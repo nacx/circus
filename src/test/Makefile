@@ -8,13 +8,13 @@ CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c
 ALL_SRC = $(CIRCUS_SRC) test.c test_hashtable.c test_hook.c
 
 OBJECTS = $(ALL_SRC:%.c=%.o)
-BINARY = circus-test
+BINARY = circus
 
 all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
-	$(LN) -o $(BINARY) $(OBJECTS)
-	./$(BINARY)
+	$(LN) -o $(BINARY)-test $(OBJECTS)
+	./$(BINARY)-test
 	
 clean:
-	rm -f *.o $(BINARY)
+	rm -f *.o $(BINARY)-test

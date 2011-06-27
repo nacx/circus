@@ -39,5 +39,5 @@ test: $(TEST_OBJ)
 	
 clean:
 	rm -f $(CIRCUS_PATH)/*.o
-	rm -f $(TEST_PATH)/*.o
+	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(BINARY)-test
 	rm -f *.o $(BINARY)
