@@ -1,4 +1,5 @@
 .project
+.cproject
 *.o
 src/circus
 src/test/circus-test
