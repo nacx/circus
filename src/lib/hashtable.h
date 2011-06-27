@@ -20,10 +20,10 @@ typedef struct entry {
     HTData data;
 } HTEntry;
 
-typedef unsigned char 	HTIndex;	// The hash table index type
-HTEntry**				ht;			// The hash table
-int						ht_size;	// The hash table size
-
+typedef unsigned char 	HTIndex;		// The hash table index type
+HTEntry**				ht;				// The hash table
+int						ht_size;		// The hash table size
+int						ht_num_entries; // The number of current entries
 
 /************************/
 /* Hash table functions */

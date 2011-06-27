@@ -13,10 +13,15 @@ CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall
 
-CIRCUS_SRC = lib/hashtable.c lib/hook.c
+CIRCUS_PATH = lib
+CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c
 ALL_SRC = $(SRC) $(CIRCUS_SRC)
-
 OBJECTS = $(ALL_SRC:%.c=%.o)
+
+TEST_PATH = test
+TEST_SRC = $(TEST_PATH)/test.c $(TEST_PATH)/test_hashtable.c $(TEST_PATH)/test_hook.c
+TEST_OBJ = $(TEST_SRC:%.c=%.o)
+
 BINARY = circus
 
 ifdef name
@@ -29,6 +34,10 @@ all: $(BINARY)
 $(BINARY): $(OBJECTS)
 	$(LN) -o $(BINARY) $(OBJECTS)
 	
+test: $(TEST_OBJ)
+	cd test && $(MAKE)
+	
 clean:
-	rm -f lib/*.o
+	rm -f $(CIRCUS_PATH)/*.o
+	rm -f $(TEST_PATH)/*.o
 	rm -f *.o $(BINARY)

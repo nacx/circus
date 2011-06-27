@@ -17,6 +17,8 @@ HTIndex ht_hash(HTData data) {
 
 void ht_init() {
 	ht_size = 256;
+	ht_num_entries = 0;
+
 	if ((ht = malloc(ht_size * sizeof(HTEntry*))) == 0) {
 		fprintf(stderr, "Out of memory (ht_init)\n");
 		exit(1);
@@ -51,6 +53,7 @@ HTEntry* ht_add(HTData data) {
 		ht[idx] = current;
 		current->next = old;
 		current->data = data;
+		ht_num_entries++;
 	} else { // Replace the entry with the new one
 		current->data = data;
 	}
@@ -82,6 +85,7 @@ void ht_del(HTData data) {
 	}
 
 	free(current);
+	ht_num_entries--;
 }
 
 HTEntry* ht_find(HTData data) {
