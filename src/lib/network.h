@@ -20,34 +20,16 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include "minunit.h"
-#include "test.h"
+#ifndef __NETWORK_H__
+#define __NETWORK_H__
 
-int tests_run = 0;
+// The socket
+int s;
 
-char* all_tests() {
-	mu_suite(test_hashtable);
-	mu_suite(test_hook);
-	mu_suite(test_network);
-	return 0;
-}
+// Network functions
+void net_connect(char* address, int port);
+void net_disconnect();
+int  net_send(char* msg);
+int  net_recv(char* msg);
 
-int main(int argc, char **argv) {
-	printf("----------------------------------------\n");
-	printf("Running unit tests...\n");
-
-	char* result = all_tests();
-
-	printf("  Tests run: %d\n", tests_run);
-
-	if (result == 0) {
-		printf("  Test result: Ok\n");
-	} else {
-		printf("  Test result: Failure (%s)\n", result);
-	}
-
-	printf("----------------------------------------\n");
-
-	return result != 0;
-}
+#endif

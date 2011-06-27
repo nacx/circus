@@ -21,33 +21,49 @@
  */
 
 #include <stdio.h>
-#include "minunit.h"
-#include "test.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include "network.h"
 
-int tests_run = 0;
+struct hostent *host_entry;		// Host name
+struct sockaddr_in sock_addr;	// Remote address
 
-char* all_tests() {
-	mu_suite(test_hashtable);
-	mu_suite(test_hook);
-	mu_suite(test_network);
-	return 0;
-}
 
-int main(int argc, char **argv) {
-	printf("----------------------------------------\n");
-	printf("Running unit tests...\n");
-
-	char* result = all_tests();
-
-	printf("  Tests run: %d\n", tests_run);
-
-	if (result == 0) {
-		printf("  Test result: Ok\n");
-	} else {
-		printf("  Test result: Failure (%s)\n", result);
+void net_connect(char* address, int port) {
+	// Socket creation
+	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+		perror("socket creation error");
+		exit(1);
 	}
 
-	printf("----------------------------------------\n");
+	// Write zeros into remote address structure
+	memset(&sock_addr, 0, sizeof(sock_addr));
 
-	return result != 0;
+	// Family type and server port
+	sock_addr.sin_family = AF_INET;
+	sock_addr.sin_port = htons(port);
+
+	// Get remote host address
+	if ((host_entry = gethostbyname(address)) == NULL) {
+		perror("gethostbyname error");
+		exit(1);
+	}
+
+	// Save remote host address
+	sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
+
+	// Create a connection with the remote host
+	if (connect(s, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
+		perror("connect error");
+		exit(1);
+	}
 }
+
+void net_disconnect() {
+	close(s);
+	s = NULL;
+}
+

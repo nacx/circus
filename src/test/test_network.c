@@ -23,31 +23,24 @@
 #include <stdio.h>
 #include "minunit.h"
 #include "test.h"
+#include "../lib/network.h"
 
-int tests_run = 0;
-
-char* all_tests() {
-	mu_suite(test_hashtable);
-	mu_suite(test_hook);
-	mu_suite(test_network);
+char* test_net_connect() {
+	net_connect("127.0.0.1", 111);
+	mu_assert(s, "test_net_connect: socket has not been initialized");
+	close(s);	// Cleanup
 	return 0;
 }
 
-int main(int argc, char **argv) {
-	printf("----------------------------------------\n");
-	printf("Running unit tests...\n");
+char* test_net_disconnect() {
+	net_connect("127.0.0.1", 111);
+	net_disconnect();
+	mu_assert(!s, "test_net_disconnect: socket should have been closed");
+	return 0;
+}
 
-	char* result = all_tests();
-
-	printf("  Tests run: %d\n", tests_run);
-
-	if (result == 0) {
-		printf("  Test result: Ok\n");
-	} else {
-		printf("  Test result: Failure (%s)\n", result);
-	}
-
-	printf("----------------------------------------\n");
-
-	return result != 0;
+char* test_network() {
+	mu_run(test_net_connect);
+	mu_run(test_net_disconnect);
+	return 0;
 }

@@ -26,5 +26,6 @@
 // Unit test suites
 char* test_hashtable();
 char* test_hook();
+char* test_network();
 
 #endif

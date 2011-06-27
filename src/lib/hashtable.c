@@ -42,7 +42,7 @@ void ht_init() {
 	ht_num_entries = 0;
 
 	if ((ht = malloc(ht_size * sizeof(HTEntry*))) == 0) {
-		fprintf(stderr, "Out of memory (ht_init)\n");
+		perror("Out of memory (ht_init)");
 		exit(1);
 	}
 }
@@ -67,7 +67,7 @@ HTEntry* ht_add(HTData data) {
 
 	if (!current) { // Insert entry at beginning of list
 		if ((current = malloc(sizeof(HTEntry))) == 0) {
-			fprintf(stderr, "Out of memory (ht_add)\n");
+			perror("Out of memory (ht_add)");
 			exit(1);
 		}
 

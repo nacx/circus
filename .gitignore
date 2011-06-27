@@ -1,5 +1,6 @@
 .project
 .cproject
+.settings
 *.o
 src/circus
 src/test/circus-test

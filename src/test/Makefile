@@ -4,8 +4,8 @@ CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall
 
-CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c
-ALL_SRC = $(CIRCUS_SRC) test.c test_hashtable.c test_hook.c
+CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c $(CIRCUS_PATH)/network.c
+ALL_SRC = $(CIRCUS_SRC) test.c test_hashtable.c test_hook.c test_network.c
 
 OBJECTS = $(ALL_SRC:%.c=%.o)
 BINARY = circus

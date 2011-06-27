@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
 #include "minunit.h"
 #include "test.h"
 #include "../lib/hashtable.h"
