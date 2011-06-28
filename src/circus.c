@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/irc.h"
+#include "lib/network.h"
 
 int main(int argc, char **argv) {
 	if (argc != 3) {
@@ -32,10 +33,17 @@ int main(int argc, char **argv) {
 
 	char* server = argv[1];
 	int port = atoi(argv[2]);
+	char msg[MSG_SIZE];
 
 	printf("Connecting to %s:%d...\n", server, port);
 
 	irc_connect(server, port);
+	irc_login("circus", "Circus", "Circus IRC bot");
+	net_recv(msg);
+
+	irc_quit("Bye");
+	net_recv(msg);
+
 	irc_disconnect();
 
 	return 0;

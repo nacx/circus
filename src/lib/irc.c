@@ -20,8 +20,11 @@
  * THE SOFTWARE.
  */
 
+#include <stdio.h>
 #include "network.h"
 #include "irc.h"
+
+// Connection functions
 
 void irc_connect(char* address, int port) {
 	net_connect(address, port);
@@ -29,4 +32,29 @@ void irc_connect(char* address, int port) {
 
 void irc_disconnect(char* address, int port) {
 	net_disconnect();
+}
+
+// User functions
+
+void irc_nick(char* nick) {
+	char msg[MSG_SIZE];
+	snprintf(msg, MSG_SIZE, "NICK %s", nick);
+	net_send(msg);
+}
+
+void irc_user(char* user_name, char* real_name) {
+	char msg[MSG_SIZE];
+	snprintf(msg, MSG_SIZE, "USER %s hostname server :%s", user_name, real_name);
+	net_send(msg);
+}
+
+void irc_login(char* nick, char* user_name, char* real_name) {
+	irc_nick(nick);
+	irc_user(user_name, real_name);
+}
+
+void irc_quit(char* quit_msg) {
+	char msg[MSG_SIZE];
+	snprintf(msg, MSG_SIZE, "QUIT :%s", quit_msg);
+	net_send(msg);
 }

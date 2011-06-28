@@ -23,8 +23,15 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
-// IRC functions
+// Connection functions
 void irc_connect(char* address, int port);
 void irc_disconnect();
+
+// User functions
+void irc_nick(char* nick);
+void irc_user(char* user_name, char* real_name);
+void irc_login(char* nick, char* user_name, char* real_name);
+
+void irc_quit(char* msg);
 
 #endif
