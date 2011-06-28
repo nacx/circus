@@ -2,7 +2,7 @@
 # Custom sources to compile #
 #############################
 
-SRC = main.c
+SRC = circus.c
 
 ######################
 # Circus source code #
@@ -15,7 +15,7 @@ CFLAGS = -pipe -O2 -Wall
 # Circus build
 CIRCUS_PATH = lib
 CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c \
-			 $(CIRCUS_PATH)/network.c
+			 $(CIRCUS_PATH)/network.c $(CIRCUS_PATH)/irc.c
 CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
 
 # Test build

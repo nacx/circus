@@ -29,8 +29,8 @@
 #include <unistd.h>
 #include "network.h"
 
-struct hostent *host_entry;		// Host name
-struct sockaddr_in sock_addr;	// Remote address
+struct hostent *host_entry; // Host name
+struct sockaddr_in sock_addr; // Remote address
 
 
 void net_connect(char* address, int port) {
@@ -68,3 +68,25 @@ void net_disconnect() {
 	s = -1;
 }
 
+int net_send(char* msg) {
+	char out[MSG_SIZE];
+
+	strncpy(out, msg, MSG_SIZE - 2); // Cut the message to the maximum size
+	strcat(out, "\r\n"); // Messages must end like this
+
+	printf(">> %s\n", msg);
+
+	return send(s, out, strlen(out), 0);
+}
+
+int net_recv(char* msg) {
+	int numbytes;
+
+	if ((numbytes = recv(s, msg, MSG_SIZE - 1, 0)) > 0) {
+		msg[numbytes] = '\0'; // Append the "end of string" character
+	}
+
+	printf("<< %s\n", msg);
+
+	return numbytes;
+}

@@ -20,19 +20,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef __NETWORK_H__
-#define __NETWORK_H__
+#ifndef __IRC_H__
+#define __IRC_H__
 
-// The maximum message size of an IRC message
-#define MSG_SIZE 512
-
-// The socket
-int s;
-
-// Network functions
-void net_connect(char* address, int port);
-void net_disconnect();
-int  net_send(char* msg);
-int  net_recv(char* msg);
+// IRC functions
+void irc_connect(char* address, int port);
+void irc_disconnect();
 
 #endif

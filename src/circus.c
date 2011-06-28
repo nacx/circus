@@ -21,31 +21,22 @@
  */
 
 #include <stdio.h>
-#include "lib/hook.h"
-
-void test_hook(char* text) {
-	printf("%s\n", text);
-}
+#include <stdlib.h>
+#include "lib/irc.h"
 
 int main(int argc, char **argv) {
-
-	hook("TEST", test_hook);
-	HOOK h = lookup("TEST");
-
-	if (h) {
-		h("This is the hook argument");
-	} else {
-		printf("No hook found!\n");
+	if (argc != 3) {
+		printf("Usage: %s <server> <port>\n", argv[0]);
+		exit(1);
 	}
 
-	unhook("TEST");
-	h = lookup("TEST");
+	char* server = argv[1];
+	int port = atoi(argv[2]);
 
-	if (h) {
-		h("This is the hook argument");
-	} else {
-		printf("No hook found!\n");
-	}
+	printf("Connecting to %s:%d...\n", server, port);
+
+	irc_connect(server, port);
+	irc_disconnect();
 
 	return 0;
 }
