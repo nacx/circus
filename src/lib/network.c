@@ -26,6 +26,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
 #include "network.h"
 
 struct hostent *host_entry;		// Host name
@@ -64,6 +65,6 @@ void net_connect(char* address, int port) {
 
 void net_disconnect() {
 	close(s);
-	s = NULL;
+	s = -1;
 }
 

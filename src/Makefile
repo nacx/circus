@@ -12,33 +12,46 @@ CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall
 
+# Circus build
 CIRCUS_PATH = lib
 CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c \
 			 $(CIRCUS_PATH)/network.c
-ALL_SRC = $(SRC) $(CIRCUS_SRC)
-OBJECTS = $(ALL_SRC:%.c=%.o)
+CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
 
+# Test build
 TEST_PATH = test
 TEST_SRC = $(TEST_PATH)/test.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_hook.c $(TEST_PATH)/test_network.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
-BINARY = circus
+ALL_SRC = $(CIRCUS_SRC) $(SRC)
+ALL_OBJ = $(ALL_SRC:%.c=%.o)
+
+BIN = circus
 
 ifdef name
-	BINARY = $(name)
+	BIN = $(name)
 endif
 
+BIN_TEST = $(BIN)-test
 
-all: $(BINARY)
 
-$(BINARY): $(OBJECTS)
-	$(LN) -o $(BINARY) $(OBJECTS)
+all: $(BIN)
+
+$(BIN): lib test $(ALL_OBJ)
+	$(LN) -o $(BIN) $(ALL_OBJ)
 	
-test: $(TEST_OBJ)
-	cd test && $(MAKE)
+lib: $(CIRCUS_OBJ)
 	
-clean:
+test: lib $(TEST_OBJ)
+	$(LN) -o $(TEST_PATH)/$(BIN_TEST) $(TEST_OBJ) $(CIRCUS_OBJ)
+	$(TEST_PATH)/$(BIN_TEST)
+	
+clean-lib:
 	rm -f $(CIRCUS_PATH)/*.o
-	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(BINARY)-test
-	rm -f *.o $(BINARY)
+	
+clean-test:
+	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(BIN_TEST)
+	
+clean: clean-lib clean-test
+	rm -f *.o $(BIN)

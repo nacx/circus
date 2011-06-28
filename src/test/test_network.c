@@ -21,13 +21,14 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 #include "minunit.h"
 #include "test.h"
 #include "../lib/network.h"
 
 char* test_net_connect() {
 	net_connect("127.0.0.1", 111);
-	mu_assert(s, "test_net_connect: socket has not been initialized");
+	mu_assert(s >= 0, "test_net_connect: socket has not been initialized");
 	close(s);	// Cleanup
 	return 0;
 }
@@ -35,7 +36,7 @@ char* test_net_connect() {
 char* test_net_disconnect() {
 	net_connect("127.0.0.1", 111);
 	net_disconnect();
-	mu_assert(!s, "test_net_disconnect: socket should have been closed");
+	mu_assert(s == -1, "test_net_disconnect: socket should have been closed");
 	return 0;
 }
 
