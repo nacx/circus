@@ -7,12 +7,17 @@ a base to write IRC bots, but it may be extended to implement fully-featured
 IRC clients.
 
 
-Compiling circus
----------------
+Compiling Circus
+----------------
 
-Circus can be compiled as usual:
+To compile your own Circus application, edit the `src/Makefile`file and add all your
+source files to the `SRC` variable. Once you have declared your sources, you can build
+them as usual invoking make:
 
     make
+    
+This will compile the Circus source code, run all the unit tests and finally build the
+entire application if all tests passed.
 
 Issue Tracking
 --------------
@@ -24,4 +29,3 @@ License
 -------
 
 This sowftare is licensed under the MIT license. See LICENSE file for details.
-
