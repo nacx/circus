@@ -24,30 +24,23 @@
 #include "minunit.h"
 #include "test.h"
 
-int tests_run = 0;
 
-char* all_tests() {
+void run_all_tests() {
 	mu_suite(test_hashtable);
 	mu_suite(test_hook);
 	mu_suite(test_network);
-	return 0;
 }
 
 int main(int argc, char **argv) {
-	printf("----------------------------------------\n");
+	printf("--------------------------------------------------\n");
 	printf("Running unit tests...\n");
 
-	char* result = all_tests();
+	run_all_tests();
 
-	printf("  Tests run: %d\n", tests_run);
+	mu_results();
+	mu_free();
 
-	if (result == 0) {
-		printf("  Test result: Ok\n");
-	} else {
-		printf("  Test result: Failure (%s)\n", result);
-	}
+	printf("--------------------------------------------------\n");
 
-	printf("----------------------------------------\n");
-
-	return result != 0;
+	return test_fails != 0;
 }

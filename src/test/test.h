@@ -24,8 +24,8 @@
 #define __TEST_H__
 
 // Unit test suites
-char* test_hashtable();
-char* test_hook();
-char* test_network();
+void test_hashtable();
+void test_hook();
+void test_network();
 
 #endif

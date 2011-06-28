@@ -21,26 +21,67 @@
  */
 
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include "minunit.h"
-#include "test.h"
-#include "../lib/network.h"
 
-char* test_net_connect() {
-	net_connect("127.0.0.1", 111);
-	mu_assert(s >= 0, "test_net_connect: socket has not been initialized");
-	close(s);	// Cleanup
-	return 0;
+struct failure {
+	struct failure *next;
+	char* msg;
+};
+
+struct failure *fails;
+
+int tests_run = 0;
+int test_fails = 0;
+
+
+void mu_fail(char* msg) {
+	struct failure *f, *it;
+
+	if ((f = malloc(sizeof(struct failure))) == 0) {
+		perror("Out of memory (fail)");
+		exit(1);
+	}
+
+	f->msg = msg;
+	f->next = NULL;
+
+	// Add the error at the end of the list
+	for (it = fails; it && it->next; it = it->next);
+
+	if (!it) { // First error
+		fails = f;
+	} else {
+		it->next = f;
+	}
+
+	test_fails++;
 }
 
-char* test_net_disconnect() {
-	net_connect("127.0.0.1", 111);
-	net_disconnect();
-	mu_assert(s == -1, "test_net_disconnect: socket should have been closed");
-	return 0;
+void mu_results() {
+	struct failure *f;
+
+	printf("  Tests run: %d\n", tests_run);
+
+	if (test_fails == 0) {
+		printf("  Test result: Ok\n");
+	} else {
+		printf("  Test result: %d Failures\n", test_fails);
+
+		for (f = fails; f; f = f->next) {
+			printf("    %s\n", f->msg);
+		}
+	}
 }
 
-void test_network() {
-	mu_run(test_net_connect);
-	mu_run(test_net_disconnect);
+void mu_free() {
+	struct failure *old, *current;
+
+	old = current = fails;
+
+	while (current) {
+		old = current;
+		current = current->next;
+		free(old);
+	}
 }

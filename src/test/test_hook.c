@@ -49,9 +49,8 @@ char* test_lookup() {
 	return 0;
 }
 
-char* test_hook() {
+void test_hook() {
 	mu_run(test_hook_method);
 	mu_run(test_unhook);
 	mu_run(test_lookup);
-	return 0;
 }

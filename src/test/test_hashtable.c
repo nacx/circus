@@ -28,7 +28,7 @@
 char* test_ht_init() {
 	ht_init();
 	mu_assert(ht != NULL, "test_ht_init: Hash table should exist");
-	mu_assert(ht_num_entries == 0, "test_hook: ht_num_entries should be 0");
+	mu_assert(ht_num_entries == 0, "test_ht_init: ht_num_entries should be 0");
 	return 0;
 }
 
@@ -42,7 +42,7 @@ char* test_ht_add() {
 
 	idx = ht_hash(data);
 	mu_assert(ht[idx], "test_ht_add: ht[idx] should exist");
-	mu_assert(ht_num_entries == 1, "test_hook: ht_num_entries should be 1");
+	mu_assert(ht_num_entries == 1, "test_ht_add: ht_num_entries should be 1");
 
 	// Cleanup
 	ht_del(data);
@@ -81,7 +81,7 @@ char* test_ht_del() {
 	ht_del(data);
 
 	mu_assert(!ht[idx], "test_ht_del: ht[idx] should not exist");
-	mu_assert(ht_num_entries == 0, "test_ht_add_replace: ht_num_entries should be 0");
+	mu_assert(ht_num_entries == 0, "test_ht_del: ht_num_entries should be 0");
 
 	return 0;
 }
@@ -131,7 +131,7 @@ char* test_ht_find_unexisting() {
 	return 0;
 }
 
-char* test_hashtable() {
+void test_hashtable() {
 	mu_run(test_ht_init);
 	mu_run(test_ht_add);
 	mu_run(test_ht_add_replace);
@@ -139,5 +139,4 @@ char* test_hashtable() {
 	mu_run(test_ht_del_unexisting);
 	mu_run(test_ht_find);
 	mu_run(test_ht_find_unexisting);
-	return 0;
 }
