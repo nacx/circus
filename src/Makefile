@@ -19,7 +19,7 @@ ALL_SRC = $(SRC) $(CIRCUS_SRC)
 OBJECTS = $(ALL_SRC:%.c=%.o)
 
 TEST_PATH = test
-TEST_SRC = $(TEST_PATH)/test.c $(TEST_PATH)/test_hashtable.c\
+TEST_SRC = $(TEST_PATH)/test.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_hook.c $(TEST_PATH)/test_network.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 

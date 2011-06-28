@@ -4,8 +4,9 @@ all:
 	cd src && $(MAKE) $@
 	$(MAKE) test
 	
+clean:
+	cd src && $(MAKE) $@
+	
 test:
 	cd src && $(MAKE) test
-	
-$(TARGETS) clean:
-	cd src && $(MAKE) $@
+
