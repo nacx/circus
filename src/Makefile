@@ -24,6 +24,7 @@ TEST_SRC = $(TEST_PATH)/test.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_hook.c $(TEST_PATH)/test_network.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
+# Binary build
 ALL_SRC = $(CIRCUS_SRC) $(SRC)
 ALL_OBJ = $(ALL_SRC:%.c=%.o)
 
