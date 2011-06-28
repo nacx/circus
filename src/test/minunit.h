@@ -20,13 +20,13 @@
  * THE SOFTWARE.
  */
 
-#ifndef __MINUNIT_H__
-#define __MINUNIT_H__
-
 /*
- * MinUnit testing framework
+ * Inspired by MinUnit testing framework
  * http://www.jera.com/techinfo/jtns/jtn002.html
  */
+
+#ifndef __MINUNIT_H__
+#define __MINUNIT_H__
 
 #define mu_assert(test, msg) do { if (!(test)) { mu_fail(msg); return msg; } } while (0)
 #define mu_run(test) do { test(); tests_run++; } while (0)
