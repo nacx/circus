@@ -21,8 +21,14 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/types.h>
 #include "network.h"
 #include "irc.h"
+
+int listening = 0;
 
 // Connection functions
 
@@ -32,6 +38,49 @@ void irc_connect(char* address, int port) {
 
 void irc_disconnect(char* address, int port) {
 	net_disconnect();
+}
+
+// Begin listening to server commands
+
+void shutdown_handler(int signal) {
+	switch (signal) {
+	case SIGHUP:
+	case SIGTERM:
+	case SIGINT:
+		listening = 1;
+	default:
+		break;
+	}
+}
+
+void irc_listen() {
+	char msg[MSG_SIZE];
+	int read;
+	fd_set read_fd_set;
+
+	// Register shutdown signals
+	signal(SIGHUP, shutdown_handler);
+	signal(SIGTERM, shutdown_handler);
+	signal(SIGINT, shutdown_handler);
+
+	// Initialize the set of active sockets
+	FD_ZERO(&read_fd_set);
+	FD_SET(s, &read_fd_set);
+
+	while (listening == 0) {
+		// Check if there is some data to be read (avoid blocking read)
+		read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
+
+		if (read < 0 && errno != EINTR) { // If an Interrupt signal is received, just let the loop end
+			perror("irc_listen select error");
+			exit(EXIT_FAILURE);
+		} else if (read > 0 && FD_ISSET(s, &read_fd_set)) {
+			// There is data to be read
+			net_recv(msg);
+		} else {
+			// Timeout. Let the loop end if any signal was received
+		}
+	}
 }
 
 // User functions

@@ -27,6 +27,9 @@
 void irc_connect(char* address, int port);
 void irc_disconnect();
 
+// Begin listening to server messages
+void irc_listen();
+
 // User functions
 void irc_nick(char* nick);
 void irc_user(char* user_name, char* real_name);
