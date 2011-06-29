@@ -37,7 +37,7 @@ void net_connect(char* address, int port) {
 	// Socket creation
 	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket creation error");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	// Write zeros into remote address structure
@@ -50,7 +50,7 @@ void net_connect(char* address, int port) {
 	// Get remote host address
 	if ((host_entry = gethostbyname(address)) == NULL) {
 		perror("gethostbyname error");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	// Save remote host address
@@ -59,7 +59,7 @@ void net_connect(char* address, int port) {
 	// Create a connection with the remote host
 	if (connect(s, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
 		perror("connect error");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 }
 
