@@ -25,22 +25,22 @@
 #include "lib/irc.h"
 
 int main(int argc, char **argv) {
-	if (argc != 3) {
-		printf("Usage: %s <server> <port>\n", argv[0]);
-		exit(EXIT_FAILURE);
-	}
+    if (argc != 3) {
+        printf("Usage: %s <server> <port>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
-	char* server = argv[1];
-	int port = atoi(argv[2]);
-	printf("Connecting to %s:%d...\n", server, port);
+    char* server = argv[1];
+    int port = atoi(argv[2]);
+    printf("Connecting to %s:%d...\n", server, port);
 
-	irc_connect(server, port);
-	irc_login("circus", "Circus", "Circus IRC bot");
+    irc_connect(server, port);
+    irc_login("circus", "Circus", "Circus IRC bot");
 
-	irc_listen();
+    irc_listen();
 
-	irc_quit("Bye");
-	irc_disconnect();
+    irc_quit("Bye");
+    irc_disconnect();
 
-	return 0;
+    return 0;
 }

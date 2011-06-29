@@ -34,59 +34,59 @@ struct sockaddr_in sock_addr; // Remote address
 
 
 void net_connect(char* address, int port) {
-	// Socket creation
-	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		perror("socket creation error");
-		exit(EXIT_FAILURE);
-	}
+    // Socket creation
+    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket creation error");
+        exit(EXIT_FAILURE);
+    }
 
-	// Write zeros into remote address structure
-	memset(&sock_addr, 0, sizeof(sock_addr));
+    // Write zeros into remote address structure
+    memset(&sock_addr, 0, sizeof(sock_addr));
 
-	// Family type and server port
-	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_port = htons(port);
+    // Family type and server port
+    sock_addr.sin_family = AF_INET;
+    sock_addr.sin_port = htons(port);
 
-	// Get remote host address
-	if ((host_entry = gethostbyname(address)) == NULL) {
-		perror("gethostbyname error");
-		exit(EXIT_FAILURE);
-	}
+    // Get remote host address
+    if ((host_entry = gethostbyname(address)) == NULL) {
+        perror("gethostbyname error");
+        exit(EXIT_FAILURE);
+    }
 
-	// Save remote host address
-	sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
+    // Save remote host address
+    sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
 
-	// Create a connection with the remote host
-	if (connect(s, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
-		perror("connect error");
-		exit(EXIT_FAILURE);
-	}
+    // Create a connection with the remote host
+    if (connect(s, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
+        perror("connect error");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void net_disconnect() {
-	close(s);
-	s = -1;
+    close(s);
+    s = -1;
 }
 
 int net_send(char* msg) {
-	char out[MSG_SIZE];
+    char out[MSG_SIZE];
 
-	strncpy(out, msg, MSG_SIZE - 2); // Cut the message to the maximum size
-	strcat(out, "\r\n"); // Messages must end like this
+    strncpy(out, msg, MSG_SIZE - 2); // Cut the message to the maximum size
+    strcat(out, "\r\n"); // Messages must end like this
 
-	printf(">> %s\n", msg);
+    printf(">> %s\n", msg);
 
-	return send(s, out, strlen(out), 0);
+    return send(s, out, strlen(out), 0);
 }
 
 int net_recv(char* msg) {
-	int numbytes;
+    int numbytes;
 
-	if ((numbytes = recv(s, msg, MSG_SIZE - 1, 0)) > 0) {
-		msg[numbytes] = '\0'; // Append the "end of string" character
-	}
+    if ((numbytes = recv(s, msg, MSG_SIZE - 1, 0)) > 0) {
+        msg[numbytes] = '\0'; // Append the "end of string" character
+    }
 
-	printf("<< %s\n", msg);
+    printf("<< %s\n", msg);
 
-	return numbytes;
+    return numbytes;
 }

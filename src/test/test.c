@@ -26,21 +26,21 @@
 
 
 void run_all_tests() {
-	mu_suite(test_hashtable);
-	mu_suite(test_hook);
-	mu_suite(test_network);
+    mu_suite(test_hashtable);
+    mu_suite(test_hook);
+    mu_suite(test_network);
 }
 
 int main(int argc, char **argv) {
-	printf("--------------------------------------------------\n");
-	printf("Running unit tests...\n");
+    printf("--------------------------------------------------\n");
+    printf("Running unit tests...\n");
 
-	run_all_tests();
+    run_all_tests();
 
-	mu_results();
-	mu_free();
+    mu_results();
+    mu_free();
 
-	printf("--------------------------------------------------\n");
+    printf("--------------------------------------------------\n");
 
-	return test_fails != 0;
+    return test_fails != 0;
 }

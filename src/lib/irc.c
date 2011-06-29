@@ -33,78 +33,78 @@ int shutdown_requested = 0;
 // Connection functions
 
 void irc_connect(char* address, int port) {
-	net_connect(address, port);
+    net_connect(address, port);
 }
 
 void irc_disconnect(char* address, int port) {
-	net_disconnect();
+    net_disconnect();
 }
 
 // Begin listening to server commands
 
 void shutdown_handler(int signal) {
-	switch (signal) {
-	case SIGHUP:
-	case SIGTERM:
-	case SIGINT:
-		shutdown_requested = 1;
-        break;
-	default:
-		break;
-	}
+    switch (signal) {
+        case SIGHUP:
+        case SIGTERM:
+        case SIGINT:
+            shutdown_requested = 1;
+            break;
+        default:
+            break;
+    }
 }
 
 void irc_listen() {
-	char msg[MSG_SIZE];
-	int read;
-	fd_set read_fd_set;
+    char msg[MSG_SIZE];
+    int read;
+    fd_set read_fd_set;
 
-	// Register shutdown signals
-	signal(SIGHUP, shutdown_handler);
-	signal(SIGTERM, shutdown_handler);
-	signal(SIGINT, shutdown_handler);
+    // Register shutdown signals
+    signal(SIGHUP, shutdown_handler);
+    signal(SIGTERM, shutdown_handler);
+    signal(SIGINT, shutdown_handler);
 
-	// Initialize the set of active sockets
-	FD_ZERO(&read_fd_set);
-	FD_SET(s, &read_fd_set);
+    // Initialize the set of active sockets
+    FD_ZERO(&read_fd_set);
+    FD_SET(s, &read_fd_set);
 
-	while (shutdown_requested == 0) {
-		// Check if there is some data to be read (avoid blocking read)
-		read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
+    while (shutdown_requested == 0) {
+        // Check if there is some data to be read (avoid blocking read)
+        read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
 
-		if (read < 0 && errno != EINTR) { // If an Interrupt signal is received, just let the loop end
-			perror("irc_listen select error");
-			exit(EXIT_FAILURE);
-		} else if (read > 0 && FD_ISSET(s, &read_fd_set)) {
-			// There is data to be read
-			net_recv(msg);
-		} else {
-			// Timeout. Let the loop end if any signal was received
-		}
-	}
+        if (read < 0 && errno != EINTR) { // If an Interrupt signal is received, just let the loop end
+            perror("irc_listen select error");
+            exit(EXIT_FAILURE);
+        } else if (read > 0 && FD_ISSET(s, &read_fd_set)) {
+            // There is data to be read
+            net_recv(msg);
+        } else {
+            // Timeout. Let the loop end if any signal was received
+        }
+    }
 }
 
 // User functions
 
 void irc_nick(char* nick) {
-	char msg[MSG_SIZE];
-	snprintf(msg, MSG_SIZE, "NICK %s", nick);
-	net_send(msg);
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "NICK %s", nick);
+    net_send(msg);
 }
 
 void irc_user(char* user_name, char* real_name) {
-	char msg[MSG_SIZE];
-	snprintf(msg, MSG_SIZE, "USER %s hostname server :%s", user_name, real_name);
-	net_send(msg);
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "USER %s hostname server :%s", user_name, real_name);
+    net_send(msg);
 }
 
 void irc_login(char* nick, char* user_name, char* real_name) {
-	irc_nick(nick);
-	irc_user(user_name, real_name);
+    irc_nick(nick);
+    irc_user(user_name, real_name);
 }
 
 void irc_quit(char* quit_msg) {
-	char msg[MSG_SIZE];
-	snprintf(msg, MSG_SIZE, "QUIT :%s", quit_msg);
-	net_send(msg);
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "QUIT :%s", quit_msg);
+    net_send(msg);
 }

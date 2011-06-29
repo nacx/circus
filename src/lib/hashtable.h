@@ -29,8 +29,8 @@
 
 // The data being stored in the hashtable
 typedef struct {
-	char* key;
-	void* value;
+    char* key;
+    void* value;
 } HTData;
 
 // Data equallity macro

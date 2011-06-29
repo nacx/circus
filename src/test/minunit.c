@@ -25,8 +25,8 @@
 #include "minunit.h"
 
 struct failure {
-	struct failure *next;
-	char* msg;
+    struct failure *next;
+    char* msg;
 };
 
 struct failure *fails;
@@ -36,52 +36,52 @@ int test_fails = 0;
 
 
 void mu_fail(char* msg) {
-	struct failure *f, *it;
+    struct failure *f, *it;
 
-	if ((f = malloc(sizeof(struct failure))) == 0) {
-		perror("Out of memory (fail)");
-		exit(EXIT_FAILURE);
-	}
+    if ((f = malloc(sizeof(struct failure))) == 0) {
+        perror("Out of memory (fail)");
+        exit(EXIT_FAILURE);
+    }
 
-	f->msg = msg;
-	f->next = NULL;
+    f->msg = msg;
+    f->next = NULL;
 
-	// Add the error at the end of the list
-	for (it = fails; it && it->next; it = it->next);
+    // Add the error at the end of the list
+    for (it = fails; it && it->next; it = it->next);
 
-	if (!it) { // First error
-		fails = f;
-	} else {
-		it->next = f;
-	}
+    if (!it) { // First error
+        fails = f;
+    } else {
+        it->next = f;
+    }
 
-	test_fails++;
+    test_fails++;
 }
 
 void mu_results() {
-	struct failure *f;
+    struct failure *f;
 
-	printf("  Tests run: %d\n", tests_run);
+    printf("  Tests run: %d\n", tests_run);
 
-	if (test_fails == 0) {
-		printf("  Test result: Ok\n");
-	} else {
-		printf("  Test result: %d Failures\n", test_fails);
+    if (test_fails == 0) {
+        printf("  Test result: Ok\n");
+    } else {
+        printf("  Test result: %d Failures\n", test_fails);
 
-		for (f = fails; f; f = f->next) {
-			printf("    %s\n", f->msg);
-		}
-	}
+        for (f = fails; f; f = f->next) {
+            printf("    %s\n", f->msg);
+        }
+    }
 }
 
 void mu_free() {
-	struct failure *old, *current;
+    struct failure *old, *current;
 
-	old = current = fails;
+    old = current = fails;
 
-	while (current) {
-		old = current;
-		current = current->next;
-		free(old);
-	}
+    while (current) {
+        old = current;
+        current = current->next;
+        free(old);
+    }
 }

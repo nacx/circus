@@ -27,20 +27,20 @@
 #include "../lib/network.h"
 
 char* test_net_connect() {
-	net_connect("127.0.0.1", 111);
-	mu_assert(s >= 0, "test_net_connect: socket has not been initialized");
-	close(s);	// Cleanup
-	return 0;
+    net_connect("127.0.0.1", 111);
+    mu_assert(s >= 0, "test_net_connect: socket has not been initialized");
+    close(s);	// Cleanup
+    return 0;
 }
 
 char* test_net_disconnect() {
-	net_connect("127.0.0.1", 111);
-	net_disconnect();
-	mu_assert(s == -1, "test_net_disconnect: socket should have been closed");
-	return 0;
+    net_connect("127.0.0.1", 111);
+    net_disconnect();
+    mu_assert(s == -1, "test_net_disconnect: socket should have been closed");
+    return 0;
 }
 
 void test_network() {
-	mu_run(test_net_connect);
-	mu_run(test_net_disconnect);
+    mu_run(test_net_connect);
+    mu_run(test_net_disconnect);
 }
