@@ -28,7 +28,7 @@
 #include "network.h"
 #include "irc.h"
 
-int listening = 0;
+int shutdown_requested = 0;
 
 // Connection functions
 
@@ -47,7 +47,7 @@ void shutdown_handler(int signal) {
 	case SIGHUP:
 	case SIGTERM:
 	case SIGINT:
-		listening = 1;
+		shutdown_requested = 1;
 	default:
 		break;
 	}
@@ -67,7 +67,7 @@ void irc_listen() {
 	FD_ZERO(&read_fd_set);
 	FD_SET(s, &read_fd_set);
 
-	while (listening == 0) {
+	while (shutdown_requested == 0) {
 		// Check if there is some data to be read (avoid blocking read)
 		read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
 
