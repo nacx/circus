@@ -38,3 +38,4 @@ void irc_login(char* nick, char* user_name, char* real_name);
 void irc_quit(char* msg);
 
 #endif
+

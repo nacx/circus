@@ -54,3 +54,4 @@ void test_hook() {
     mu_run(test_unhook);
     mu_run(test_lookup);
 }
+

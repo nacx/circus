@@ -23,8 +23,8 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
-// The maximum message size of an IRC message
-#define MSG_SIZE 512
+#define MSG_SIZE 512    // The maximum message size of an IRC message
+#define MSG_SEP "\r\n"  // The message separator
 
 // The socket
 int s;
@@ -36,3 +36,4 @@ int  net_send(char* msg);
 int  net_recv(char* msg);
 
 #endif
+

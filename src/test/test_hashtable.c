@@ -140,3 +140,4 @@ void test_hashtable() {
     mu_run(test_ht_find);
     mu_run(test_ht_find_unexisting);
 }
+

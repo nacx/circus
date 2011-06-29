@@ -72,14 +72,15 @@ void irc_listen() {
         // Check if there is some data to be read (avoid blocking read)
         read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
 
-        if (read < 0 && errno != EINTR) { // If an Interrupt signal is received, just let the loop end
+        // If there is an error in select, abort except
+        // if the error is an interrupt signal. We'll just
+        // ignore it since we are handling the signals.
+        if (read < 0 && errno != EINTR) {
             perror("irc_listen select error");
             exit(EXIT_FAILURE);
         } else if (read > 0 && FD_ISSET(s, &read_fd_set)) {
             // There is data to be read
             net_recv(msg);
-        } else {
-            // Timeout. Let the loop end if any signal was received
         }
     }
 }
@@ -108,3 +109,4 @@ void irc_quit(char* quit_msg) {
     snprintf(msg, MSG_SIZE, "QUIT :%s", quit_msg);
     net_send(msg);
 }
+
