@@ -40,7 +40,7 @@ void mu_fail(char* msg) {
 
 	if ((f = malloc(sizeof(struct failure))) == 0) {
 		perror("Out of memory (fail)");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	f->msg = msg;
