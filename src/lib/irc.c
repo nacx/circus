@@ -48,6 +48,7 @@ void shutdown_handler(int signal) {
 	case SIGTERM:
 	case SIGINT:
 		shutdown_requested = 1;
+        break;
 	default:
 		break;
 	}
