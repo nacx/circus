@@ -25,27 +25,15 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <errno.h>
 #include <netdb.h>
 #include <unistd.h>
 #include "network.h"
 
-struct hostent *host_entry;     // Host name
-struct sockaddr_in sock_addr;   // Remote address
-
 
 void net_connect(char* address, int port) {
-    // Socket creation
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket creation error");
-        exit(EXIT_FAILURE);
-    }
-
-    // Write zeros into remote address structure
-    memset(&sock_addr, 0, sizeof(sock_addr));
-
-    // Family type and server port
-    sock_addr.sin_family = AF_INET;
-    sock_addr.sin_port = htons(port);
+    struct hostent *host_entry;     // Host name
+    struct sockaddr_in sock_addr;   // Remote address
 
     // Get remote host address
     if ((host_entry = gethostbyname(address)) == NULL) {
@@ -53,19 +41,30 @@ void net_connect(char* address, int port) {
         exit(EXIT_FAILURE);
     }
 
-    // Save remote host address
+    // Write zeros into remote address structure
+    memset(&sock_addr, 0, sizeof(sock_addr));
+
+    // Family type, server port and host address
+    sock_addr.sin_family = AF_INET;
+    sock_addr.sin_port = htons(port);
     sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
 
+    // Socket creation
+    if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket creation error");
+        exit(EXIT_FAILURE);
+    }
+
     // Create a connection with the remote host
-    if (connect(s, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
+    if (connect(_socket, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
         perror("connect error");
         exit(EXIT_FAILURE);
     }
 }
 
 void net_disconnect() {
-    close(s);
-    s = -1;
+    close(_socket);
+    _socket = -1;
 }
 
 int net_send(char* msg) {
@@ -76,18 +75,43 @@ int net_send(char* msg) {
 
     printf(">> %s\n", msg);
 
-    return send(s, out, strlen(out), 0);
+    return send(_socket, out, strlen(out), 0);
 }
 
 int net_recv(char* msg) {
     int numbytes;
 
-    if ((numbytes = recv(s, msg, MSG_SIZE - 1, 0)) > 0) {
+    if ((numbytes = recv(_socket, msg, MSG_SIZE - 1, 0)) > 0) {
         msg[numbytes] = '\0';   // Append the "end of string" character
     }
 
     printf("<< %s\n", msg);
 
     return numbytes;
+}
+
+int net_listen() {
+    int read, ret;
+    fd_set read_fd_set;
+
+    // Initialize the set of active sockets
+    FD_ZERO(&read_fd_set);
+    FD_SET(_socket, &read_fd_set);
+
+    // Check if there is some data to be read (avoid blocking read)
+    read = select(_socket + 1, &read_fd_set, NULL, NULL, NULL);
+
+    // If there is an error in select, abort except
+    // if the error is an interrupt signal. We'll just
+    // ignore it since we are handling the signals.
+    if (read < 0) {
+        ret = (errno == EINTR)? NET_CLOSE : NET_ERROR;
+    } else if (read > 0 && FD_ISSET(_socket, &read_fd_set)) {
+        ret = NET_READY;
+    } else {
+        ret = NET_IGNORE;
+    }
+
+    return ret;
 }
 

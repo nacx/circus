@@ -28,15 +28,15 @@
 
 char* test_net_connect() {
     net_connect("127.0.0.1", 111);
-    mu_assert(s >= 0, "test_net_connect: socket has not been initialized");
-    close(s);	// Cleanup
+    mu_assert(_socket >= 0, "test_net_connect: socket has not been initialized");
+    close(_socket);	// Cleanup
     return 0;
 }
 
 char* test_net_disconnect() {
     net_connect("127.0.0.1", 111);
     net_disconnect();
-    mu_assert(s == -1, "test_net_disconnect: socket should have been closed");
+    mu_assert(_socket == -1, "test_net_disconnect: socket should have been closed");
     return 0;
 }
 

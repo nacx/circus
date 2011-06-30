@@ -26,14 +26,20 @@
 #define MSG_SIZE 512    // The maximum message size of an IRC message
 #define MSG_SEP "\r\n"  // The message separator
 
-// The socket
-int s;
+#define NET_READY   0     // There are messages to be read
+#define NET_ERROR   1     // Unexpected error while reading
+#define NET_CLOSE   2     // The communication must finish
+#define NET_IGNORE  3     // Ignore the status and continue
+
+// The socket to the IRC server
+int _socket;
 
 // Network functions
 void net_connect(char* address, int port);
 void net_disconnect();
 int  net_send(char* msg);
 int  net_recv(char* msg);
+int  net_listen();
 
 #endif
 

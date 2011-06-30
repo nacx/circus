@@ -2,5 +2,6 @@
 .cproject
 .settings
 *.o
+*.swp
 src/circus
 src/test/circus-test

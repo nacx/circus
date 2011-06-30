@@ -36,7 +36,7 @@ void irc_connect(char* address, int port) {
     net_connect(address, port);
 }
 
-void irc_disconnect(char* address, int port) {
+void irc_disconnect() {
     net_disconnect();
 }
 
@@ -55,32 +55,34 @@ void shutdown_handler(int signal) {
 }
 
 void irc_listen() {
+    int status;
     char msg[MSG_SIZE];
-    int read;
-    fd_set read_fd_set;
 
     // Register shutdown signals
     signal(SIGHUP, shutdown_handler);
     signal(SIGTERM, shutdown_handler);
     signal(SIGINT, shutdown_handler);
 
-    // Initialize the set of active sockets
-    FD_ZERO(&read_fd_set);
-    FD_SET(s, &read_fd_set);
-
     while (shutdown_requested == 0) {
-        // Check if there is some data to be read (avoid blocking read)
-        read = select(s + 1, &read_fd_set, NULL, NULL, NULL);
+        status = net_listen();
 
-        // If there is an error in select, abort except
-        // if the error is an interrupt signal. We'll just
-        // ignore it since we are handling the signals.
-        if (read < 0 && errno != EINTR) {
-            perror("irc_listen select error");
-            exit(EXIT_FAILURE);
-        } else if (read > 0 && FD_ISSET(s, &read_fd_set)) {
-            // There is data to be read
-            net_recv(msg);
+        switch(status) {
+            case NET_ERROR:
+                perror("Error listening for messages");
+                exit(EXIT_FAILURE);
+                break;
+            case NET_READY:
+                net_recv(msg);
+                break;
+            case NET_IGNORE:
+                // Do nothing. The loop should continue
+                break;
+            case NET_CLOSE:
+                // Do nothing. The shutdown flag should be set
+                // and the loop should end
+                break;
+            default:
+                break;
         }
     }
 }
