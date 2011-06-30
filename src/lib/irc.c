@@ -71,15 +71,16 @@ void irc_listen() {
                 perror("Error listening for messages");
                 exit(EXIT_FAILURE);
                 break;
+            case NET_CLOSE:
+                // The shutdown flag should have been set by
+                // the signal handler, but it is safe to set it again
+                shutdown_requested = 1;
+                break;
             case NET_READY:
                 net_recv(msg);
                 break;
             case NET_IGNORE:
                 // Do nothing. The loop should continue
-                break;
-            case NET_CLOSE:
-                // Do nothing. The shutdown flag should be set
-                // and the loop should end
                 break;
             default:
                 break;
