@@ -27,11 +27,16 @@
 #include <sys/types.h>
 #include "network.h"
 #include "message_handler.h"
+#include "binding.h"
 #include "irc.h"
 
+// Flag used to close the connection
 int shutdown_requested = 0;
 
-// Connection functions
+
+/* ******************** */
+/* Connection functions */
+/* ******************** */
 
 void irc_connect(char* address, int port) {
     net_connect(address, port);
@@ -40,8 +45,6 @@ void irc_connect(char* address, int port) {
 void irc_disconnect() {
     net_disconnect();
 }
-
-// Begin listening to server commands
 
 void shutdown_handler(int signal) {
     switch (signal) {
@@ -90,7 +93,31 @@ void irc_listen() {
     }
 }
 
-// User functions
+/* *********************** */
+/* Event binding functions */
+/* *********************** */
+
+void irc_bind(char* event, void* callback) {
+    bind_event(event, callback);
+}
+
+void irc_unbind(char* event) {
+    unbind_event(event);
+}
+
+/* **************** */
+/* System functions */
+/* **************** */
+
+void irc_pong(char* server) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "PONG %s", server);
+    net_send(msg);
+}
+
+/* ************** */
+/* User functions */
+/* ************** */
 
 void irc_nick(char* nick) {
     char msg[MSG_SIZE];

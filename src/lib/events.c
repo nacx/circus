@@ -20,44 +20,32 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include "hook.h"
-#include "hashtable.h"
+#include "events.h"
+#include "message_handler.h"
+#include "irc.h"
 
-/******************/
-/* Hook functions */
-/******************/
+/* ************************ */
+/* Event building functions */
+/* ************************ */
 
-void hook(char* key, Hook hook) {
-    HTData entry;
-
-    entry.key = key;
-    entry.value = hook;
-
-    ht_add(entry);
+PingEvent ping_event(struct raw_msg *raw) {
+    PingEvent event;
+    event.server = raw->params[0];
+    return event;
 }
 
-void unhook(char* key) {
-    HTData entry;
-
-    entry.key = key;
-    entry.value = NULL;
-
-    ht_del(entry);
+NoticeEvent notice_event(struct raw_msg *raw) {
+    NoticeEvent event;
+    event.user = raw->params[0];
+    event.text = raw->params[1];
+    return event;
 }
 
-Hook lookup(char* key) {
-    HTData entry;
-    Hook hook = NULL;
+/* ****************************** */
+/* System event binding functions */
+/* ****************************** */
 
-    entry.key = key;
-    entry.value = NULL;
-
-    HTEntry* current = ht_find(entry);
-    if (current) {
-        hook = current->data.value;
-    }
-
-    return hook;
+void on_ping(PingEvent* event) {
+    irc_pong(event->server);
 }
 

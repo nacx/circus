@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "events.h"
+#include "utils.h"
+#include "binding.h"
+#include "irc.h"
 #include "message_handler.h"
 
 
@@ -32,13 +36,15 @@ void handle(char* msg) {
 
     if (msg != NULL && strlen(msg) > 0) {
         // Each line is a different IRC message
-        line = strtok_r(msg, "\r\n", &line_end);
+        line = strtok_r(msg, MSG_END, &line_end);
         while (line != NULL) {
             // Parse each message individually
             raw = parse(line, buffer);
 
-            // TODO Build the event object
-            // TODO Call the appropiate binding
+            // Fire the event
+            if (raw.type != NULL) {
+                fire_event(&raw);
+            }
 
             // Free memory used to parse the message
             // once it has been handled
@@ -48,7 +54,7 @@ void handle(char* msg) {
             }
 
             // Continue with the next line
-            line = strtok_r(NULL, " ", &line_end);
+            line = strtok_r(NULL, MSG_END, &line_end);
         }
     }
 }
@@ -82,7 +88,7 @@ struct raw_msg parse(char* msg, char* buffer) {
 
         strncpy(buffer, msg, msg_len);
 
-        token = strtok_r(buffer, " ", &token_end);
+        token = strtok_r(buffer, PARAM_SEP, &token_end);
         while(token != NULL)
         {
             if (raw.type == NULL) {
@@ -112,7 +118,7 @@ struct raw_msg parse(char* msg, char* buffer) {
             }
 
             // Continue with the next token
-            token = strtok_r(NULL, " ", &token_end);
+            token = strtok_r(NULL, PARAM_SEP, &token_end);
         }
 
         // If we have a last parameter we should increment now the parameter
@@ -121,5 +127,22 @@ struct raw_msg parse(char* msg, char* buffer) {
     }
 
     return raw;
+}
+
+void fire_event(struct raw_msg *raw) {
+    upper(raw->type);
+
+    if (s_eq(raw->type, PING)) {
+        PingEvent event = ping_event(raw);
+        on_ping(&event);
+    } else if (s_eq(raw->type, NOTICE)) {
+        NoticeEvent event = notice_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((NoticeCallback) callback)(&event);
+        }
+    }
+
+    // Just ignore other message types
 }
 

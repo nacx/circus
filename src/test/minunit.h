@@ -33,10 +33,6 @@
 #define mu_run(test) do { test(); tests_run++; } while (0)
 #define mu_suite(suite) do { suite(); } while (0)
 
-// Assertion macros
-#define s_eq(a,b)   strcmp(a,b) == 0
-#define s_ne(a,b)   strcmp(a,b) != 0
-
 extern int tests_run;
 extern int test_fails;
 

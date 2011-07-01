@@ -23,12 +23,21 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
+// IRC message types
+#define PING    "PING"
+#define NOTICE  "NOTICE"
+
 // Connection functions
 void irc_connect(char* address, int port);
 void irc_disconnect();
-
-// Begin listening to server messages
 void irc_listen();
+
+// Event binding functions
+void irc_bind(char* event, void* callback);
+void irc_unbind(char* event);
+
+// System functions
+void irc_pong(char* server);
 
 // User functions
 void irc_nick(char* nick);

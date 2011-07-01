@@ -21,28 +21,40 @@
  */
 
 #include <stdio.h>
-#include "minunit.h"
-#include "test.h"
+#include "binding.h"
+#include "hashtable.h"
 
 
-void run_all_tests() {
-    mu_suite(test_hashtable);
-    mu_suite(test_binding);
-    mu_suite(test_network);
-    mu_suite(test_message_handler);
+void bind_event(char* event, void* callback) {
+    HTData entry;
+
+    entry.key = event;
+    entry.value = callback;
+
+    ht_add(entry);
 }
 
-int main(int argc, char **argv) {
-    printf("--------------------------------------------------\n");
-    printf("Running unit tests...\n");
+void unbind_event(char* event) {
+    HTData entry;
 
-    run_all_tests();
+    entry.key = event;
+    entry.value = NULL;
 
-    mu_results();
-    mu_free();
+    ht_del(entry);
+}
 
-    printf("--------------------------------------------------\n");
+void* lookup_event(char* event) {
+    HTData entry;
+    void* callback = NULL;
 
-    return test_fails != 0;
+    entry.key = event;
+    entry.value = NULL;
+
+    HTEntry* current = ht_find(entry);
+    if (current != NULL) {
+        callback = current->data.value;
+    }
+
+    return callback;
 }
 

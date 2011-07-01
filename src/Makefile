@@ -14,15 +14,16 @@ CFLAGS = -pipe -O2 -Wall
 
 # Circus build
 CIRCUS_PATH = lib
-CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/hook.c \
+CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/binding.c \
 			 $(CIRCUS_PATH)/network.c $(CIRCUS_PATH)/message_handler.c \
+			 $(CIRCUS_PATH)/events.c $(CIRCUS_PATH)/utils.c \
 			 $(CIRCUS_PATH)/irc.c
 CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
 
 # Test build
 TEST_PATH = test
 TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
-		   $(TEST_PATH)/test_hook.c $(TEST_PATH)/test_network.c \
+		   $(TEST_PATH)/test_binding.c $(TEST_PATH)/test_network.c \
 		   $(TEST_PATH)/test_message_handler.c $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 

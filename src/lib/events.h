@@ -20,16 +20,42 @@
  * THE SOFTWARE.
  */
 
-#ifndef __HOOK_H__
-#define __HOOK_H__
+#ifndef __EVENTS_H__
+#define __EVENTS_H__
 
-// The hook pointer type
-typedef void (*Hook)(char*);
+#include "message_handler.h"
 
-// Hook functions
-void hook(char* key, Hook hook);	// Hook a function to a given key
-void unhook(char* key);				// Remove the hook for the given key
-Hook lookup(char* key);				// Lookup the given hook
+/* *************** */
+/* IRC Event types */
+/* *************** */
+
+typedef struct {
+    char* server;
+} PingEvent;
+
+typedef struct {
+    char* user;
+    char* text;
+} NoticeEvent;
+
+/* ************************ */
+/* Event building functions */
+/* ************************ */
+
+PingEvent   ping_event(struct raw_msg * raw);
+NoticeEvent notice_event(struct raw_msg * raw);
+
+/* ************** */
+/* Callback types */
+/* ************** */
+
+typedef void (*NoticeCallback)(NoticeEvent*);
+
+/* ****************************** */
+/* System event mapping functions */
+/* ****************************** */
+
+void on_ping(PingEvent* event);
 
 #endif
 

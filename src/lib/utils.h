@@ -20,29 +20,12 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include "minunit.h"
-#include "test.h"
+#ifndef __NETWORK_H__
+#define __NETWORK_H__
 
+// String utility functions
+void upper(char* str);
+void lower(char* str);
 
-void run_all_tests() {
-    mu_suite(test_hashtable);
-    mu_suite(test_binding);
-    mu_suite(test_network);
-    mu_suite(test_message_handler);
-}
-
-int main(int argc, char **argv) {
-    printf("--------------------------------------------------\n");
-    printf("Running unit tests...\n");
-
-    run_all_tests();
-
-    mu_results();
-    mu_free();
-
-    printf("--------------------------------------------------\n");
-
-    return test_fails != 0;
-}
+#endif
 

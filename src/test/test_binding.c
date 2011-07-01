@@ -23,26 +23,45 @@
 #include <stdio.h>
 #include "minunit.h"
 #include "test.h"
+#include "../lib/hashtable.h"
+#include "../lib/binding.h"
 
-
-void run_all_tests() {
-    mu_suite(test_hashtable);
-    mu_suite(test_binding);
-    mu_suite(test_network);
-    mu_suite(test_message_handler);
+void target(char* txt) {
+    // target function to test hook methods
 }
 
-int main(int argc, char **argv) {
-    printf("--------------------------------------------------\n");
-    printf("Running unit tests...\n");
+char* test_bind_event() {
+    bind_event("test", target);
+    mu_assert(ht_num_entries == 1, "test_bind_event: ht_num_entries should be 1");
+    unbind_event("test"); // Cleanup
+    return 0;
+}
 
-    run_all_tests();
+char* test_unbind_event() {
+    bind_event("test", target);
+    unbind_event("test");
+    mu_assert(ht_num_entries == 0, "test_unbind_event: ht_num_entries should be 0");
+    return 0;
+}
 
-    mu_results();
-    mu_free();
+char* test_lookup_event() {
+    bind_event("test", target);
+    void* callback = lookup_event("test");
+    mu_assert(callback == target, "test_lookup_event: Found a different memory address");
+    unbind_event("test"); // Cleanup
+    return 0;
+}
 
-    printf("--------------------------------------------------\n");
+char* test_lookup_unexisting_event() {
+    void* callback = lookup_event("test");
+    mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
+    return 0;
+}
 
-    return test_fails != 0;
+void test_binding() {
+    mu_run(test_bind_event);
+    mu_run(test_unbind_event);
+    mu_run(test_lookup_event);
+    mu_run(test_lookup_unexisting_event);
 }
 

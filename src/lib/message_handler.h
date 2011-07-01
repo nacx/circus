@@ -23,8 +23,12 @@
 #ifndef __MESSAGEHANDLER_H__
 #define __MESSAGEHANDLER_H__
 
+#define s_eq(a,b)   strcmp(a,b) == 0
+
 // Maximum number of parameters as defined int he prococol
 #define MAX_PARAMS 15
+#define MSG_END    "\r\n"
+#define PARAM_SEP  " "
 
 // Raw IRC message
 struct raw_msg{
@@ -34,9 +38,10 @@ struct raw_msg{
     char* params[MAX_PARAMS];   // The parameter array
 };
 
-// Message parsing and managing functions
+// Message parsing functions
 void handle(char* msg);
 struct raw_msg parse(char* msg, char* buffer);
+void fire_event(struct raw_msg *raw);
 
 #endif
 

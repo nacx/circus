@@ -20,38 +20,13 @@
  * THE SOFTWARE.
  */
 
-#include "minunit.h"
-#include "test.h"
-#include "../lib/hashtable.h"
-#include "../lib/hook.h"
+#ifndef __BINDING_H__
+#define __BINDING_H__
 
-void target(char* txt) {
-    // target function to test hook methods
-}
+// Hook functions
+void  bind_event(char* event, void* callback);  // Bind an event to the given callback
+void  unbind_event(char* event);			    // Remove the binding for the given event
+void* lookup_event(char* event);  		        // Lookup for the callback for the given event
 
-char* test_hook_method() {
-    hook("test", target);
-    mu_assert(ht_num_entries == 1, "test_hook: ht_num_entries should be 1");
-    return 0;
-}
-
-char* test_unhook() {
-    hook("test", target);
-    unhook("test");
-    mu_assert(ht_num_entries == 0, "test_unhook: ht_num_entries should be 0");
-    return 0;
-}
-
-char* test_lookup() {
-    hook("test", target);
-    Hook h = lookup("test");
-    mu_assert(h == target, "test_lookup: Found a different memory address");
-    return 0;
-}
-
-void test_hook() {
-    mu_run(test_hook_method);
-    mu_run(test_unhook);
-    mu_run(test_lookup);
-}
+#endif
 

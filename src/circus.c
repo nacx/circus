@@ -22,7 +22,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "lib/events.h"
 #include "lib/irc.h"
+
+
+void on_notice(NoticeEvent* event) {
+    printf("Received NOTICE:\n");
+    printf("User: %s\n", event->user);
+    printf("Text: %s\n", event->text);
+}
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -32,15 +40,19 @@ int main(int argc, char **argv) {
 
     char* server = argv[1];
     int port = atoi(argv[2]);
-    printf("Connecting to %s:%d...\n", server, port);
+    
+    // Bind IRC event to custom functions
+    irc_bind(NOTICE, on_notice);
 
+    // Connect and start listening to events
     irc_connect(server, port);
     irc_login("circus", "Circus", "Circus IRC bot");
+    irc_listen();   // This method blocks until a quit signal is received
 
-    irc_listen();
-
+    // Quit from IRC and close connection
     irc_quit("Bye");
     irc_disconnect();
 
     return 0;
 }
+
