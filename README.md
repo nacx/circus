@@ -15,6 +15,12 @@ source files to the `SRC` variable. Once you have declared your sources, you can
 them as usual invoking make:
 
     make
+
+This will generate the `circus` binary in the `src` directory, and the `circus-test`
+one in the `src/test` directory. If you want, you can also customize the name of the
+binary by setting the `name` parameter when invoking make:
+
+    make name=<binary name>
     
 This will compile the Circus source code, run all the unit tests and finally build the
 entire application if all tests passed.
