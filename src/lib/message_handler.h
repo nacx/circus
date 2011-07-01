@@ -23,8 +23,6 @@
 #ifndef __MESSAGEHANDLER_H__
 #define __MESSAGEHANDLER_H__
 
-#define s_eq(a,b)   strcmp(a,b) == 0
-
 // Maximum number of parameters as defined int he prococol
 #define MAX_PARAMS 15
 #define MSG_END    "\r\n"

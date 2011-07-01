@@ -23,6 +23,8 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
+#define s_eq(a,b) (strcmp(a,b) == 0)
+
 // String utility functions
 void upper(char* str);
 void lower(char* str);
