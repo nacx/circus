@@ -98,7 +98,7 @@ struct raw_msg parse(char* input) {
                         raw.params[i++] = token;
                     } else {
                         // If it is the last parameter, just concatenate
-                        // he tokens
+                        // the tokens
                         sprintf(raw.params[i], "%s %s", raw.params[i], token);
                     }
                 }
