@@ -52,6 +52,7 @@ struct raw_msg new_raw_message() {
 
     raw.prefix = NULL;
     raw.type = NULL;
+    raw.num_params = 0;
 
     for (i = 0; i < MAX_PARAMS; i++) {
         raw.params[i] = NULL;
@@ -96,6 +97,8 @@ struct raw_msg parse(char* input) {
                     if (is_last_parameter == 0) {
                         raw.params[i++] = token;
                     } else {
+                        // If it is the last parameter, just concatenate
+                        // he tokens
                         sprintf(raw.params[i], "%s %s", raw.params[i], token);
                     }
                 }
@@ -104,6 +107,10 @@ struct raw_msg parse(char* input) {
             // Continue with the next token
             token = strtok_r(NULL, " ", &token_end);
         }
+
+        // If we have a last parameter we should increment now the parameter
+        // counter
+        raw.num_params = (is_last_parameter == 0)? i : i + 1;
     }
 
     return raw;

@@ -28,9 +28,10 @@
 
 // Raw IRC message
 struct raw_msg{
-    char* type;
-    char* prefix;
-    char* params[MAX_PARAMS];
+    char* type;                 // The IRC message type
+    char* prefix;               // The message prefix (if any)
+    int   num_params;           // The number of parameters
+    char* params[MAX_PARAMS];   // The parameter array
 };
 
 // Message parsing and managing functions
