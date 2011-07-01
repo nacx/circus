@@ -35,8 +35,8 @@ struct raw_msg{
 };
 
 // Message parsing and managing functions
-void           handle(char* msg);
-struct raw_msg parse(char* msg);
+void handle(char* msg);
+struct raw_msg parse(char* msg, char* buffer);
 
 #endif
 

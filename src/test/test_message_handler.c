@@ -29,14 +29,15 @@
 
 char* test_parse_empty_message() {
     struct raw_msg raw;
+    char* buffer = NULL;
 
-    raw = parse(NULL);
+    raw = parse(NULL, buffer);
 
     mu_assert(raw.prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    raw = parse("");
+    raw = parse("", buffer);
 
     mu_assert(raw.prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
@@ -47,8 +48,9 @@ char* test_parse_empty_message() {
 
 char* test_parse() {
     struct raw_msg raw;
+    char* buffer = NULL;
 
-    raw = parse("TEST This is a message test without prefix");
+    raw = parse("TEST This is a message test without prefix", buffer);
 
     mu_assert(raw.prefix == NULL, "test_parse: prefix should be NULL"); 
     mu_assert(s_eq(raw.type, "TEST"), "test_parse: type should be TEST"); 
@@ -59,8 +61,9 @@ char* test_parse() {
 
 char* test_parse_with_prefix() {
     struct raw_msg raw;
+    char* buffer = NULL;
 
-    raw = parse(":prefix TEST This is a message test with prefix");
+    raw = parse(":prefix TEST This is a message test with prefix", buffer);
 
     mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix: prefix should be 'prefix'"); 
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
@@ -72,8 +75,9 @@ char* test_parse_with_prefix() {
 char* test_parse_with_last_param() {
     char* last_param;
     struct raw_msg raw;
+    char* buffer = NULL;
 
-    raw = parse("TEST This is a message test with a :last parameter");
+    raw = parse("TEST This is a message test with a :last parameter", buffer);
     last_param = raw.params[raw.num_params -1];
 
     mu_assert(raw.prefix == NULL, "test_parse_with_last_param: prefix should be NULL"); 
@@ -87,8 +91,9 @@ char* test_parse_with_last_param() {
 char* test_parse_with_prefix_and_last_param() {
     char* last_param;
     struct raw_msg raw;
+    char* buffer = NULL;
 
-    raw = parse(":prefix TEST This is a message test with a :last parameter");
+    raw = parse(":prefix TEST This is a message test with a :last parameter", buffer);
     last_param = raw.params[raw.num_params - 1];
 
     mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix_and_last_param: prefix should be 'prefix'"); 

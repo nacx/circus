@@ -28,17 +28,24 @@
 
 void handle(char* msg) {
     struct raw_msg raw;
-    char* line, *line_end;
+    char *line, *line_end, *buffer = NULL;
 
     if (msg != NULL && strlen(msg) > 0) {
         // Each line is a different IRC message
         line = strtok_r(msg, "\r\n", &line_end);
         while (line != NULL) {
             // Parse each message individually
-            raw = parse(line);
+            raw = parse(line, buffer);
 
             // TODO Build the event object
             // TODO Call the appropiate binding
+
+            // Free memory used to parse the message
+            // once it has been handled
+            if (buffer != NULL) {
+                free(buffer);
+                buffer = NULL;
+            }
 
             // Continue with the next line
             line = strtok_r(NULL, " ", &line_end);
@@ -61,21 +68,21 @@ struct raw_msg new_raw_message() {
     return raw;
 }
 
-struct raw_msg parse(char* input) {
+struct raw_msg parse(char* msg, char* buffer) {
     int msg_len, i = 0, is_last_parameter = 0;
     struct raw_msg raw = new_raw_message();
-    char *msg,*token, *token_end = NULL;
+    char *token, *token_end = NULL;
 
-    if (input != NULL && (msg_len = strlen(input)) > 0) {
+    if (msg != NULL && (msg_len = strlen(msg)) > 0) {
 
-        if ((msg = malloc(msg_len * sizeof(char*))) == 0) {
+        if ((buffer = malloc(msg_len * sizeof(char*))) == 0) {
             perror("Out of memory (parse)");
             exit(EXIT_FAILURE);
         }
 
-        strncpy(msg, input, msg_len);
+        strncpy(buffer, msg, msg_len);
 
-        token = strtok_r(msg, " ", &token_end);
+        token = strtok_r(buffer, " ", &token_end);
         while(token != NULL)
         {
             if (raw.type == NULL) {
