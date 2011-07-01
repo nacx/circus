@@ -10,20 +10,20 @@ IRC clients.
 Compiling Circus
 ----------------
 
-To compile your own Circus application, edit the `src/Makefile`file and add all your
-source files to the `SRC` variable. Once you have declared your sources, you can build
+To compile your own Circus application, edit the _src/Makefile_ file and add all your
+source files to the _SRC_ variable. Once you have declared your sources, you can build
 them as usual invoking make:
 
     make
 
-This will generate the `circus` binary in the `src` directory, and the `circus-test`
-one in the `src/test` directory. If you want, you can also customize the name of the
-binary by setting the `name` parameter when invoking make:
+This will generate the *circus* binary in the *src* directory, the *circus-test*
+one in the *src/test* directory and run all unit tests.
+
+If you want, you can also
+customize the name of the binary by setting the *name* parameter when invoking make:
 
     make name=<binary name>
-    
-This will compile the Circus source code, run all the unit tests and finally build the
-entire application if all tests passed.
+
 
 Issue Tracking
 --------------
@@ -31,7 +31,9 @@ Issue Tracking
 If you find any issue, please submit it to the [Bug tracking system](https://github.com/nacx/circus/issues) and we
 will do our best to fix it.
 
+
 License
 -------
 
 This sowftare is licensed under the MIT license. See LICENSE file for details.
+
