@@ -29,6 +29,7 @@ void run_all_tests() {
     mu_suite(test_hashtable);
     mu_suite(test_hook);
     mu_suite(test_network);
+    mu_suite(test_message_handler);
 }
 
 int main(int argc, char **argv) {

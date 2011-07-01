@@ -28,7 +28,7 @@
 /* Hook functions */
 /******************/
 
-void hook(char* key, HOOK hook) {
+void hook(char* key, Hook hook) {
     HTData entry;
 
     entry.key = key;
@@ -46,9 +46,9 @@ void unhook(char* key) {
     ht_del(entry);
 }
 
-HOOK lookup(char* key) {
+Hook lookup(char* key) {
     HTData entry;
-    HOOK hook = NULL;
+    Hook hook = NULL;
 
     entry.key = key;
     entry.value = NULL;

@@ -20,16 +20,22 @@
  * THE SOFTWARE.
  */
 
-#ifndef __HOOK_H__
-#define __HOOK_H__
+#ifndef __MESSAGEHANDLER_H__
+#define __MESSAGEHANDLER_H__
 
-// The hook pointer type
-typedef void (*Hook)(char*);
+// Maximum number of parameters as defined int he prococol
+#define MAX_PARAMS 15
 
-// Hook functions
-void hook(char* key, Hook hook);	// Hook a function to a given key
-void unhook(char* key);				// Remove the hook for the given key
-Hook lookup(char* key);				// Lookup the given hook
+// Raw IRC message
+struct raw_msg{
+    char* type;
+    char* prefix;
+    char* params[MAX_PARAMS];
+};
+
+// Message parsing and managing functions
+void           handle(char* msg);
+struct raw_msg parse(char* msg);
 
 #endif
 

@@ -27,6 +27,7 @@
 void test_hashtable();
 void test_hook();
 void test_network();
+void test_message_handler();
 
 #endif
 

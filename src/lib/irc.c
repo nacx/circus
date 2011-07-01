@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include "network.h"
+#include "message_handler.h"
 #include "irc.h"
 
 int shutdown_requested = 0;
@@ -78,6 +79,7 @@ void irc_listen() {
                 break;
             case NET_READY:
                 net_recv(msg);
+                handle(msg);
                 break;
             case NET_IGNORE:
                 // Do nothing. The loop should continue

@@ -44,7 +44,7 @@ char* test_unhook() {
 
 char* test_lookup() {
     hook("test", target);
-    HOOK h = lookup("test");
+    Hook h = lookup("test");
     mu_assert(h == target, "test_lookup: Found a different memory address");
     return 0;
 }
