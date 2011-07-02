@@ -25,7 +25,14 @@
 
 // IRC message types
 #define PING    "PING"
+#define PONG    "PING"
 #define NOTICE  "NOTICE"
+#define USER    "USER"
+#define NICK    "NICK"
+#define JOIN    "JOIN"
+#define PART    "PART"
+#define QUIT    "QUIT"
+#define PRIVMSG "PRIVMSG"
 
 // Connection functions
 void irc_connect(char* address, int port);
@@ -44,7 +51,13 @@ void irc_nick(char* nick);
 void irc_user(char* user_name, char* real_name);
 void irc_login(char* nick, char* user_name, char* real_name);
 
-void irc_quit(char* msg);
+void irc_join(char* channel);
+void irc_join_pass(char* channel, char* pass); 
+void irc_part(char* channel); 
+void irc_quit(char* message);
+
+void irc_channel(char* channel, char* messge);
+void irc_private(char* nick, char* message);
 
 #endif
 

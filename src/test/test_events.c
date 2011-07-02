@@ -23,55 +23,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lib/utils.h"
-#include "lib/events.h"
-#include "lib/irc.h"
-
-#define CONF_NICK "circus-bot"
-#define CONF_CHAN "#circus-bot"
+#include "minunit.h"
+#include "test.h"
+#include "../lib/utils.h"
+#include "../lib/events.h"
 
 
-void on_join(JoinEvent* event) {
-    char msg[30];
-    if (s_ne(event->nick, CONF_NICK)) {
-        snprintf(msg, 30, "Welcome %s", event->nick);
-        irc_channel(event->channel, msg);
-    }
-}
+char* test_get_user_info() {
+    struct user_info ui;
+    char user_ref[] = "nickname!~username@servername";
 
-void on_part(PartEvent* event) {
-    char msg[30];
-    if (s_ne(event->nick, CONF_NICK)) {
-        snprintf(msg, 30, "Good bye %s", event->nick);
-        irc_private(event->nick, msg);
-    }
-}
+    ui = get_user_info(user_ref);
 
-int main(int argc, char **argv) {
-    if (argc != 3) {
-        printf("Usage: %s <server> <port>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    char* server = argv[1];
-    int port = atoi(argv[2]);
-
-    // Bind IRC event to custom functions
-    irc_bind(JOIN, on_join);
-    irc_bind(PART, on_part);
-
-    // Connect and start listening to events
-    irc_connect(server, port);
-    irc_login(CONF_NICK, "Circus", "Circus IRC bot");
-    irc_join(CONF_CHAN);
-
-    // This method blocks until a quit signal is received
-    irc_listen();
-
-    // Quit from IRC and close connection
-    irc_quit("Bye");
-    irc_disconnect();
+    mu_assert(s_eq(ui.nick, "nickname"), "test_get_user_info: Nick should be 'nickname'");
+    mu_assert(s_eq(ui.user, "username"), "test_get_user_info: User should be 'username'");
+    mu_assert(s_eq(ui.server, "servername"), "test_get_user_info: Server should be 'servername'");
 
     return 0;
+}
+
+void test_events() {
+    mu_run(test_get_user_info);
 }
 

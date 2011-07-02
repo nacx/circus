@@ -141,6 +141,18 @@ void fire_event(struct raw_msg *raw) {
         if (callback != NULL) {
             ((NoticeCallback) callback)(&event);
         }
+    } else if (s_eq(raw->type, JOIN)) {
+        JoinEvent event = join_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((JoinCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, PART)) {
+        PartEvent event = part_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((PartCallback) callback)(&event);
+        }
     }
 
     // Just ignore other message types

@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <stdarg.h>
 #include "network.h"
 #include "message_handler.h"
 #include "binding.h"
@@ -111,7 +112,7 @@ void irc_unbind(char* event) {
 
 void irc_pong(char* server) {
     char msg[MSG_SIZE];
-    snprintf(msg, MSG_SIZE, "PONG %s", server);
+    snprintf(msg, MSG_SIZE, "%s %s", PONG, server);
     net_send(msg);
 }
 
@@ -121,13 +122,13 @@ void irc_pong(char* server) {
 
 void irc_nick(char* nick) {
     char msg[MSG_SIZE];
-    snprintf(msg, MSG_SIZE, "NICK %s", nick);
+    snprintf(msg, MSG_SIZE, "%s %s", NICK, nick);
     net_send(msg);
 }
 
 void irc_user(char* user_name, char* real_name) {
     char msg[MSG_SIZE];
-    snprintf(msg, MSG_SIZE, "USER %s hostname server :%s", user_name, real_name);
+    snprintf(msg, MSG_SIZE, "%s %s hostname server :%s", USER, user_name, real_name);
     net_send(msg);
 }
 
@@ -136,9 +137,39 @@ void irc_login(char* nick, char* user_name, char* real_name) {
     irc_user(user_name, real_name);
 }
 
-void irc_quit(char* quit_msg) {
+void irc_quit(char* message) {
     char msg[MSG_SIZE];
-    snprintf(msg, MSG_SIZE, "QUIT :%s", quit_msg);
+    snprintf(msg, MSG_SIZE, "%s :%s", QUIT, message);
+    net_send(msg);
+}
+
+void irc_join(char* channel) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s", JOIN, channel);
+    net_send(msg);
+}
+
+void irc_join_pass(char* channel, char* pass) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s %s", JOIN, channel, pass);
+    net_send(msg);
+}
+
+void irc_part(char* channel) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s", PART, channel);
+    net_send(msg);
+}
+
+void irc_channel(char* channel, char* message) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s :%s", PRIVMSG, channel, message);
+    net_send(msg);
+}
+
+void irc_private(char* nick, char* message) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s :%s", PRIVMSG, nick, message);
     net_send(msg);
 }
 

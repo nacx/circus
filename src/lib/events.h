@@ -34,9 +34,24 @@ typedef struct {
 } PingEvent;
 
 typedef struct {
-    char* user;
+    char* nick;
     char* text;
 } NoticeEvent;
+
+typedef struct {
+    char* nick;
+    char* user;
+    char* server;
+    char* channel;
+} JoinEvent;
+
+typedef struct {
+    char* nick;
+    char* user;
+    char* server;
+    char* channel;
+    char* message;
+} PartEvent;
 
 /* ************************ */
 /* Event building functions */
@@ -44,16 +59,28 @@ typedef struct {
 
 PingEvent   ping_event(struct raw_msg * raw);
 NoticeEvent notice_event(struct raw_msg * raw);
+JoinEvent   join_event(struct raw_msg * raw);
+PartEvent   part_event(struct raw_msg * raw);
 
 /* ************** */
 /* Callback types */
 /* ************** */
 
 typedef void (*NoticeCallback)(NoticeEvent*);
+typedef void (*JoinCallback)(JoinEvent*);
+typedef void (*PartCallback)(PartEvent*);
 
-/* ****************************** */
-/* System event mapping functions */
-/* ****************************** */
+/* ********************** */
+/* Internal use functions */
+/* ********************** */
+
+struct user_info {
+    char* nick;
+    char* user;
+    char* server;
+};
+
+struct user_info get_user_info(char* user_ref);
 
 void on_ping(PingEvent* event);
 

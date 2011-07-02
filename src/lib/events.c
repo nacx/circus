@@ -20,9 +20,13 @@
  * THE SOFTWARE.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "events.h"
 #include "message_handler.h"
 #include "irc.h"
+
 
 /* ************************ */
 /* Event building functions */
@@ -36,14 +40,57 @@ PingEvent ping_event(struct raw_msg *raw) {
 
 NoticeEvent notice_event(struct raw_msg *raw) {
     NoticeEvent event;
-    event.user = raw->params[0];
+    event.nick = raw->params[0];
     event.text = raw->params[1];
+    return event;
+}
+
+JoinEvent join_event(struct raw_msg *raw) {
+    JoinEvent event;
+    struct user_info ui = get_user_info(raw->prefix);
+
+    event.nick = ui.nick;
+    event.user = ui.user;
+    event.server = ui.server;
+    event.channel = raw->params[0];
+
+    return event;
+}
+
+PartEvent part_event(struct raw_msg *raw) {
+    PartEvent event;
+    struct user_info ui = get_user_info(raw->prefix);
+
+    event.nick = ui.nick;
+    event.user = ui.user;
+    event.server = ui.server;
+    event.channel = raw->params[0];
+    event.message = raw->params[1];
+
     return event;
 }
 
 /* ****************************** */
 /* System event binding functions */
 /* ****************************** */
+
+struct user_info get_user_info(char* user_ref) {
+    struct user_info ui;
+    char* c;
+    
+    c = user_ref;
+    ui.nick = c;
+
+    while (*c != '!') c++;
+    *c = '\0';
+    ui.user = c + 2;
+
+    while (*c != '@') c++;
+    *c = '\0';
+    ui.server = c + 1;
+
+    return ui;
+}
 
 void on_ping(PingEvent* event) {
     irc_pong(event->server);

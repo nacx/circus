@@ -105,11 +105,45 @@ char* test_parse_with_prefix_and_last_param() {
     return 0;
 }
 
+char* test_parse_only_last_param() {
+    char* last_param;
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    raw = parse("TEST :only last parameter", buffer);
+    last_param = raw.params[raw.num_params -1];
+
+    mu_assert(raw.prefix == NULL, "test_parse_only_last_param: prefix should be NULL"); 
+    mu_assert(s_eq(raw.type, "TEST"), "test_parse_only_last_param: type should be 'TEST'"); 
+    mu_assert(raw.num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
+    mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
+
+    return 0;
+}
+
+char* test_parse_with_prefix_only_last_param() {
+    char* last_param;
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    raw = parse(":prefix TEST :only last parameter", buffer);
+    last_param = raw.params[raw.num_params - 1];
+
+    mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix_only_last_param: prefix should be 'prefix'"); 
+    mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix_only_last_param: type should be 'TEST'"); 
+    mu_assert(raw.num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
+    mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
+
+    return 0;
+}
+
 void test_message_handler() {
     mu_run(test_parse_empty_message);
     mu_run(test_parse);
     mu_run(test_parse_with_prefix);
     mu_run(test_parse_with_last_param);
     mu_run(test_parse_with_prefix_and_last_param);
+    mu_run(test_parse_only_last_param);
+    mu_run(test_parse_with_prefix_only_last_param);
 }
 
