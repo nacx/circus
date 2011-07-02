@@ -25,9 +25,6 @@
 #include <string.h>
 #include "hashtable.h"
 
-/************************/
-/* Hash table functions */
-/************************/
 
 HTIndex ht_hash(HTData data) {
     HTIndex h = 0;

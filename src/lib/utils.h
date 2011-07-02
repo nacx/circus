@@ -23,6 +23,7 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
+// String utility macros
 #define s_eq(a,b) (strcmp(a,b) == 0)
 #define s_ne(a,b) (strcmp(a,b) != 0)
 

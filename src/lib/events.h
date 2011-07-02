@@ -23,7 +23,16 @@
 #ifndef __EVENTS_H__
 #define __EVENTS_H__
 
-#include "message_handler.h"
+// Maximum number of parameters in an IRC message
+#define MAX_PARAMS 15
+
+// Raw IRC message
+struct raw_msg {
+    char* type;                 // The IRC message type
+    char* prefix;               // The message prefix (if any)
+    int   num_params;           // The number of parameters
+    char* params[MAX_PARAMS];   // The parameter array
+};
 
 /* *************** */
 /* IRC Event types */
@@ -70,9 +79,9 @@ typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
 
-/* ********************** */
-/* Internal use functions */
-/* ********************** */
+/* ********************************** */
+/* User information utility functions */
+/* ********************************** */
 
 struct user_info {
     char* nick;
@@ -81,8 +90,6 @@ struct user_info {
 };
 
 struct user_info get_user_info(char* user_ref);
-
-void on_ping(PingEvent* event);
 
 #endif
 

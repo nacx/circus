@@ -29,35 +29,9 @@
 #include "irc.h"
 #include "message_handler.h"
 
-
-void handle(char* msg) {
-    struct raw_msg raw;
-    char *line, *line_end, *buffer = NULL;
-
-    if (msg != NULL && strlen(msg) > 0) {
-        // Each line is a different IRC message
-        line = strtok_r(msg, MSG_END, &line_end);
-        while (line != NULL) {
-            // Parse each message individually
-            raw = parse(line, buffer);
-
-            // Fire the event
-            if (raw.type != NULL) {
-                fire_event(&raw);
-            }
-
-            // Free memory used to parse the message
-            // once it has been handled
-            if (buffer != NULL) {
-                free(buffer);
-                buffer = NULL;
-            }
-
-            // Continue with the next line
-            line = strtok_r(NULL, MSG_END, &line_end);
-        }
-    }
-}
+/* *************** */
+/* Utility methods */
+/* *************** */
 
 struct raw_msg new_raw_message() {
     int i;
@@ -73,6 +47,51 @@ struct raw_msg new_raw_message() {
 
     return raw;
 }
+
+/* ********************* */
+/* System event handlers */
+/* ********************* */
+
+void on_ping(PingEvent* event) {
+    irc_pong(event->server);
+}
+
+/* **************** */
+/* Event triggering */
+/* **************** */
+
+void fire_event(struct raw_msg *raw) {
+    upper(raw->type);
+
+    if (s_eq(raw->type, PING)) {
+        PingEvent event = ping_event(raw);
+        on_ping(&event);
+    } else if (s_eq(raw->type, NOTICE)) {
+        NoticeEvent event = notice_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((NoticeCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, JOIN)) {
+        JoinEvent event = join_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((JoinCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, PART)) {
+        PartEvent event = part_event(raw);
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((PartCallback) callback)(&event);
+        }
+    }
+
+    // Just ignore other message types
+}
+
+/* *************** */
+/* Message parsing */
+/* *************** */
 
 struct raw_msg parse(char* msg, char* buffer) {
     int msg_len, i = 0, is_last_parameter = 0;
@@ -129,32 +148,32 @@ struct raw_msg parse(char* msg, char* buffer) {
     return raw;
 }
 
-void fire_event(struct raw_msg *raw) {
-    upper(raw->type);
+void handle(char* msg) {
+    struct raw_msg raw;
+    char *line, *line_end, *buffer = NULL;
 
-    if (s_eq(raw->type, PING)) {
-        PingEvent event = ping_event(raw);
-        on_ping(&event);
-    } else if (s_eq(raw->type, NOTICE)) {
-        NoticeEvent event = notice_event(raw);
-        void* callback = lookup_event(raw->type);
-        if (callback != NULL) {
-            ((NoticeCallback) callback)(&event);
-        }
-    } else if (s_eq(raw->type, JOIN)) {
-        JoinEvent event = join_event(raw);
-        void* callback = lookup_event(raw->type);
-        if (callback != NULL) {
-            ((JoinCallback) callback)(&event);
-        }
-    } else if (s_eq(raw->type, PART)) {
-        PartEvent event = part_event(raw);
-        void* callback = lookup_event(raw->type);
-        if (callback != NULL) {
-            ((PartCallback) callback)(&event);
+    if (msg != NULL && strlen(msg) > 0) {
+        // Each line is a different IRC message
+        line = strtok_r(msg, MSG_END, &line_end);
+        while (line != NULL) {
+            // Parse each message individually
+            raw = parse(line, buffer);
+
+            // Fire the event
+            if (raw.type != NULL) {
+                fire_event(&raw);
+            }
+
+            // Free memory used to parse the message
+            // once it has been handled
+            if (buffer != NULL) {
+                free(buffer);
+                buffer = NULL;
+            }
+
+            // Continue with the next line
+            line = strtok_r(NULL, MSG_END, &line_end);
         }
     }
-
-    // Just ignore other message types
 }
 

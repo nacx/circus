@@ -70,9 +70,9 @@ PartEvent part_event(struct raw_msg *raw) {
     return event;
 }
 
-/* ****************************** */
-/* System event binding functions */
-/* ****************************** */
+/* ********************************** */
+/* User information utility functions */
+/* ********************************** */
 
 struct user_info get_user_info(char* user_ref) {
     struct user_info ui;
@@ -90,9 +90,5 @@ struct user_info get_user_info(char* user_ref) {
     ui.server = c + 1;
 
     return ui;
-}
-
-void on_ping(PingEvent* event) {
-    irc_pong(event->server);
 }
 

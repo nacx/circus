@@ -25,6 +25,7 @@
 #include "minunit.h"
 #include "test.h"
 #include "../lib/utils.h"
+#include "../lib/events.h"
 #include "../lib/message_handler.h"
 
 
