@@ -19,7 +19,7 @@ examples in the *examples* directory, so you can run them.
 
 If you want to install the library, you can do it as usual to install it in
 the default location, or you can provide the *prefix* parameter to customize
-the install location, as follows:
+it, as follows:
 
     make install                       # will install Circus in /usr/local/lib
     make install prefix=<install dir>  # will install Circus in <install dir>
@@ -29,11 +29,10 @@ Building Circus based applications
 ----------------------------------
 
 To build your own Circus application, you can take a look at the *examples*
-folder. There you will find an example Makefile that you can use to build
-your own application.
+folder. There you will find an example Makefile that you can use to build it.
 
-If you installed Circus, you will have to change the *LIBDIR* variable to
-point to the location where you installed the library.
+If you installed Circus using the *make install* command, you will need to change
+the *LIBDIR* variable to point to the location where you installed the library.
 
 
 Issue Tracking

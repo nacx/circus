@@ -4,10 +4,10 @@
 
 TARGETS = welcome
 
-CC = gcc
-LN = $(CC)
 LIBDIR = ../src/lib
 
+CC = gcc
+LN = $(CC)
 CFLAGS = -pipe -O2 -Wall -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lcircus
 
