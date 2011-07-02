@@ -20,6 +20,12 @@
  * THE SOFTWARE.
  */
 
+/*
+ * This is an example bot that welcomes the users when joining the
+ * channels where the bot is, and says goodbye in a private message
+ * when a user leaves.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,23 +33,30 @@
 #include "events.h"
 #include "irc.h"
 
-#define CONF_NICK "circus-bot"
-#define CONF_CHAN "#circus-bot"
+#define CONF_NICK "circus-bot"      // The nick to be used by the bot
+#define CONF_CHAN "#circus-bot"     // The channel to join
 
-
+/*
+ * Welcomes a user when joining the channel.
+ * If the user is the bot itself, do nothing.
+ */
 void on_join(JoinEvent* event) {
     char msg[30];
-    if (s_ne(event->nick, CONF_NICK)) {
-        snprintf(msg, 30, "Welcome %s", event->nick);
-        irc_channel(event->channel, msg);
+    if (s_ne(event->nick, CONF_NICK)) {                 // String not-equal macro from utils.h
+        snprintf(msg, 30, "Welcome %s", event->nick);   // Build the message to send
+        irc_channel(event->channel, msg);               // Send message to channel
     }
 }
 
+/*
+ * Says goodbye to a user in a private message when leaving the channel.
+ * If the user is the bot itself, do nothing.
+ */
 void on_part(PartEvent* event) {
     char msg[30];
-    if (s_ne(event->nick, CONF_NICK)) {
-        snprintf(msg, 30, "Good bye %s", event->nick);
-        irc_private(event->nick, msg);
+    if (s_ne(event->nick, CONF_NICK)) {                 // String not-equal macro from utils.h
+        snprintf(msg, 30, "Good bye %s", event->nick);  // Build the message to send
+        irc_private(event->nick, msg);                  // Send the private message to the user
     }
 }
 
@@ -53,22 +66,23 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    char* server = argv[1];
-    int port = atoi(argv[2]);
+    char* server = argv[1];     // The IRC server
+    int port = atoi(argv[2]);   // The IRC server port
 
     // Bind IRC event to custom functions
     irc_bind(JOIN, on_join);
     irc_bind(PART, on_part);
 
-    // Connect and start listening to events
+    // Connect, login and join the configured channel
     irc_connect(server, port);
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
+    // Start listening to events
     // This method blocks until a quit signal is received
     irc_listen();
 
-    // Quit from IRC and close connection
+    // Send quit message and close connection
     irc_quit("Bye");
     irc_disconnect();
 
