@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ignasi Barrera
+ * Copyright (c) 2011 Ignasi Barrera
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lib/utils.h"
-#include "lib/events.h"
-#include "lib/irc.h"
+#include "utils.h"
+#include "events.h"
+#include "irc.h"
 
 #define CONF_NICK "circus-bot"
 #define CONF_CHAN "#circus-bot"

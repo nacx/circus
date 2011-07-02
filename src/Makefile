@@ -1,12 +1,6 @@
-#############################
-# Custom sources to compile #
-#############################
-
-SRC = circus.c
-
-######################
-# Circus source code #
-######################
+# Circus Makefile
+# Copyright (c) 2011 Ignasi Barrera
+# This file is released under the MIT License, see LICENSE file.
 
 CC = gcc
 LN = $(CC)
@@ -28,35 +22,40 @@ TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
-# Binary build
-ALL_SRC = $(CIRCUS_SRC) $(SRC)
-ALL_OBJ = $(ALL_SRC:%.c=%.o)
+LIB = libcircus.a
+LIB_TEST = libcircus-test
+INSTALL_DIR = /usr/local/lib
 
-BIN = circus
-
-ifdef name
-	BIN = $(name)
+ifdef prefix
+	INSTALL_DIR = $(prefix)
 endif
 
-BIN_TEST = $(BIN)-test
 
+all: $(LIB)
 
-all: $(BIN)
+$(LIB): lib test
 
-$(BIN): lib test $(ALL_OBJ)
-	$(LN) -o $(BIN) $(ALL_OBJ)
+#lib: $(CIRCUS_OBJ)
+#	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $^
+#	$(MAKE) test
 
-lib: $(CIRCUS_OBJ)
+lib: $(CIRCUS_OBJ) $(TEST_OBJ)
+	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $(CIRCUS_OBJ)
+	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
+	$(TEST_PATH)/$(LIB_TEST)
 
-test: lib $(TEST_OBJ)
-	$(LN) -o $(TEST_PATH)/$(BIN_TEST) $(TEST_OBJ) $(CIRCUS_OBJ)
-	$(TEST_PATH)/$(BIN_TEST)
+test: lib
+
+install: all
+	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_DIR)
+
+uninstall:
+	rm -f $(INSTALL_DIR)/$(LIB)
 
 clean-lib:
-	rm -f $(CIRCUS_PATH)/*.o
+	rm -f $(CIRCUS_PATH)/*.o $(CIRCUS_PATH)/$(LIB)
 
 clean-test:
-	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(BIN_TEST)
+	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(LIB_TEST)
 
 clean: clean-lib clean-test
-	rm -f *.o $(BIN)
