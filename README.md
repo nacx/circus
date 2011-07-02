@@ -10,17 +10,30 @@ IRC clients.
 Compiling Circus
 ----------------
 
-To compile your own Circus application, edit the *src/Makefile* file and add all your
-source files to the *SRC* variable. Once you have declared your sources, you can build
-them as usual invoking make:
+To compile Circus, you can simply run:
 
     make
 
-This will generate the *circus* binary in the *src* directory, the *circus-test*
-one in the *src/test* directory and run all unit tests. If you want, you can also
-customize the name of the binary by setting the *name* parameter when invoking make:
+This will compile the Circus library, run all unit tests, and build all the
+examples in the *examples* directory, so you can run them.
 
-    make name=<binary name>
+If you want to install the library, you can do it as usual to install it in
+the default location, or you can provide the *prefix* parameter to customize
+the install location, as follows:
+
+    make install                       # will install Circus in /usr/local/lib
+    make install prefix=<install dir>  # will install Circus in <install dir>
+
+
+Building Circus based applications
+----------------------------------
+
+To build your own Circus application, you can take a look at the *examples*
+folder. There you will find an example Makefile that you can use to build
+your own application.
+
+If you installed Circus, you will have to change the *LIBDIR* variable to
+point to the location where you installed the library.
 
 
 Issue Tracking
