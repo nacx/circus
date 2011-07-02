@@ -29,11 +29,9 @@
 #include "../lib/events.h"
 
 
-char* test_get_user_info() {
-    struct user_info ui;
+char* test_user_info() {
     char user_ref[] = "nickname!~username@servername";
-
-    ui = get_user_info(user_ref);
+    UserInfo ui = user_info(user_ref);
 
     mu_assert(s_eq(ui.nick, "nickname"), "test_get_user_info: Nick should be 'nickname'");
     mu_assert(s_eq(ui.user, "username"), "test_get_user_info: User should be 'username'");
@@ -43,6 +41,6 @@ char* test_get_user_info() {
 }
 
 void test_events() {
-    mu_run(test_get_user_info);
+    mu_run(test_user_info);
 }
 

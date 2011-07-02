@@ -23,12 +23,18 @@
 #ifndef __MESSAGEHANDLER_H__
 #define __MESSAGEHANDLER_H__
 
-#define MSG_END    "\r\n"
-#define PARAM_SEP  " "
+#define MSG_END     "\r\n"      // IRC message end
+#define PARAM_SEP   " "         // IRC parameter separator
+#define CMD_SEP     "#"         // Command separator in event bindings
 
-// Message parsing functions
+// Parse each line of an IRC mesage
 void handle(char* msg);
+
+// Parse one single line of an IRC message
 struct raw_msg parse(char* msg, char* buffer);
+
+// Build the binding key for a command binding
+void build_command_key(char* key, char* command);
 
 #endif
 

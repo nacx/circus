@@ -66,23 +66,44 @@ void fire_event(struct raw_msg *raw) {
     if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);
         on_ping(&event);
-    } else if (s_eq(raw->type, NOTICE)) {
-        NoticeEvent event = notice_event(raw);
+    } else if (s_eq(raw->type, NICK_IN_USE)) {
         void* callback = lookup_event(raw->type);
         if (callback != NULL) {
+            NickInUseEvent event = nick_in_use_event(raw);
+            ((NickInUseCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, NOTICE)) {
+        void* callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            NoticeEvent event = notice_event(raw);
             ((NoticeCallback) callback)(&event);
         }
     } else if (s_eq(raw->type, JOIN)) {
-        JoinEvent event = join_event(raw);
         void* callback = lookup_event(raw->type);
         if (callback != NULL) {
+            JoinEvent event = join_event(raw);
             ((JoinCallback) callback)(&event);
         }
     } else if (s_eq(raw->type, PART)) {
-        PartEvent event = part_event(raw);
         void* callback = lookup_event(raw->type);
         if (callback != NULL) {
+            PartEvent event = part_event(raw);
             ((PartCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, PRIVMSG)) {
+        // Look for a command binding
+        char key[50];
+        build_command_key(key, raw->params[1]);
+        void* callback = lookup_event(key);
+
+        if (callback == NULL) {
+            // If no command binding is found, look for an event binding
+            callback = lookup_event(raw->type);
+        }
+
+        if (callback != NULL) {
+            MessageEvent event = message_event(raw);
+            ((MessageCallback) callback)(&event);
         }
     }
 
@@ -175,5 +196,13 @@ void handle(char* msg) {
             line = strtok_r(NULL, MSG_END, &line_end);
         }
     }
+}
+
+/* ************************* */
+/* Binding utility functions */
+/* ************************* */
+
+void build_command_key(char* key, char* command) {
+    snprintf(key, 50, "%s%s%s", PRIVMSG, CMD_SEP, command);
 }
 

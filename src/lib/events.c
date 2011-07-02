@@ -38,35 +38,43 @@ PingEvent ping_event(struct raw_msg *raw) {
     return event;
 }
 
+NickInUseEvent nick_in_use_event(struct raw_msg *raw) {
+    NickInUseEvent event;
+    event.nick = raw->params[1];
+    event.message = raw->params[2];
+    return event;
+}
+
 NoticeEvent notice_event(struct raw_msg *raw) {
     NoticeEvent event;
-    event.nick = raw->params[0];
+    event.to = raw->params[0];
     event.text = raw->params[1];
     return event;
 }
 
 JoinEvent join_event(struct raw_msg *raw) {
     JoinEvent event;
-    struct user_info ui = get_user_info(raw->prefix);
-
-    event.nick = ui.nick;
-    event.user = ui.user;
-    event.server = ui.server;
+    UserInfo ui = user_info(raw->prefix);
+    event.user = ui;
     event.channel = raw->params[0];
-
     return event;
 }
 
 PartEvent part_event(struct raw_msg *raw) {
     PartEvent event;
-    struct user_info ui = get_user_info(raw->prefix);
-
-    event.nick = ui.nick;
-    event.user = ui.user;
-    event.server = ui.server;
+    UserInfo ui = user_info(raw->prefix);
+    event.user = ui;
     event.channel = raw->params[0];
     event.message = raw->params[1];
+    return event;
+}
 
+MessageEvent message_event(struct raw_msg *raw) {
+    MessageEvent event;
+    UserInfo ui = user_info(raw->prefix);
+    event.user = ui;
+    event.to = raw->params[0];
+    event.message = raw->params[1];
     return event;
 }
 
@@ -74,8 +82,8 @@ PartEvent part_event(struct raw_msg *raw) {
 /* User information utility functions */
 /* ********************************** */
 
-struct user_info get_user_info(char* user_ref) {
-    struct user_info ui;
+UserInfo user_info(char* user_ref) {
+    UserInfo ui;
     char* c;
     
     c = user_ref;

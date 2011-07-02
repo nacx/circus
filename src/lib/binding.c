@@ -21,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <stdio.h>
 #include "binding.h"
 #include "hashtable.h"
 
@@ -34,13 +35,14 @@ void bind_event(char* event, void* callback) {
     ht_add(entry);
 }
 
-void unbind_event(char* event) {
+char* unbind_event(char* event) {
     HTData entry;
 
     entry.key = event;
     entry.value = NULL;
 
-    ht_del(entry);
+    entry = ht_del(entry);
+    return entry.key;
 }
 
 void* lookup_event(char* event) {

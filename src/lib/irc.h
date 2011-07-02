@@ -24,15 +24,17 @@
 #define __IRC_H__
 
 // IRC message types
-#define PING    "PING"
-#define PONG    "PING"
-#define NOTICE  "NOTICE"
-#define USER    "USER"
-#define NICK    "NICK"
-#define JOIN    "JOIN"
-#define PART    "PART"
-#define QUIT    "QUIT"
-#define PRIVMSG "PRIVMSG"
+#define PING            "PING"
+#define PONG            "PONG"
+#define NOTICE          "NOTICE"
+#define USER            "USER"
+#define NICK            "NICK"
+#define JOIN            "JOIN"
+#define PART            "PART"
+#define QUIT            "QUIT"
+#define PRIVMSG         "PRIVMSG"
+#define MODE            "MODE"
+#define NICK_IN_USE     "433"
 
 // Connection functions
 void irc_connect(char* address, int port);
@@ -40,8 +42,10 @@ void irc_disconnect();
 void irc_listen();
 
 // Event binding functions
-void irc_bind(char* event, void* callback);
-void irc_unbind(char* event);
+void irc_bind_event(char* event, void* callback);
+void irc_bind_command(char* command, void* callback);
+void irc_unbind_event(char* event);
+void irc_unbind_command(char* command);
 
 // System functions
 void irc_pong(char* server);
@@ -58,6 +62,11 @@ void irc_quit(char* message);
 
 void irc_channel(char* channel, char* messge);
 void irc_private(char* nick, char* message);
+
+void irc_op(char* channel, char* nick);
+void irc_deop(char* channel, char* nick);
+void irc_voice(char* channel, char* nick);
+void irc_devoice(char* channel, char* nick);
 
 #endif
 

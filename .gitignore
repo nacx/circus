@@ -3,4 +3,6 @@
 *.a
 src/test/libcircus-test
 examples/welcome
+examples/oper
+examples/bind-and-nick
 

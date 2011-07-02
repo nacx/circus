@@ -21,9 +21,8 @@
  */
 
 /*
- * This is an example bot that welcomes the users when joining the
- * channels where the bot is, and says goodbye in a private message
- * when a user leaves.
+ * This is an example bot that give operator and voice mode when
+ * requested.
  */
 
 #include <stdio.h>
@@ -37,28 +36,25 @@
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
 
-/*
- * Welcomes a user when joining the channel.
- * If the user is the bot itself, do nothing.
- */
-void on_join(JoinEvent* event) {
-    char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
-        irc_channel(event->channel, msg);                   // Send message to channel
-    }
+
+// Give op to the user who has requested it
+void give_op(MessageEvent* event) {
+    irc_op(event->to, event->user.nick);
 }
 
-/*
- * Says goodbye to a user in a private message when leaving the channel.
- * If the user is the bot itself, do nothing.
- */
-void on_part(PartEvent* event) {
-    char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Good bye %s", event->user.nick); // Build the message to send
-        irc_private(event->user.nick, msg);                 // Send the private message to the user
-    }
+// Take op to the user who has requested it
+void take_op(MessageEvent* event) {
+    irc_deop(event->to, event->user.nick);
+}
+
+// Give voice to the user who has requested it
+void give_voice(MessageEvent* event) {
+    irc_voice(event->to, event->user.nick);
+}
+
+// Take voice to the user who has requested it
+void take_voice(MessageEvent* event) {
+    irc_devoice(event->to, event->user.nick);
 }
 
 int main(int argc, char **argv) {
@@ -70,9 +66,11 @@ int main(int argc, char **argv) {
     char* server = argv[1];     // The IRC server
     int port = atoi(argv[2]);   // The IRC server port
 
-    // Bind IRC event to custom functions
-    irc_bind_event(JOIN, on_join);
-    irc_bind_event(PART, on_part);
+    // Bind message commands to custom functions
+    irc_bind_command("!op", give_op);
+    irc_bind_command("!deop", take_op);
+    irc_bind_command("!voice", give_voice);
+    irc_bind_command("!devoice", take_voice);
 
     // Connect, login and join the configured channel
     irc_connect(server, port);

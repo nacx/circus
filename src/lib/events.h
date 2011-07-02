@@ -34,62 +34,79 @@ struct raw_msg {
     char* params[MAX_PARAMS];   // The parameter array
 };
 
+/* ********************************** */
+/* User information utility functions */
+/* ********************************** */
+
+typedef struct {
+    char* nick;
+    char* user;
+    char* server;
+} UserInfo;
+
+UserInfo user_info(char* user_ref);
+
 /* *************** */
 /* IRC Event types */
 /* *************** */
 
+// Fired when a ping message arrives
 typedef struct {
-    char* server;
+    char* server;   // Server where the pong response must be sent
 } PingEvent;
 
+// Fired when the nick is in use
 typedef struct {
     char* nick;
-    char* text;
+    char* message;
+} NickInUseEvent;
+
+// Fired when a notice arrives
+typedef struct {
+    char* to;       // The destination of the message
+    char* text;     // The text of the message
 } NoticeEvent;
 
+// Fired when a user joins a channel
 typedef struct {
-    char* nick;
-    char* user;
-    char* server;
-    char* channel;
+    UserInfo user;  // The user who joined a channel
+    char* channel;  // The channel name
 } JoinEvent;
 
+// Fired when a user leaves a channel
 typedef struct {
-    char* nick;
-    char* user;
-    char* server;
-    char* channel;
-    char* message;
+    UserInfo user;  // The user who leaved the channel
+    char* channel;  // The channel name
+    char* message;  // The part message
 } PartEvent;
 
+// Fired when a message is sent to a channel or to a user
+typedef struct {
+    UserInfo user;  // The user who sends the event
+    char* to;       // The destination of the event (nick or channel)
+    char* message;  // The text of the message
+} MessageEvent;
+
 /* ************************ */
-/* Event building functions */
+/* Event building functions */ 
 /* ************************ */
 
-PingEvent   ping_event(struct raw_msg * raw);
-NoticeEvent notice_event(struct raw_msg * raw);
-JoinEvent   join_event(struct raw_msg * raw);
-PartEvent   part_event(struct raw_msg * raw);
+PingEvent       ping_event(struct raw_msg * raw);
+NickInUseEvent  nick_in_use_event(struct raw_msg * raw);
+NoticeEvent     notice_event(struct raw_msg * raw);
+JoinEvent       join_event(struct raw_msg * raw);
+PartEvent       part_event(struct raw_msg * raw);
+MessageEvent    message_event(struct raw_msg * raw);
 
 /* ************** */
 /* Callback types */
 /* ************** */
 
+typedef void (*NickInUseCallback)(NickInUseEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
-
-/* ********************************** */
-/* User information utility functions */
-/* ********************************** */
-
-struct user_info {
-    char* nick;
-    char* user;
-    char* server;
-};
-
-struct user_info get_user_info(char* user_ref);
+typedef void (*MessageCallback)(MessageEvent*);
 
 #endif
 

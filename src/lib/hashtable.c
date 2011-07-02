@@ -35,12 +35,17 @@ HTIndex ht_hash(HTData data) {
 }
 
 void ht_init() {
+    int i;
     ht_size = 256;
     ht_num_entries = 0;
 
     if ((ht = malloc(ht_size * sizeof(HTEntry*))) == 0) {
         perror("Out of memory (ht_init)");
         exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; i < ht_size; i++) {
+        ht[i] = NULL;
     }
 }
 
@@ -49,7 +54,7 @@ HTEntry* ht_add(HTData data) {
     HTIndex idx;
 
     // Make sure hash table is always initialized
-    if (!ht) {
+    if (ht == NULL) {
         ht_init();
     }
 
@@ -57,12 +62,12 @@ HTEntry* ht_add(HTData data) {
     current = ht[idx];
 
     // Find the key (if already exists)
-    while (current && !ht_eq(current->data, data)) {
+    while (current != NULL && !ht_eq(current->data, data)) {
         old = current;
         current = current->next;
     }
 
-    if (!current) { // Insert entry at beginning of list
+    if (current == NULL) { // Insert entry at beginning of list
         if ((current = malloc(sizeof(HTEntry))) == 0) {
             perror("Out of memory (ht_add)");
             exit(EXIT_FAILURE);
@@ -80,40 +85,62 @@ HTEntry* ht_add(HTData data) {
     return current;
 }
 
-void ht_del(HTData data) {
+HTData ht_del(HTData data) {
     HTEntry *current, *old;
     HTIndex idx;
+    HTData ret;
+
+    ret.key = NULL;
+    ret.value = NULL;
 
     // Find entry
     old = 0;
     idx = ht_hash(data);
     current = ht[idx];
 
-    while (current && !ht_eq(current->data, data)) {
+    while (current != NULL && !ht_eq(current->data, data)) {
         old = current;
         current = current->next;
     }
 
-    if (!current)
-        return;
+    if (current == NULL)
+        return ret;
 
-    if (old) {
+    if (old != NULL) {
         old->next = current->next; /* not first node, old points to previous node */
     } else {
         ht[idx] = current->next; /* first node on chain */
     }
 
+    ret = current->data;
     free(current);
     ht_num_entries--;
+
+    return ret;
 }
 
 HTEntry* ht_find(HTData data) {
     HTEntry *current;
 
     current = ht[ht_hash(data)];
-    while (current && !ht_eq(current->data, data)) {
+    while (current != NULL && !ht_eq(current->data, data)) {
         current = current->next;
     }
     return current;
+}
+
+void ht_print_keys() {
+    HTEntry* current;
+    int i = 0;
+
+    for (i = 0; i < ht_size; i++) {
+        if (ht[i] != NULL) {
+            current = ht[i];
+            while (current != NULL) {
+                printf("Key: %s\n", current->data.key);
+                current = current->next;
+            }
+        }
+    }
 }
 

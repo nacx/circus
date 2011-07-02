@@ -21,9 +21,14 @@
  */
 
 /*
- * This is an example bot that welcomes the users when joining the
- * channels where the bot is, and says goodbye in a private message
- * when a user leaves.
+ * Read first welcome.c and oper.c examples.
+ *
+ * This is an example bot that shows Circus event binding features.
+ * 
+ * It defines a method to choose another nick if the current one is
+ * already in use, and rejoins the channels.
+ * It also defines two control methods to enable and disable the defined
+ * callbacks on the fly.
  */
 
 #include <stdio.h>
@@ -37,11 +42,9 @@
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
 
-/*
- * Welcomes a user when joining the channel.
- * If the user is the bot itself, do nothing.
- */
-void on_join(JoinEvent* event) {
+
+// Welcome a user when joining the channel
+void welcome(JoinEvent* event) {
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
         snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
@@ -49,17 +52,29 @@ void on_join(JoinEvent* event) {
     }
 }
 
-/*
- * Says goodbye to a user in a private message when leaving the channel.
- * If the user is the bot itself, do nothing.
- */
-void on_part(PartEvent* event) {
-    char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Good bye %s", event->user.nick); // Build the message to send
-        irc_private(event->user.nick, msg);                 // Send the private message to the user
-    }
+// Give op to the user who has requested it
+void give_op(MessageEvent* event) {
+    irc_op(event->to, event->user.nick);
 }
+
+// Disables bot callbacks
+void disable(MessageEvent* event) {
+    irc_unbind_event(JOIN);
+    irc_unbind_command("!op");
+}
+
+// Enables bot callbacks
+void enable(MessageEvent* event) {
+    irc_bind_event(JOIN, welcome);
+    irc_bind_command("!op", give_op);
+}
+
+// Enables bot callbacks
+void change_nick(NickInUseEvent* event) {
+    irc_nick("circus-bot2");
+    irc_join(CONF_CHAN);
+}
+
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -70,9 +85,12 @@ int main(int argc, char **argv) {
     char* server = argv[1];     // The IRC server
     int port = atoi(argv[2]);   // The IRC server port
 
-    // Bind IRC event to custom functions
-    irc_bind_event(JOIN, on_join);
-    irc_bind_event(PART, on_part);
+    // Bind IRC events and message commands to custom functions
+    irc_bind_event(JOIN, welcome);
+    irc_bind_event(NICK_IN_USE, change_nick);
+    irc_bind_command("!disable", disable);
+    irc_bind_command("!enable", enable);
+    irc_bind_command("!op", give_op);
 
     // Connect, login and join the configured channel
     irc_connect(server, port);

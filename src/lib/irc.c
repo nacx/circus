@@ -98,12 +98,41 @@ void irc_listen() {
 /* Event binding functions */
 /* *********************** */
 
-void irc_bind(char* event, void* callback) {
+void irc_bind_event(char* event, void* callback) {
     bind_event(event, callback);
 }
 
-void irc_unbind(char* event) {
+void irc_unbind_event(char* event) {
     unbind_event(event);
+}
+
+void irc_bind_command(char* command, void* callback) {
+    char* key;
+
+    if ((key = malloc(50 * sizeof(char))) == 0) {
+        perror("Out of memory (irc_bind_command)");
+        exit(EXIT_FAILURE);
+    }
+
+    build_command_key(key, command);
+    bind_event(key, callback);
+}
+
+void irc_unbind_command(char* command) {
+    char* key, *ret;
+
+    if ((key = malloc(50 * sizeof(char))) == 0) {
+        perror("Out of memory (irc_unbind_command)");
+        exit(EXIT_FAILURE);
+    }
+    
+    build_command_key(key, command);
+    ret = unbind_event(key);
+
+    free(key);  // Free the memory allocated un this function
+    if (ret != NULL) {
+        free(ret);  // Free the memory allocated when binding the command
+    }
 }
 
 /* **************** */
@@ -170,6 +199,30 @@ void irc_channel(char* channel, char* message) {
 void irc_private(char* nick, char* message) {
     char msg[MSG_SIZE];
     snprintf(msg, MSG_SIZE, "%s %s :%s", PRIVMSG, nick, message);
+    net_send(msg);
+}
+
+void irc_op(char* channel, char* nick) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s +o %s", MODE, channel, nick);
+    net_send(msg);
+}
+
+void irc_deop(char* channel, char* nick) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s -o %s", MODE, channel, nick);
+    net_send(msg);
+}
+
+void irc_voice(char* channel, char* nick) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s +v %s", MODE, channel, nick);
+    net_send(msg);
+}
+
+void irc_devoice(char* channel, char* nick) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, "%s %s -v %s", MODE, channel, nick);
     net_send(msg);
 }
 
