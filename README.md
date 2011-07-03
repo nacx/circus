@@ -35,6 +35,16 @@ If you installed Circus using the *make install* command, you will need to chang
 the *LIBDIR* variable to point to the location where you installed the library.
 
 
+Note on patches/pull requests
+-----------------------------
+ 
+ * Fork the project.
+ * Make your feature addition or bug fix.
+ * Add tests for it. This is important so I don't break it in a future version unintentionally.
+ * Commit
+ * Send me a pull request. Bonus points for topic branches.
+
+
 Issue Tracking
 --------------
 
