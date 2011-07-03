@@ -145,6 +145,12 @@ void irc_pong(char* server) {
     net_send(msg);
 }
 
+void irc_raw(char* prefix, char* type, char* message) {
+    char msg[MSG_SIZE];
+    snprintf(msg, MSG_SIZE, ":%s %s %s", prefix, type, message);
+    net_send(msg);
+}
+
 /* ************** */
 /* User functions */
 /* ************** */

@@ -19,6 +19,7 @@ TEST_PATH = test
 TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_binding.c $(TEST_PATH)/test_network.c \
 		   $(TEST_PATH)/test_message_handler.c $(TEST_PATH)/test_events.c \
+		   $(TEST_PATH)/test_codes.c $(TEST_PATH)/test_utils.c \
 		   $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 

@@ -23,6 +23,7 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
+// Error and numeric response codes
 #include "codes.h"
 
 // Global binding message types
@@ -30,17 +31,16 @@
 #define ERROR           "ERROR"     // If no specific error binding is found, call this global binding
 
 // IRC message types
+#define JOIN            "JOIN"
+#define MODE            "MODE"
+#define NICK            "NICK"
+#define NOTICE          "NOTICE"
+#define PART            "PART"
 #define PING            "PING"
 #define PONG            "PONG"
-#define NOTICE          "NOTICE"
-#define USER            "USER"
-#define NICK            "NICK"
-#define JOIN            "JOIN"
-#define PART            "PART"
-#define QUIT            "QUIT"
 #define PRIVMSG         "PRIVMSG"
-#define MODE            "MODE"
-
+#define USER            "USER"
+#define QUIT            "QUIT"
 
 // Connection functions
 void irc_connect(char* address, int port);
@@ -55,6 +55,7 @@ void irc_unbind_command(char* command);
 
 // System functions
 void irc_pong(char* server);
+void irc_raw(char* prefix, char* type, char* message);
 
 // User functions
 void irc_nick(char* nick);

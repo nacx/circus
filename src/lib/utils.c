@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -29,15 +30,19 @@
 
 void upper(char* str) {
     int i;
-    for (i = 0; i < strlen(str); i++) {
-        str[i] = toupper(str[i]);
+    if (str != NULL) {
+        for (i = 0; i < strlen(str); i++) {
+            str[i] = toupper(str[i]);
+        }
     }
 }
 
 void lower(char* str) {
     int i;
-    for (i = 0; i < strlen(str); i++) {
-        str[i] = tolower(str[i]);
+    if (str != NULL) {
+        for (i = 0; i < strlen(str); i++) {
+            str[i] = tolower(str[i]);
+        }
     }
 }
 

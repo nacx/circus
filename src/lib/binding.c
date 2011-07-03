@@ -32,7 +32,7 @@ void bind_event(char* event, void* callback) {
     entry.key = event;
     entry.value = callback;
 
-    ht_add(entry);
+    ht_add(entry, 1);   // Add the key and override it
 }
 
 char* unbind_event(char* event) {

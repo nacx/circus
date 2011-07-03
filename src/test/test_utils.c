@@ -20,32 +20,28 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
+#include <string.h>
 #include "minunit.h"
 #include "test.h"
+#include "../lib/utils.h"
 
 
-void run_all_tests() {
-    mu_suite(test_hashtable);
-    mu_suite(test_binding);
-    mu_suite(test_network);
-    mu_suite(test_utils);
-    mu_suite(test_message_handler);
-    mu_suite(test_events);
-    mu_suite(test_codes);
+char* test_upper() {
+    char text[10] = "Test Text";
+    upper(text);
+    mu_assert(s_eq(text, "TEST TEXT"), "test_uppper: text should be 'TEST TEXT'");
+    return 0;
 }
 
-int main(int argc, char **argv) {
-    printf("--------------------------------------------------\n");
-    printf("Running unit tests...\n");
+char* test_lower() {
+    char text[10] = "Test Text";
+    lower(text);
+    mu_assert(s_eq(text, "test text"), "test_uppper: text should be 'test text'");
+    return 0;   
+}
 
-    run_all_tests();
-
-    mu_results();
-    mu_free();
-
-    printf("--------------------------------------------------\n");
-
-    return test_fails != 0;
+void test_utils() {
+    mu_run(test_upper);
+    mu_run(test_lower);
 }
 

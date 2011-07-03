@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "minunit.h"
 #include "test.h"
 #include "../lib/utils.h"
+#include "../lib/message_handler.h"
 #include "../lib/events.h"
 
 
@@ -40,7 +40,81 @@ char* test_user_info() {
     return 0;
 }
 
+char* test_error_event_one_param() {
+    ErrorEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+   
+    raw = parse(":nick!~user@server 401 circus-bot :Test message", buffer);
+    event = error_event(&raw);
+
+    mu_assert(s_eq(event.code, "401"), "test_error_event_one_param: code should be 401");
+    mu_assert(event.num_params == 1, "test_error_event_one_param: num_params should be 1");
+    mu_assert(s_eq(event.params[0], "circus-bot"), "test_error_event_one_param: params[0] should be 'circus-bot'");
+    mu_assert(s_eq(event.message, "Test message"), "test_error_event_one_param: message should be 'Test message'");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_error_event_no_params() {
+    ErrorEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+   
+    raw = parse(":nick!~user@server 401 :Test message", buffer);
+    event = error_event(&raw);
+
+    mu_assert(s_eq(event.code, "401"), "test_error_event_no_params: code should be 401");
+    mu_assert(event.num_params == 0, "test_error_event_no_params: num_params should be 0");
+    mu_assert(s_eq(event.message, "Test message"), "test_error_event_no_params: message should be 'Test message'");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_generic_event_one_param() {
+    GenericEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+   
+    raw = parse(":nick!~user@server 305 circus-bot :Test message", buffer);
+    event = generic_event(&raw);
+
+    mu_assert(s_eq(event.code, "305"), "test_generic_event_one_param: code should be 305");
+    mu_assert(event.num_params == 1, "test_generic_event_one_param: num_params should be 1");
+    mu_assert(s_eq(event.params[0], "circus-bot"), "test_generic_event_one_param: params[0] should be 'circus-bot'");
+    mu_assert(s_eq(event.message, "Test message"), "test_generic_event_one_param: message should be 'test message'");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_generic_event_no_params() {
+    GenericEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+   
+    raw = parse(":nick!~user@server 305 :Test message", buffer);
+    event = generic_event(&raw);
+
+    mu_assert(s_eq(event.code, "305"), "test_generic_event_no_params: code should be 305");
+    mu_assert(event.num_params == 0, "test_generic_event_no_params: num_params should be 0");
+    mu_assert(s_eq(event.message, "Test message"), "test_generic_event_no_params: message should be 'test message'");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
 void test_events() {
     mu_run(test_user_info);
+    mu_run(test_error_event_one_param);
+    mu_run(test_error_event_no_params);
+    mu_run(test_generic_event_one_param);
+    mu_run(test_generic_event_no_params);
 }
 

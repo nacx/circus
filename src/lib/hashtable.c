@@ -49,7 +49,7 @@ void ht_init() {
     }
 }
 
-HTEntry* ht_add(HTData data) {
+HTEntry* ht_add(HTData data, int override) {
     HTEntry *current, *old;
     HTIndex idx;
 
@@ -67,7 +67,9 @@ HTEntry* ht_add(HTData data) {
         current = current->next;
     }
 
-    if (current == NULL) { // Insert entry at beginning of list
+    // If key does not exist or it must not be overriden,
+    // add the new element at the beginning of the list
+    if (current == NULL || override == 0) {
         if ((current = malloc(sizeof(HTEntry))) == 0) {
             perror("Out of memory (ht_add)");
             exit(EXIT_FAILURE);
@@ -78,7 +80,7 @@ HTEntry* ht_add(HTData data) {
         current->next = old;
         current->data = data;
         ht_num_entries++;
-    } else { // Replace the entry with the new one
+    } else {
         current->data = data;
     }
 
