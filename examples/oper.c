@@ -28,16 +28,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "events.h"                 // Event types for callback functions
 #include "irc.h"                    // IRC protocol functions
-
 
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
 
-
 // Give op to the user who has requested it
 void give_op(MessageEvent* event) {
+    // The event->to variable is the channel where the message comes from,
+    // if the message was sent to a channel, or the sender's nick, if the
+    // message was a private message
     irc_op(event->to, event->user.nick);
 }
 

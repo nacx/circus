@@ -23,29 +23,9 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
-// Error and numeric response codes
+// Include the common files, so circus apps only need to include this file
 #include "codes.h"
-
-// Global binding message types
-#define ALL             "ALL"       // If no specific binging is found, call this global binding
-#define ERROR           "ERROR"     // If no specific error binding is found, call this global binding
-
-// IRC message types
-#define JOIN            "JOIN"
-#define MODE            "MODE"
-#define NICK            "NICK"
-#define NOTICE          "NOTICE"
-#define PART            "PART"
-#define PING            "PING"
-#define PONG            "PONG"
-#define PRIVMSG         "PRIVMSG"
-#define USER            "USER"
-#define QUIT            "QUIT"
-
-// Connection functions
-void irc_connect(char* address, int port);
-void irc_disconnect();
-void irc_listen();
+#include "events.h"
 
 // Event binding functions
 void irc_bind_event(char* event, void* callback);
@@ -57,19 +37,27 @@ void irc_unbind_command(char* command);
 void irc_pong(char* server);
 void irc_raw(char* prefix, char* type, char* message);
 
+// Connection functions
+void irc_connect(char* address, int port);
+void irc_disconnect();
+void irc_listen();
+void irc_quit(char* message);
+
 // User functions
 void irc_nick(char* nick);
 void irc_user(char* user_name, char* real_name);
 void irc_login(char* nick, char* user_name, char* real_name);
 
+// Channel functions
 void irc_join(char* channel);
 void irc_join_pass(char* channel, char* pass); 
 void irc_part(char* channel); 
-void irc_quit(char* message);
 
+// Messaging functions
 void irc_channel(char* channel, char* messge);
 void irc_private(char* nick, char* message);
 
+// Operator functions
 void irc_op(char* channel, char* nick);
 void irc_deop(char* channel, char* nick);
 void irc_voice(char* channel, char* nick);

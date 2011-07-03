@@ -23,15 +23,33 @@
 #ifndef __CODES_H__
 #define __CODES_H__
 
+// Check if the given code is an error code or a numeric response
+int is_error(char* code);
+int is_numeric_response(char* code);
+
+// Global binding message types
+#define ALL             "ALL"       // If no specific binging is found, call this global binding
+#define ERROR           "ERROR"     // If no specific error binding is found, call this global binding
+
+// Text message types
+#define JOIN            "JOIN"      // Someone joins a channel
+#define MODE            "MODE"      // A mode is set
+#define NICK            "NICK"      // Nick change message
+#define NOTICE          "NOTICE"    // Notice message
+#define PART            "PART"      // Someone leaves a channel
+#define PING            "PING"      // Ping message
+#define PONG            "PONG"      // Ping response message
+#define PRIVMSG         "PRIVMSG"   // Message to a channel or user
+#define USER            "USER"      // Set user information set message
+#define QUIT            "QUIT"      // Quit message
+
+// TODO: Add missing text message types and the custom events
+
 // First and last error code
 #define ERR_CODE_START      400
 #define ERR_CODE_END        599
 #define RESP_CODE_START     200
 #define RESP_CODE_END       399
-
-// Check if the given code is an error code or a numeric response
-int is_error(char* code);
-int is_numeric_response(char* code);
 
 // Response codes
 #define RPL_NONE            "300"       // Dummy reply number. Not used.

@@ -35,11 +35,11 @@
 int _socket;
 
 // Network functions
-void net_connect(char* address, int port);
-void net_disconnect();
-int  net_send(char* msg);
-int  net_recv(char* msg);
-int  net_listen();
+void net_connect(char* address, int port);  // Connect to the IRC server
+void net_disconnect();                      // Disconnect from the server
+int  net_send(char* msg);                   // Send a message to the server
+int  net_recv(char* msg);                   // Receive a message rom the server
+int  net_listen();                          // Listen for incoming messages
 
 #endif
 

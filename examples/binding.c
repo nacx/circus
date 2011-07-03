@@ -32,13 +32,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"                  // Utility functions and macros
-#include "events.h"                 // Event types for callback functions
 #include "irc.h"                    // IRC protocol functions
-
 
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
-
 
 // Welcome a user when joining the channel
 void welcome(JoinEvent* event) {

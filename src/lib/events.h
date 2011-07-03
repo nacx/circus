@@ -38,12 +38,14 @@ struct raw_msg {
 /* User information utility functions */
 /* ********************************** */
 
+// Information of the user who generates an event
 typedef struct {
     char* nick;
     char* user;
     char* server;
 } UserInfo;
 
+// Parse the given user string and build the UserInfo struct
 UserInfo user_info(char* user_ref);
 
 /* *************** */

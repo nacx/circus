@@ -23,13 +23,11 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
-// String utility macros
-#define s_eq(a,b) (strcmp(a,b) == 0)
-#define s_ne(a,b) (strcmp(a,b) != 0)
+#define s_eq(a,b) (strcmp(a,b) == 0)    // String equals
+#define s_ne(a,b) (strcmp(a,b) != 0)    // String not equals
 
-// String utility functions
-void upper(char* str);
-void lower(char* str);
+void upper(char* str);      // Modify the given string and make it upper case
+void lower(char* str);      // Modify the given string and make it lower case
 
 #endif
 

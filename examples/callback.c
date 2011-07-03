@@ -31,9 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"                  // Utility functions and macros
-#include "events.h"                 // Event types for callback functions
 #include "irc.h"                    // IRC protocol functions
-
 
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
@@ -48,7 +46,7 @@ void on_nick_in_use(ErrorEvent* event) {
 
 // Print the error message
 void on_error(ErrorEvent* event) {
-    printf("Error message arrived: [%s] %s\n", event->code, event->message);
+    printf("Incoming error message: [%s] %s\n", event->code, event->message);
 }
 
 // Welcome a user when joining
