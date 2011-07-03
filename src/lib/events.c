@@ -68,13 +68,6 @@ PingEvent ping_event(struct raw_msg *raw) {
     return event;
 }
 
-NickInUseEvent nick_in_use_event(struct raw_msg *raw) {
-    NickInUseEvent event;
-    event.nick = raw->params[1];
-    event.message = raw->params[2];
-    return event;
-}
-
 NoticeEvent notice_event(struct raw_msg *raw) {
     NoticeEvent event;
     event.to = raw->params[0];

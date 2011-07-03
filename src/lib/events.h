@@ -73,12 +73,6 @@ typedef struct {
     char* server;   // Server where the pong response must be sent
 } PingEvent;
 
-// Fired when the nick is in use
-typedef struct {
-    char* nick;
-    char* message;
-} NickInUseEvent;
-
 // Fired when a notice arrives
 typedef struct {
     char* to;       // The destination of the message
@@ -113,7 +107,6 @@ typedef struct {
 ErrorEvent      error_event(struct raw_msg *raw);
 GenericEvent    generic_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
-NickInUseEvent  nick_in_use_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
 JoinEvent       join_event(struct raw_msg *raw);
 PartEvent       part_event(struct raw_msg *raw);
@@ -125,7 +118,6 @@ MessageEvent    message_event(struct raw_msg *raw);
 
 typedef void (*ErrorCallback)(ErrorEvent*);
 typedef void (*GenericCallback)(GenericEvent*);
-typedef void (*NickInUseCallback)(NickInUseEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
