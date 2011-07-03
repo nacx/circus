@@ -50,6 +50,22 @@ UserInfo user_info(char* user_ref);
 /* IRC Event types */
 /* *************** */
 
+// Fired when an error message arrives
+typedef struct {
+    char* code;
+    int   num_params;
+    char* params[MAX_PARAMS];
+    char* message;
+} ErrorEvent;
+
+// Fired when no specific parsing is defined fot the reveiced event
+typedef struct {
+    char* code;
+    int   num_params;
+    char* params[MAX_PARAMS];
+    char* message;
+} GenericEvent;
+
 // Fired when a ping message arrives
 typedef struct {
     char* server;   // Server where the pong response must be sent
@@ -87,21 +103,26 @@ typedef struct {
     char* message;  // The text of the message
 } MessageEvent;
 
+
 /* ************************ */
 /* Event building functions */ 
 /* ************************ */
 
-PingEvent       ping_event(struct raw_msg * raw);
-NickInUseEvent  nick_in_use_event(struct raw_msg * raw);
-NoticeEvent     notice_event(struct raw_msg * raw);
-JoinEvent       join_event(struct raw_msg * raw);
-PartEvent       part_event(struct raw_msg * raw);
-MessageEvent    message_event(struct raw_msg * raw);
+ErrorEvent      error_event(struct raw_msg *raw);
+GenericEvent    generic_event(struct raw_msg *raw);
+PingEvent       ping_event(struct raw_msg *raw);
+NickInUseEvent  nick_in_use_event(struct raw_msg *raw);
+NoticeEvent     notice_event(struct raw_msg *raw);
+JoinEvent       join_event(struct raw_msg *raw);
+PartEvent       part_event(struct raw_msg *raw);
+MessageEvent    message_event(struct raw_msg *raw);
 
 /* ************** */
 /* Callback types */
 /* ************** */
 
+typedef void (*ErrorCallback)(ErrorEvent*);
+typedef void (*GenericCallback)(GenericEvent*);
 typedef void (*NickInUseCallback)(NickInUseEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*JoinCallback)(JoinEvent*);

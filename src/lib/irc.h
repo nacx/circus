@@ -23,6 +23,12 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
+#include "codes.h"
+
+// Global binding message types
+#define ALL             "ALL"       // If no specific binging is found, call this global binding
+#define ERROR           "ERROR"     // If no specific error binding is found, call this global binding
+
 // IRC message types
 #define PING            "PING"
 #define PONG            "PONG"
@@ -34,7 +40,7 @@
 #define QUIT            "QUIT"
 #define PRIVMSG         "PRIVMSG"
 #define MODE            "MODE"
-#define NICK_IN_USE     "433"
+
 
 // Connection functions
 void irc_connect(char* address, int port);

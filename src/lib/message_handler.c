@@ -26,6 +26,7 @@
 #include "events.h"
 #include "utils.h"
 #include "binding.h"
+#include "codes.h"
 #include "irc.h"
 #include "message_handler.h"
 
@@ -61,31 +62,26 @@ void on_ping(PingEvent* event) {
 /* **************** */
 
 void fire_event(struct raw_msg *raw) {
+    void* callback = NULL;
     upper(raw->type);
 
     if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);
         on_ping(&event);
-    } else if (s_eq(raw->type, NICK_IN_USE)) {
-        void* callback = lookup_event(raw->type);
-        if (callback != NULL) {
-            NickInUseEvent event = nick_in_use_event(raw);
-            ((NickInUseCallback) callback)(&event);
-        }
     } else if (s_eq(raw->type, NOTICE)) {
-        void* callback = lookup_event(raw->type);
+        callback = lookup_event(raw->type);
         if (callback != NULL) {
             NoticeEvent event = notice_event(raw);
             ((NoticeCallback) callback)(&event);
         }
     } else if (s_eq(raw->type, JOIN)) {
-        void* callback = lookup_event(raw->type);
+        callback = lookup_event(raw->type);
         if (callback != NULL) {
             JoinEvent event = join_event(raw);
             ((JoinCallback) callback)(&event);
         }
     } else if (s_eq(raw->type, PART)) {
-        void* callback = lookup_event(raw->type);
+        callback = lookup_event(raw->type);
         if (callback != NULL) {
             PartEvent event = part_event(raw);
             ((PartCallback) callback)(&event);
@@ -94,7 +90,7 @@ void fire_event(struct raw_msg *raw) {
         // Look for a command binding
         char key[50];
         build_command_key(key, raw->params[1]);
-        void* callback = lookup_event(key);
+        callback = lookup_event(key);
 
         if (callback == NULL) {
             // If no command binding is found, look for an event binding
@@ -107,7 +103,33 @@ void fire_event(struct raw_msg *raw) {
         }
     }
 
-    // Just ignore other message types
+    // If no specific callback has been found, check if there is a global
+    // callback defined
+    if (callback == NULL) {
+        if (is_error(raw->type)) {
+            // Lookup first the concrete error
+            callback = lookup_event(raw->type);
+            if (callback == NULL) {
+                callback = lookup_event(ERROR);
+            }
+
+            if (callback != NULL) {
+                ErrorEvent event = error_event(raw);
+                ((ErrorCallback) callback)(&event);
+            }
+        } else {
+            // Lookup the concrete reponse code
+            callback = lookup_event(raw->type);
+            if (callback == NULL) {
+                callback = lookup_event(ALL);
+            }
+
+            if (callback != NULL) {
+                GenericEvent event = generic_event(raw);
+                ((GenericCallback) callback)(&event);
+            }
+        }
+    }
 }
 
 /* *************** */

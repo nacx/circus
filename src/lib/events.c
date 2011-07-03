@@ -32,6 +32,36 @@
 /* Event building functions */
 /* ************************ */
 
+ErrorEvent error_event(struct raw_msg *raw) {
+    int i;
+    ErrorEvent event;
+
+    for (i = 0; i < raw->num_params - 1; i++) {
+        event.params[i] = raw->params[i];
+    }
+
+    event.code = raw->type;
+    event.num_params = i;
+    event.message = raw->params[raw->num_params - 1];
+
+    return event;
+}
+
+GenericEvent generic_event(struct raw_msg *raw) {
+    int i;
+    GenericEvent event;
+
+    for (i = 0; i < raw->num_params - 1; i++) {
+        event.params[i] = raw->params[i];
+    }
+
+    event.code = raw->type;
+    event.num_params = i;
+    event.message = raw->params[raw->num_params - 1];
+
+    return event;
+}
+
 PingEvent ping_event(struct raw_msg *raw) {
     PingEvent event;
     event.server = raw->params[0];
@@ -85,7 +115,7 @@ MessageEvent message_event(struct raw_msg *raw) {
 UserInfo user_info(char* user_ref) {
     UserInfo ui;
     char* c;
-    
+
     c = user_ref;
     ui.nick = c;
 
