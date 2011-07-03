@@ -35,10 +35,6 @@ all: $(LIB)
 
 $(LIB): lib test
 
-#lib: $(CIRCUS_OBJ)
-#	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $^
-#	$(MAKE) test
-
 lib: $(CIRCUS_OBJ) $(TEST_OBJ)
 	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $(CIRCUS_OBJ)
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
@@ -59,3 +55,4 @@ clean-test:
 	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(LIB_TEST)
 
 clean: clean-lib clean-test
+

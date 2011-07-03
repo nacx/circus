@@ -65,6 +65,8 @@ void fire_event(struct raw_msg *raw) {
     void* callback = NULL;
     upper(raw->type);
 
+    // Check if there is a concrete binding for the
+    // incoming message type
     if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);
         on_ping(&event);
@@ -92,8 +94,8 @@ void fire_event(struct raw_msg *raw) {
         build_command_key(key, raw->params[1]);
         callback = lookup_event(key);
 
+        // If no command binding is found, look for an event binding
         if (callback == NULL) {
-            // If no command binding is found, look for an event binding
             callback = lookup_event(raw->type);
         }
 
@@ -103,12 +105,13 @@ void fire_event(struct raw_msg *raw) {
         }
     }
 
-    // If no specific callback has been found, check if there is a global
-    // callback defined
+    // If no specific callback is found, check if there is
+    // a global binding defined to handle the incoming message
     if (callback == NULL) {
         if (is_error(raw->type)) {
-            // Lookup first the concrete error
+            // Look for a concrete error binding
             callback = lookup_event(raw->type);
+            // If none is found, look for a generic error binding
             if (callback == NULL) {
                 callback = lookup_event(ERROR);
             }
@@ -118,8 +121,9 @@ void fire_event(struct raw_msg *raw) {
                 ((ErrorCallback) callback)(&event);
             }
         } else {
-            // Lookup the concrete reponse code
+            // Look for a concrete message binding
             callback = lookup_event(raw->type);
+            // If none is found, look for a generic message binding
             if (callback == NULL) {
                 callback = lookup_event(ALL);
             }

@@ -109,7 +109,6 @@ int is_numeric_response(char* code);
 #define RPL_ADMINLOC2       "258"       // ":<admin info>"
 #define RPL_ADMINEMAIL      "259"       // ":<admin info>"
 
-
 // Error codes
 #define ERR_NOSUCHNICK          "401"       // "<nickname> :No such nick/channel"
 #define ERR_NOSUCHSERVER        "402"       // "<server name> :No such server"

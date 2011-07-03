@@ -9,3 +9,4 @@ test:
 
 clean:
 	cd .. && $(MAKE) clean-test
+
