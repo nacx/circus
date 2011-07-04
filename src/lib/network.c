@@ -73,7 +73,7 @@ int net_send(char* msg) {
     strncpy(out, msg, MSG_SIZE - 2);    // Cut the message to the maximum size
     strcat(out, MSG_SEP);               // Messages must end like this
 
-    printf(">> %s\n", msg);
+    printf(">> %s", out);
 
     return send(_socket, out, strlen(out), 0);
 }
@@ -85,7 +85,13 @@ int net_recv(char* msg) {
         msg[numbytes] = '\0';   // Append the "end of string" character
     }
 
-    printf("<< %s\n", msg);
+    // If we receive the command in different read operations, print
+    // them in different lines
+    if (msg[numbytes - 1] != '\n') {
+        printf("\n");
+    }
+
+    printf("<< %s", msg);
 
     return numbytes;
 }
