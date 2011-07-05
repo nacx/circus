@@ -67,16 +67,22 @@ void fire_event(struct raw_msg *raw) {
 
     // Check if there is a concrete binding for the
     // incoming message type
-    if (s_eq(raw->type, PING)) {
-        PingEvent event = ping_event(raw);
-        on_ping(&event);
-    } else if (s_eq(raw->type, NOTICE)) {
+    
+    // Connection registration
+    if (s_eq(raw->type, NICK)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
-            NoticeEvent event = notice_event(raw);
-            ((NoticeCallback) callback)(&event);
+            NickEvent event = nick_event(raw);
+            ((NickCallback) callback)(&event);
         }
-    } else if (s_eq(raw->type, JOIN)) {
+    } else if (s_eq(raw->type, QUIT)) {
+        callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            QuitEvent event = quit_event(raw);
+            ((QuitCallback) callback)(&event);
+        }
+    } // Channel operations
+    else if (s_eq(raw->type, JOIN)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             JoinEvent event = join_event(raw);
@@ -103,10 +109,25 @@ void fire_event(struct raw_msg *raw) {
             MessageEvent event = message_event(raw);
             ((MessageCallback) callback)(&event);
         }
+    } // Miscellaneous events
+    else if (s_eq(raw->type, PING)) {
+        PingEvent event = ping_event(raw);
+        on_ping(&event);    // Call the system callback for ping before calling the bindings
+        callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ((PingCallback) callback)(&event);
+        }
+    } else if (s_eq(raw->type, NOTICE)) {
+        callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            NoticeEvent event = notice_event(raw);
+            ((NoticeCallback) callback)(&event);
+        }
     }
 
     // If no specific callback is found, check if there is
     // a global binding defined to handle the incoming message
+
     if (callback == NULL) {
         if (is_error(raw->type)) {
             // Look for a concrete error binding

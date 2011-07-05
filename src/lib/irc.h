@@ -27,41 +27,37 @@
 #include "codes.h"
 #include "events.h"
 
-// Event binding functions
+// Event binding
 void irc_bind_event(char* event, void* callback);
 void irc_bind_command(char* command, void* callback);
 void irc_unbind_event(char* event);
 void irc_unbind_command(char* command);
 
-// System functions
-void irc_pong(char* server);
-void irc_raw(char* prefix, char* type, char* message);
-
-// Connection functions
+// Connection registration
 void irc_connect(char* address, int port);
 void irc_disconnect();
 void irc_listen();
-void irc_quit(char* message);
-
-// User functions
 void irc_nick(char* nick);
 void irc_user(char* user_name, char* real_name);
 void irc_login(char* nick, char* user_name, char* real_name);
+void irc_quit(char* message);
 
-// Channel functions
+// Channel operations
 void irc_join(char* channel);
 void irc_join_pass(char* channel, char* pass); 
 void irc_part(char* channel); 
-
-// Messaging functions
 void irc_channel(char* channel, char* messge);
 void irc_private(char* nick, char* message);
-
-// Operator functions
 void irc_op(char* channel, char* nick);
 void irc_deop(char* channel, char* nick);
 void irc_voice(char* channel, char* nick);
 void irc_devoice(char* channel, char* nick);
+
+// Miscellaneous functions
+void irc_pong(char* server);
+
+// System functions
+void irc_raw(char* prefix, char* type, char* message);
 
 #endif
 

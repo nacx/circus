@@ -28,9 +28,31 @@
 #include "irc.h"
 
 
-/* ************************ */
-/* Event building functions */
-/* ************************ */
+/* ********************************** */
+/* User information utility functions */
+/* ********************************** */
+
+UserInfo user_info(char* user_ref) {
+    UserInfo ui;
+    char* c;
+
+    c = user_ref;
+    ui.nick = c;
+
+    while (*c != '!') c++;
+    *c = '\0';
+    ui.user = c + 2;
+
+    while (*c != '@') c++;
+    *c = '\0';
+    ui.server = c + 1;
+
+    return ui;
+}
+
+/* ************** */
+/* Generic events */
+/* ************** */
 
 ErrorEvent error_event(struct raw_msg *raw) {
     int i;
@@ -62,6 +84,55 @@ GenericEvent generic_event(struct raw_msg *raw) {
     return event;
 }
 
+/* ****************************** */
+/* Connection registration events */
+/* ****************************** */
+
+NickEvent nick_event(struct raw_msg *raw) {
+    NickEvent event;
+    event.user = user_info(raw->prefix);
+    event.new_nick = raw->params[0];
+    return event;
+}
+
+QuitEvent quit_event(struct raw_msg * raw) {
+    QuitEvent event;
+    event.user = user_info(raw->prefix);
+    event.message = raw->params[0];
+    return event;
+}
+
+/* ************************ */
+/* Channel operation events */
+/* ************************ */
+
+JoinEvent join_event(struct raw_msg *raw) {
+    JoinEvent event;
+    event.user = user_info(raw->prefix);
+    event.channel = raw->params[0];
+    return event;
+}
+
+PartEvent part_event(struct raw_msg *raw) {
+    PartEvent event;
+    event.user = user_info(raw->prefix);
+    event.channel = raw->params[0];
+    event.message = raw->params[1];
+    return event;
+}
+
+MessageEvent message_event(struct raw_msg *raw) {
+    MessageEvent event;
+    event.user = user_info(raw->prefix);
+    event.to = raw->params[0];
+    event.message = raw->params[1];
+    return event;
+}
+
+/* ******************** */
+/* Miscellaneous events */
+/* ******************** */
+
 PingEvent ping_event(struct raw_msg *raw) {
     PingEvent event;
     event.server = raw->params[0];
@@ -73,53 +144,5 @@ NoticeEvent notice_event(struct raw_msg *raw) {
     event.to = raw->params[0];
     event.text = raw->params[1];
     return event;
-}
-
-JoinEvent join_event(struct raw_msg *raw) {
-    JoinEvent event;
-    UserInfo ui = user_info(raw->prefix);
-    event.user = ui;
-    event.channel = raw->params[0];
-    return event;
-}
-
-PartEvent part_event(struct raw_msg *raw) {
-    PartEvent event;
-    UserInfo ui = user_info(raw->prefix);
-    event.user = ui;
-    event.channel = raw->params[0];
-    event.message = raw->params[1];
-    return event;
-}
-
-MessageEvent message_event(struct raw_msg *raw) {
-    MessageEvent event;
-    UserInfo ui = user_info(raw->prefix);
-    event.user = ui;
-    event.to = raw->params[0];
-    event.message = raw->params[1];
-    return event;
-}
-
-/* ********************************** */
-/* User information utility functions */
-/* ********************************** */
-
-UserInfo user_info(char* user_ref) {
-    UserInfo ui;
-    char* c;
-
-    c = user_ref;
-    ui.nick = c;
-
-    while (*c != '!') c++;
-    *c = '\0';
-    ui.user = c + 2;
-
-    while (*c != '@') c++;
-    *c = '\0';
-    ui.server = c + 1;
-
-    return ui;
 }
 

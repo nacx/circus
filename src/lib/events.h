@@ -48,9 +48,9 @@ typedef struct {
 // Parse the given user string and build the UserInfo struct
 UserInfo user_info(char* user_ref);
 
-/* *************** */
-/* IRC Event types */
-/* *************** */
+/* ******************* */
+/* Generic event types */
+/* ******************* */
 
 // Fired when an error message arrives
 typedef struct {
@@ -68,16 +68,23 @@ typedef struct {
     char* message;
 } GenericEvent;
 
-// Fired when a ping message arrives
-typedef struct {
-    char* server;   // Server where the pong response must be sent
-} PingEvent;
+/* ****************************** */
+/* Connection registration events */
+/* ****************************** */
 
-// Fired when a notice arrives
 typedef struct {
-    char* to;       // The destination of the message
-    char* text;     // The text of the message
-} NoticeEvent;
+    UserInfo user;
+    char* new_nick;
+} NickEvent;
+
+typedef struct {
+    UserInfo user;
+    char* message;
+} QuitEvent;
+
+/* ************************ */
+/* Channel operation events */
+/* ************************ */
 
 // Fired when a user joins a channel
 typedef struct {
@@ -99,6 +106,20 @@ typedef struct {
     char* message;  // The text of the message
 } MessageEvent;
 
+/* ******************** */
+/* Miscellaneous events */
+/* ******************** */
+
+// Fired when a ping message arrives
+typedef struct {
+    char* server;   // Server where the pong response must be sent
+} PingEvent;
+
+// Fired when a notice arrives
+typedef struct {
+    char* to;       // The destination of the message
+    char* text;     // The text of the message
+} NoticeEvent;
 
 /* ************************ */
 /* Event building functions */ 
@@ -106,11 +127,13 @@ typedef struct {
 
 ErrorEvent      error_event(struct raw_msg *raw);
 GenericEvent    generic_event(struct raw_msg *raw);
-PingEvent       ping_event(struct raw_msg *raw);
-NoticeEvent     notice_event(struct raw_msg *raw);
+NickEvent       nick_event(struct raw_msg *raw);
+QuitEvent       quit_event(struct raw_msg *raw);
 JoinEvent       join_event(struct raw_msg *raw);
 PartEvent       part_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
+PingEvent       ping_event(struct raw_msg *raw);
+NoticeEvent     notice_event(struct raw_msg *raw);
 
 /* ************** */
 /* Callback types */
@@ -118,10 +141,13 @@ MessageEvent    message_event(struct raw_msg *raw);
 
 typedef void (*ErrorCallback)(ErrorEvent*);
 typedef void (*GenericCallback)(GenericEvent*);
-typedef void (*NoticeCallback)(NoticeEvent*);
+typedef void (*NickCallback)(NickEvent*);
+typedef void (*QuitCallback)(QuitEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
+typedef void (*NoticeCallback)(NoticeEvent*);
+typedef void (*PingCallback)(PingEvent*);
 
 #endif
 
