@@ -218,18 +218,12 @@ struct raw_msg parse(char* msg, char* buffer) {
 
 void handle(char* msg) {
     char* buffer = NULL;
+    char* msg_end;
     struct raw_msg raw;
 
-    // Remove the end line termination before parsing
-    msg[strlen(msg) - 2] = '\0';
-
-    // Parse the line and get the raw message
-    raw = parse(msg, buffer);
-
-    // Fire the event
-    //if (raw.type != NULL) {
-        fire_event(&raw);
-    //}
+    msg[strlen(msg) - 2] = '\0';    // Remove the line terminaion before parsing
+    raw = parse(msg, buffer);       // Parse the input and get the raw message
+    fire_event(&raw);               // Fire the event
 
     // Free memory used to parse the message once it has been handled
     if (buffer != NULL) {

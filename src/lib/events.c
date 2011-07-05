@@ -124,6 +124,7 @@ PartEvent part_event(struct raw_msg *raw) {
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
     event.user = user_info(raw->prefix);
+    event.is_channel = (raw->params[0][0] == '#');
     event.to = raw->params[0];
     event.message = raw->params[1];
     return event;

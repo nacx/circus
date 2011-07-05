@@ -102,6 +102,7 @@ typedef struct {
 // Fired when a message is sent to a channel or to a user
 typedef struct {
     UserInfo user;  // The user who sends the event
+    int is_channel; // If the message is sent to a channel
     char* to;       // The destination of the event (nick or channel)
     char* message;  // The text of the message
 } MessageEvent;

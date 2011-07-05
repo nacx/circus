@@ -2,7 +2,7 @@
 # Copyright (c) 2011 Ignasi Barrera
 # This file is released under the MIT License, see LICENSE file.
 
-TARGETS = listen welcome oper binding callback
+TARGETS = welcome oper binding callback logger
 
 LIBDIR = ../src/lib
 
