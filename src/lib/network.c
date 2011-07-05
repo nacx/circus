@@ -64,9 +64,8 @@ void net_connect(char* address, int port) {
         exit(EXIT_FAILURE);
     }
 
-    // Create the file descriptor to read and write easily
-    _sd = fdopen(_socket, "r");
-    setvbuf(_sd, NULL, _IONBF, 0);   // Turn off buffering
+    _sd = fdopen(_socket, "r");     // Create the file descriptor to read from the socket line by line
+    setvbuf(_sd, NULL, _IONBF, 0);  // Turn off buffering to avoid blocking input
 }
 
 void net_disconnect() {
@@ -88,7 +87,7 @@ int net_send(char* msg) {
 void net_recv(char* msg) {
     char* ret;
 
-    // Read only a line from the socket
+    // Read only a single line from the socket
     ret = fgets(msg, MSG_SIZE + 1, _sd);
 
     if (ret == NULL) {
