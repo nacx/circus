@@ -102,7 +102,7 @@ void shutdown_handler(int signal) {
 
 void irc_listen() {
     int status;
-    char msg[MSG_SIZE];
+    char msg[MSG_SIZE + 1];
 
     // Register shutdown signals
     signal(SIGHUP, shutdown_handler);

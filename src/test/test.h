@@ -26,7 +26,6 @@
 // Unit test suites
 void test_hashtable();
 void test_binding();
-void test_network();
 void test_utils();
 void test_message_handler();
 void test_events();

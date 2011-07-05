@@ -31,6 +31,9 @@
 #include "network.h"
 
 
+int   _socket;  // The socket to the IRC server
+FILE* _sd;      // A file pointer to be able to read from the socket line by line
+
 void net_connect(char* address, int port) {
     struct hostent *host_entry;     // Host name
     struct sockaddr_in sock_addr;   // Remote address
@@ -60,6 +63,10 @@ void net_connect(char* address, int port) {
         perror("connect error");
         exit(EXIT_FAILURE);
     }
+
+    // Create the file descriptor to read and write easily
+    _sd = fdopen(_socket, "r");
+    setvbuf(_sd, NULL, _IONBF, 0);   // Turn off buffering
 }
 
 void net_disconnect() {
@@ -78,22 +85,18 @@ int net_send(char* msg) {
     return send(_socket, out, strlen(out), 0);
 }
 
-int net_recv(char* msg) {
-    int numbytes;
+void net_recv(char* msg) {
+    char* ret;
 
-    if ((numbytes = recv(_socket, msg, MSG_SIZE - 1, 0)) > 0) {
-        msg[numbytes] = '\0';   // Append the "end of string" character
-    }
+    // Read only a line from the socket
+    ret = fgets(msg, MSG_SIZE + 1, _sd);
 
-    // If we receive the command in different read operations, print
-    // them in different lines
-    if (msg[numbytes - 1] != '\n') {
-        printf("\n");
+    if (ret == NULL) {
+        perror("Error reading from socket");
+        exit(EXIT_FAILURE);
     }
 
     printf("<< %s", msg);
-
-    return numbytes;
 }
 
 int net_listen() {

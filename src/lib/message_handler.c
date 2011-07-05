@@ -67,7 +67,7 @@ void fire_event(struct raw_msg *raw) {
 
     // Check if there is a concrete binding for the
     // incoming message type
-    
+
     // Connection registration
     if (s_eq(raw->type, NICK)) {
         callback = lookup_event(raw->type);
@@ -217,31 +217,23 @@ struct raw_msg parse(char* msg, char* buffer) {
 }
 
 void handle(char* msg) {
+    char* buffer = NULL;
     struct raw_msg raw;
-    char *line, *line_end, *buffer = NULL;
 
-    if (msg != NULL && strlen(msg) > 0) {
-        // Each line is a different IRC message
-        line = strtok_r(msg, MSG_END, &line_end);
-        while (line != NULL) {
-            // Parse each message individually
-            raw = parse(line, buffer);
+    // Remove the end line termination before parsing
+    msg[strlen(msg) - 2] = '\0';
 
-            // Fire the event
-            if (raw.type != NULL) {
-                fire_event(&raw);
-            }
+    // Parse the line and get the raw message
+    raw = parse(msg, buffer);
 
-            // Free memory used to parse the message
-            // once it has been handled
-            if (buffer != NULL) {
-                free(buffer);
-                buffer = NULL;
-            }
+    // Fire the event
+    //if (raw.type != NULL) {
+        fire_event(&raw);
+    //}
 
-            // Continue with the next line
-            line = strtok_r(NULL, MSG_END, &line_end);
-        }
+    // Free memory used to parse the message once it has been handled
+    if (buffer != NULL) {
+        free(buffer);
     }
 }
 

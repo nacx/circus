@@ -31,14 +31,11 @@
 #define NET_CLOSE   2     // The communication must finish
 #define NET_IGNORE  3     // Ignore the status and continue
 
-// The socket to the IRC server
-int _socket;
-
 // Network functions
 void net_connect(char* address, int port);  // Connect to the IRC server
 void net_disconnect();                      // Disconnect from the server
 int  net_send(char* msg);                   // Send a message to the server
-int  net_recv(char* msg);                   // Receive a message rom the server
+void net_recv(char* msg);                   // Receive a message from the server
 int  net_listen();                          // Listen for incoming messages
 
 #endif
