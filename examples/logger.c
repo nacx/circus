@@ -23,7 +23,7 @@
 /*
  * Read welcome.c and oper.c first.
  *
- * This is an ecample logging bot that logs conversations in all channels where
+ * This is an example logging bot that logs conversations in all channels where
  * the bot is connected and all private messages sent to it.
  *
  * It also defines a binding to disconnect if the given nick is already in use.
