@@ -218,7 +218,6 @@ struct raw_msg parse(char* msg, char* buffer) {
 
 void handle(char* msg) {
     char* buffer = NULL;
-    char* msg_end;
     struct raw_msg raw;
 
     msg[strlen(msg) - 2] = '\0';    // Remove the line terminaion before parsing
