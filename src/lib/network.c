@@ -76,8 +76,8 @@ void net_disconnect() {
 int net_send(char* msg) {
     char out[MSG_SIZE];
 
-    strncpy(out, msg, MSG_SIZE - 2);    // Cut the message to the maximum size
-    strcat(out, MSG_SEP);               // Messages must end like this
+    strncpy(out, msg, WRITE_BUF);   // Cut the message to the maximum size
+    strcat(out, MSG_SEP);           // Messages must end like this
 
     printf(">> %s", out);
 
@@ -88,7 +88,7 @@ void net_recv(char* msg) {
     char* ret;
 
     // Read only a single line from the socket
-    ret = fgets(msg, MSG_SIZE + 1, _sd);
+    ret = fgets(msg, READ_BUF, _sd);
 
     if (ret == NULL) {
         perror("Error reading from socket");

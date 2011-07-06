@@ -26,6 +26,9 @@
 #define MSG_SIZE 512    // The maximum message size of an IRC message
 #define MSG_SEP "\r\n"  // The message separator
 
+#define READ_BUF (MSG_SIZE + 1)     // The read buffer size
+#define WRITE_BUF (MSG_SIZE - 2)    // The write buffer size
+
 #define NET_READY   0     // There are messages to be read
 #define NET_ERROR   1     // Unexpected error while reading
 #define NET_CLOSE   2     // The communication must finish

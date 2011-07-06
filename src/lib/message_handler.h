@@ -23,7 +23,6 @@
 #ifndef __MESSAGEHANDLER_H__
 #define __MESSAGEHANDLER_H__
 
-#define MSG_END     "\r\n"      // IRC message end
 #define PARAM_SEP   " "         // IRC parameter separator
 #define CMD_SEP     "#"         // Command separator in event bindings
 
