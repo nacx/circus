@@ -61,15 +61,17 @@ void log_msg(MessageEvent* event) {
 
 
 int main(int argc, char **argv) {
-    if (argc != 5) {
-        printf("Usage: %s <server> <port> <nick> <channel>\n", argv[0]);
+    int i, port;
+    char *server, *nick;
+
+    if (argc < 4) {
+        printf("Usage: %s <server> <port> <nick> ['<channel 1>' ... '<channel n>']\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    char* server = argv[1];     // The IRC server
-    int port = atoi(argv[2]);   // The IRC server port
-    char* nick = argv[3];       // The nick to use
-    char* channel = argv[4];    // The channel to connect to
+    server = argv[1];     // The IRC server
+    port = atoi(argv[2]);   // The IRC server port
+    nick = argv[3];       // The nick to use
 
     // Create the log directory
     mkdir(LOG_PATH, S_IRWXU);
@@ -81,7 +83,11 @@ int main(int argc, char **argv) {
     // Connect, login and join the configured channel
     irc_connect(server, port);
     irc_login(nick, "Circus", "Circus IRC bot");
-    irc_join(channel);
+
+    // Join the given channels
+    for (i = 4; i < argc; i++) {
+        irc_join(argv[i]);
+    }
 
     // Start listening to events
     // This method blocks until a quit signal is received
