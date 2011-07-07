@@ -136,8 +136,8 @@ NamesEvent names_event(struct raw_msg *raw) {
     event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
     event.channel = raw->params[2];
     event.num_names = event.finished? 0 : raw->num_params - 3;
-    for (i = 3 ; i < raw->num_params; i++) {
-        event.names[i - 3] = raw->params[i];
+    for (i = 0 ; i < event.num_names; i++) {
+        event.names[i] = raw->params[i + 3];
     }
     return event;
 }
