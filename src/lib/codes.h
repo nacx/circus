@@ -34,13 +34,14 @@ int is_numeric_response(char* code);
 // Text message types
 #define JOIN            "JOIN"      // Someone joins a channel
 #define MODE            "MODE"      // A mode is set
+#define NAMES           "NAMES"     // List of users in a channel
 #define NICK            "NICK"      // Nick change message
 #define NOTICE          "NOTICE"    // Notice message
 #define PART            "PART"      // Someone leaves a channel
 #define PING            "PING"      // Ping message
 #define PONG            "PONG"      // Ping response message
 #define PRIVMSG         "PRIVMSG"   // Message to a channel or user
-#define TOPIC           "TOPIC"     // Changhe the topic of a channel
+#define TOPIC           "TOPIC"     // Change the topic of a channel
 #define USER            "USER"      // Set user information set message
 #define QUIT            "QUIT"      // Quit message
 

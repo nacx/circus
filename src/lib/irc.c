@@ -186,6 +186,12 @@ void irc_topic(char* channel, char* topic) {
     net_send(msg);
 }
 
+void irc_names(char* channel) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s", NAMES, channel);
+    net_send(msg);
+}
+
 void irc_channel(char* channel, char* message) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, channel, message);

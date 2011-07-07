@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 #include "events.h"
 #include "message_handler.h"
 #include "irc.h"
@@ -126,6 +127,18 @@ TopicEvent topic_event(struct raw_msg *raw) {
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.topic = raw->params[1];
+    return event;
+}
+
+NamesEvent names_event(struct raw_msg *raw) {
+    int i;
+    NamesEvent event;
+    event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
+    event.channel = raw->params[2];
+    event.num_names = event.finished? 0 : raw->num_params - 3;
+    for (i = 3 ; i < raw->num_params; i++) {
+        event.names[i - 3] = raw->params[i];
+    }
     return event;
 }
 

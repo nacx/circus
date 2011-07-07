@@ -106,6 +106,14 @@ typedef struct {
     char* topic;    // The new topic
 } TopicEvent;
 
+// Fired when the response to the NAMES arrives
+typedef struct {
+    int finished;               // If there are no more users to process (NAMES response is multi-message)
+    char* channel;              // The channel
+    int num_names;              // The number of names in the current names list
+    char* names[MAX_PARAMS];    // The list of users in channel
+} NamesEvent;
+
 // Fired when a message is sent to a channel or to a user
 typedef struct {
     UserInfo user;  // The user who sends the event
@@ -140,6 +148,7 @@ QuitEvent       quit_event(struct raw_msg *raw);
 JoinEvent       join_event(struct raw_msg *raw);
 PartEvent       part_event(struct raw_msg *raw);
 TopicEvent      topic_event(struct raw_msg *raw);
+NamesEvent      names_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
@@ -155,6 +164,7 @@ typedef void (*QuitCallback)(QuitEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
 typedef void (*TopicCallback)(TopicEvent*);
+typedef void (*NamesCallback)(NamesEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*PingCallback)(PingEvent*);
