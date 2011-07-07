@@ -99,6 +99,13 @@ typedef struct {
     char* message;  // The part message
 } PartEvent;
 
+// Fired when someone changes the topic of a channel
+typedef struct {
+    UserInfo user;  // The user who has changed the topic
+    char* channel;  // The channel name
+    char* topic;    // The new topic
+} TopicEvent;
+
 // Fired when a message is sent to a channel or to a user
 typedef struct {
     UserInfo user;  // The user who sends the event
@@ -132,6 +139,7 @@ NickEvent       nick_event(struct raw_msg *raw);
 QuitEvent       quit_event(struct raw_msg *raw);
 JoinEvent       join_event(struct raw_msg *raw);
 PartEvent       part_event(struct raw_msg *raw);
+TopicEvent      topic_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
@@ -146,6 +154,7 @@ typedef void (*NickCallback)(NickEvent*);
 typedef void (*QuitCallback)(QuitEvent*);
 typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
+typedef void (*TopicCallback)(TopicEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*PingCallback)(PingEvent*);

@@ -40,6 +40,7 @@ int is_numeric_response(char* code);
 #define PING            "PING"      // Ping message
 #define PONG            "PONG"      // Ping response message
 #define PRIVMSG         "PRIVMSG"   // Message to a channel or user
+#define TOPIC           "TOPIC"     // Changhe the topic of a channel
 #define USER            "USER"      // Set user information set message
 #define QUIT            "QUIT"      // Quit message
 

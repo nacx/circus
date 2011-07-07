@@ -69,9 +69,9 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    server = argv[1];     // The IRC server
+    server = argv[1];       // The IRC server
     port = atoi(argv[2]);   // The IRC server port
-    nick = argv[3];       // The nick to use
+    nick = argv[3];         // The nick to use
 
     // Create the log directory
     mkdir(LOG_PATH, S_IRWXU);

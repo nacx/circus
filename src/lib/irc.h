@@ -46,6 +46,7 @@ void irc_quit(char* message);
 void irc_join(char* channel);
 void irc_join_pass(char* channel, char* pass); 
 void irc_part(char* channel); 
+void irc_topic(char* channel, char* topic);
 void irc_channel(char* channel, char* messge);
 void irc_private(char* nick, char* message);
 void irc_op(char* channel, char* nick);

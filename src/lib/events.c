@@ -121,6 +121,14 @@ PartEvent part_event(struct raw_msg *raw) {
     return event;
 }
 
+TopicEvent topic_event(struct raw_msg *raw) {
+    TopicEvent event;
+    event.user = user_info(raw->prefix);
+    event.channel = raw->params[0];
+    event.topic = raw->params[1];
+    return event;
+}
+
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
     event.user = user_info(raw->prefix);

@@ -136,14 +136,14 @@ void irc_listen() {
 }
 
 void irc_nick(char* nick) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s", NICK, nick);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s", NICK, nick);
     net_send(msg);
 }
 
 void irc_user(char* user_name, char* real_name) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s hostname server :%s", USER, user_name, real_name);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s hostname server :%s", USER, user_name, real_name);
     net_send(msg);
 }
 
@@ -153,8 +153,8 @@ void irc_login(char* nick, char* user_name, char* real_name) {
 }
 
 void irc_quit(char* message) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s :%s", QUIT, message);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s :%s", QUIT, message);
     net_send(msg);
 }
 
@@ -163,56 +163,62 @@ void irc_quit(char* message) {
 /* ****************** */
 
 void irc_join(char* channel) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s", JOIN, channel);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s", JOIN, channel);
     net_send(msg);
 }
 
 void irc_join_pass(char* channel, char* pass) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s %s", JOIN, channel, pass);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s %s", JOIN, channel, pass);
     net_send(msg);
 }
 
 void irc_part(char* channel) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s", PART, channel);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s", PART, channel);
+    net_send(msg);
+}
+
+void irc_topic(char* channel, char* topic) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s :%s", TOPIC, channel, topic);
     net_send(msg);
 }
 
 void irc_channel(char* channel, char* message) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s :%s", PRIVMSG, channel, message);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, channel, message);
     net_send(msg);
 }
 
 void irc_private(char* nick, char* message) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s :%s", PRIVMSG, nick, message);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, nick, message);
     net_send(msg);
 }
 
 void irc_op(char* channel, char* nick) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s +o %s", MODE, channel, nick);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +o %s", MODE, channel, nick);
     net_send(msg);
 }
 
 void irc_deop(char* channel, char* nick) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s -o %s", MODE, channel, nick);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s -o %s", MODE, channel, nick);
     net_send(msg);
 }
 
 void irc_voice(char* channel, char* nick) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s +v %s", MODE, channel, nick);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +v %s", MODE, channel, nick);
     net_send(msg);
 }
 
 void irc_devoice(char* channel, char* nick) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s -v %s", MODE, channel, nick);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s -v %s", MODE, channel, nick);
     net_send(msg);
 }
 
@@ -221,8 +227,8 @@ void irc_devoice(char* channel, char* nick) {
 /* *********************** */
 
 void irc_pong(char* server) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, "%s %s", PONG, server);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s", PONG, server);
     net_send(msg);
 }
 
@@ -231,8 +237,8 @@ void irc_pong(char* server) {
 /* **************** */
 
 void irc_raw(char* prefix, char* type, char* message) {
-    char msg[READ_BUF];
-    snprintf(msg, READ_BUF, ":%s %s %s", prefix, type, message);
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, ":%s %s %s", prefix, type, message);
     net_send(msg);
 }
 
