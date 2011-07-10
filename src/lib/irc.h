@@ -48,6 +48,7 @@ void irc_join_pass(char* channel, char* pass);      // Join a password protected
 void irc_part(char* channel);                       // Leave a channel
 void irc_topic(char* channel, char* topic);         // Change the topic of a channel
 void irc_names(char* channel);                      // List the users in a channel
+void irc_list();                                    // List channels and their topics
 void irc_channel(char* channel, char* messge);      // Send a message to a channel
 void irc_private(char* nick, char* message);        // Send a private message to a user
 void irc_op(char* channel, char* nick);             // Give operator to a user

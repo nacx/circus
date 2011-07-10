@@ -106,6 +106,12 @@ void fire_event(struct raw_msg *raw) {
             NamesEvent event = names_event(raw);
             ((NamesCallback) callback)(&event);
         }
+    } else if (s_eq(raw->type, RPL_LIST) || s_eq(raw->type, RPL_LISTEND)) {
+        callback = lookup_event(LIST);
+        if (callback != NULL) {
+            ListEvent event = list_event(raw);
+            ((ListCallback) callback)(&event);
+        }
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
         char key[50];

@@ -142,6 +142,20 @@ NamesEvent names_event(struct raw_msg *raw) {
     return event;
 }
 
+ListEvent list_event(struct raw_msg *raw) {
+    ListEvent event;
+    event.channel = NULL;
+    event.num_users = 0;
+    event.topic = NULL;
+    event.finished = s_eq(raw->type, RPL_LISTEND);
+    if (!event.finished) {
+        event.channel = raw->params[1];
+        event.num_users = atoi(raw->params[2]);
+        event.topic = raw->params[3];
+    }
+    return event;
+}
+
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
     event.user = user_info(raw->prefix);

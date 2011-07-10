@@ -114,6 +114,14 @@ typedef struct {
     char* names[MAX_PARAMS];    // The list of users in channel
 } NamesEvent;
 
+// Fired when the response to the NAMES arrives
+typedef struct {
+    int finished;       // If there are no more channels to process (LIST response is multi-message)
+    char* channel;      // The name of the current channel
+    int num_users;      // The number of users in the channel
+    char* topic;        // The current topic in the channel
+} ListEvent;
+
 // Fired when a message is sent to a channel or to a user
 typedef struct {
     UserInfo user;  // The user who sends the event
@@ -149,6 +157,7 @@ JoinEvent       join_event(struct raw_msg *raw);
 PartEvent       part_event(struct raw_msg *raw);
 TopicEvent      topic_event(struct raw_msg *raw);
 NamesEvent      names_event(struct raw_msg *raw);
+ListEvent       list_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
@@ -165,6 +174,7 @@ typedef void (*JoinCallback)(JoinEvent*);
 typedef void (*PartCallback)(PartEvent*);
 typedef void (*TopicCallback)(TopicEvent*);
 typedef void (*NamesCallback)(NamesEvent*);
+typedef void (*ListCallback)(ListEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*PingCallback)(PingEvent*);

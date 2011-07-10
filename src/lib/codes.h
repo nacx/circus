@@ -33,6 +33,7 @@ int is_numeric_response(char* code);
 
 // Text message types
 #define JOIN            "JOIN"      // Someone joins a channel
+#define LIST            "LIST"      // List channel and their topics
 #define MODE            "MODE"      // A mode is set
 #define NAMES           "NAMES"     // List of users in a channel
 #define NICK            "NICK"      // Nick change message
