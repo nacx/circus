@@ -156,6 +156,13 @@ ListEvent list_event(struct raw_msg *raw) {
     return event;
 }
 
+InviteEvent invite_event(struct raw_msg* raw) {
+    InviteEvent event;
+    event.user = user_info(raw->prefix);
+    event.channel = raw->params[1];
+    return event;
+}
+
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
     event.user = user_info(raw->prefix);

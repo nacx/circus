@@ -32,6 +32,7 @@ int is_numeric_response(char* code);
 #define ERROR           "ERROR"     // If no specific error binding is found, call this global binding
 
 // Text message types
+#define INVITE          "INVITE"    // Invite a user to a channel
 #define JOIN            "JOIN"      // Someone joins a channel
 #define LIST            "LIST"      // List channel and their topics
 #define MODE            "MODE"      // A mode is set

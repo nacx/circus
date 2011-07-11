@@ -198,6 +198,12 @@ void irc_list() {
     net_send(msg);
 }
 
+void irc_invite(char* nick, char* channel) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s %s", INVITE, nick, channel);
+    net_send(msg);
+}
+
 void irc_channel(char* channel, char* message) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, channel, message);
