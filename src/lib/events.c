@@ -163,6 +163,15 @@ InviteEvent invite_event(struct raw_msg* raw) {
     return event;
 }
 
+KickEvent kick_event(struct raw_msg* raw) {
+    KickEvent event;
+    event.user = user_info(raw->prefix);
+    event.channel = raw->params[0];
+    event.nick = raw->params[1];
+    event.message = raw->params[2];
+    return event;
+}
+
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
     event.user = user_info(raw->prefix);

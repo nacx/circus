@@ -43,19 +43,20 @@ void irc_login(char* nick, char* user_name, char* real_name);   // Sets the nick
 void irc_quit(char* message);                                   // Sends a quit message to the server to close the connection
 
 // Channel operations
-void irc_join(char* channel);                       // Join a channel
-void irc_join_pass(char* channel, char* pass);      // Join a password protected channel
-void irc_part(char* channel);                       // Leave a channel
-void irc_topic(char* channel, char* topic);         // Change the topic of a channel
-void irc_names(char* channel);                      // List the users in a channel
-void irc_list();                                    // List channels and their topics
-void irc_invite(char* nick, char* channel);         // Invite a user to a channel
-void irc_channel(char* channel, char* messge);      // Send a message to a channel
-void irc_private(char* nick, char* message);        // Send a private message to a user
-void irc_op(char* channel, char* nick);             // Give operator to a user
-void irc_deop(char* channel, char* nick);           // Take operator from a user
-void irc_voice(char* channel, char* nick);          // Give voice to a user
-void irc_devoice(char* channel, char* nick);        // Take voice from a user
+void irc_join(char* channel);                               // Join a channel
+void irc_join_pass(char* channel, char* pass);              // Join a password protected channel
+void irc_part(char* channel);                               // Leave a channel
+void irc_topic(char* channel, char* topic);                 // Change the topic of a channel
+void irc_names(char* channel);                              // List the users in a channel
+void irc_list();                                            // List channels and their topics
+void irc_invite(char* nick, char* channel);                 // Invite a user to a channel
+void irc_channel(char* channel, char* messge);              // Send a message to a channel
+void irc_private(char* nick, char* message);                // Send a private message to a user
+void irc_op(char* channel, char* nick);                     // Give operator to a user
+void irc_deop(char* channel, char* nick);                   // Take operator from a user
+void irc_voice(char* channel, char* nick);                  // Give voice to a user
+void irc_devoice(char* channel, char* nick);                // Take voice from a user
+void irc_kick(char* channel, char* nick, char* message);    // Kick a user from a channel
 
 // Miscellaneous functions
 void irc_pong(char* server);                // Respond to ping message to keep connected if inactive

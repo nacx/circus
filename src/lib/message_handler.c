@@ -118,6 +118,12 @@ void fire_event(struct raw_msg *raw) {
             InviteEvent event = invite_event(raw);
             ((InviteCallback) callback)(&event);
         }
+    } else if (s_eq(raw->type, KICK)) {
+        callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            KickEvent event = kick_event(raw);
+            ((KickCallback) callback)(&event);
+        }
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
         char key[50];

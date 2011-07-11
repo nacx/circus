@@ -240,6 +240,12 @@ void irc_devoice(char* channel, char* nick) {
     net_send(msg);
 }
 
+void irc_kick(char* channel, char* nick, char* message) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s %s :%s", KICK, channel, nick, message);
+    net_send(msg);
+}
+
 /* *********************** */
 /* Miscellaneous functions */
 /* *********************** */

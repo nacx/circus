@@ -34,6 +34,7 @@ int is_numeric_response(char* code);
 // Text message types
 #define INVITE          "INVITE"    // Invite a user to a channel
 #define JOIN            "JOIN"      // Someone joins a channel
+#define KICK            "KICK"      // Kick a user form a channel
 #define LIST            "LIST"      // List channel and their topics
 #define MODE            "MODE"      // A mode is set
 #define NAMES           "NAMES"     // List of users in a channel

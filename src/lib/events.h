@@ -128,6 +128,14 @@ typedef struct {
     char* channel;
 } InviteEvent;
 
+// Fired when someone is kicked in a channel
+typedef struct {
+    UserInfo user;
+    char* channel;
+    char* nick;
+    char* message;
+} KickEvent;
+
 // Fired when a message is sent to a channel or to a user
 typedef struct {
     UserInfo user;  // The user who sends the event
@@ -165,6 +173,7 @@ TopicEvent      topic_event(struct raw_msg *raw);
 NamesEvent      names_event(struct raw_msg *raw);
 ListEvent       list_event(struct raw_msg *raw);
 InviteEvent     invite_event(struct raw_msg *raw);
+KickEvent       kick_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
@@ -183,6 +192,7 @@ typedef void (*TopicCallback)(TopicEvent*);
 typedef void (*NamesCallback)(NamesEvent*);
 typedef void (*ListCallback)(ListEvent*);
 typedef void (*InviteCallback)(InviteEvent*);
+typedef void (*KickCallback)(KickEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*PingCallback)(PingEvent*);
