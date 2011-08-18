@@ -101,7 +101,7 @@ void shutdown_handler(int signal) {
 }
 
 void irc_listen() {
-    int status;
+    enum net_status status;
     char msg[READ_BUF];
 
     // Register shutdown signals

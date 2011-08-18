@@ -98,7 +98,7 @@ void net_recv(char* msg) {
     printf("<< %s", msg);
 }
 
-int net_listen() {
+enum net_status net_listen() {
     int read, ret;
     fd_set read_fd_set;
 

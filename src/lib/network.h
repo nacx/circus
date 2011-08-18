@@ -29,17 +29,20 @@
 #define READ_BUF (MSG_SIZE + 1)     // The read buffer size
 #define WRITE_BUF (MSG_SIZE - 2)    // The write buffer size
 
-#define NET_READY   0     // There are messages to be read
-#define NET_ERROR   1     // Unexpected error while reading
-#define NET_CLOSE   2     // The communication must finish
-#define NET_IGNORE  3     // Ignore the status and continue
+// Network status
+enum net_status {
+    NET_READY,      // There is data to be read from the socket
+    NET_ERROR,      // Unexpected error while reading
+    NET_CLOSE,      // The connection must terminate
+    NET_IGNORE      // Ignore the status and continue
+};
 
 // Network functions
 void net_connect(char* address, int port);  // Connect to the IRC server
 void net_disconnect();                      // Disconnect from the server
 int  net_send(char* msg);                   // Send a message to the server
 void net_recv(char* msg);                   // Receive a message from the server
-int  net_listen();                          // Listen for incoming messages
+enum net_status net_listen();               // Listen for incoming messages
 
 #endif
 
