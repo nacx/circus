@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "irc.h"
 
 /* ************************ */
 /* String utility functions */
@@ -44,5 +45,14 @@ void lower(char* str) {
             str[i] = tolower(str[i]);
         }
     }
+}
+
+void append_channel_flags(char* str, unsigned char flags) {
+    if (flags & CH_PRIVATE)     strcat(str, "p");
+    if (flags & CH_SECRET)      strcat(str, "s");
+    if (flags & CH_INVITEONLY)  strcat(str, "i");
+    if (flags & CH_TOPICLOCK)   strcat(str, "t");
+    if (flags & CH_NOEXTMSGS)   strcat(str, "n");
+    if (flags & CH_MODERATED)   strcat(str, "m");
 }
 

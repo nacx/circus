@@ -23,8 +23,8 @@
 #include <string.h>
 #include "minunit.h"
 #include "test.h"
+#include "../lib/irc.h"
 #include "../lib/utils.h"
-
 
 char* test_upper() {
     char text[10] = "Test Text";
@@ -40,8 +40,34 @@ char* test_lower() {
     return 0;   
 }
 
+char* test_append_channel_flags() {
+    char text[10] = "";
+
+    // No flags set
+    append_channel_flags(text, 0x00);
+    mu_assert(s_eq(text, ""), "test_append_channel_flags: text should be an empty string");
+
+    // Single flag
+    *text = '\0';
+    append_channel_flags(text, CH_MODERATED);
+    mu_assert(s_eq(text, "m"), "test_append_channel_flags: text should be 'm'");
+
+    // Multiple flags are set in the order defined in the append_channel_flags function
+    *text = '\0';
+    append_channel_flags(text, CH_INVITEONLY | CH_NOEXTMSGS | CH_TOPICLOCK);
+    mu_assert(s_eq(text, "itn"), "test_append_channel_flags: text should be 'itn'");
+
+    // All flags
+    *text = '\0';
+    append_channel_flags(text, 0xFF);
+    mu_assert(s_eq(text, "psitnm"), "test_append_channel_flags: text should be 'psitnm'");
+
+    return 0;
+}
+
 void test_utils() {
     mu_run(test_upper);
     mu_run(test_lower);
+    mu_run(test_append_channel_flags);
 }
 

@@ -20,14 +20,16 @@
  * THE SOFTWARE.
  */
 
-#ifndef __NETWORK_H__
-#define __NETWORK_H__
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 #define s_eq(a,b) (strcmp(a,b) == 0)    // String equals
 #define s_ne(a,b) (strcmp(a,b) != 0)    // String not equals
 
 void upper(char* str);      // Modify the given string and make it upper case
 void lower(char* str);      // Modify the given string and make it lower case
+
+void append_channel_flags(char* str, unsigned char flags); // Append the given flags to the given string
 
 #endif
 

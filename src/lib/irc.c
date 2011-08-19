@@ -29,6 +29,7 @@
 #include "network.h"
 #include "message_handler.h"
 #include "binding.h"
+#include "utils.h"
 #include "irc.h"
 
 // Flag used to close the connection
@@ -243,6 +244,20 @@ void irc_devoice(char* channel, char* nick) {
 void irc_kick(char* channel, char* nick, char* message) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s %s :%s", KICK, channel, nick, message);
+    net_send(msg);
+}
+
+void irc_channel_set(char* channel, unsigned char flags) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +", MODE, channel);
+    append_channel_flags(msg, flags);
+    net_send(msg);
+}
+
+void irc_channel_unset(char* channel, unsigned char flags) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s -", MODE, channel);
+    append_channel_flags(msg, flags);
     net_send(msg);
 }
 

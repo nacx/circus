@@ -27,6 +27,16 @@
 #include "codes.h"
 #include "events.h"
 
+// Channel flags
+enum channel_flags {
+    CH_PRIVATE      = 0x01,     // Private channel flag
+    CH_SECRET       = 0x02,     // Secret channel
+    CH_INVITEONLY   = 0X04,     // Invite only channel
+    CH_TOPICLOCK    = 0x08,     // Topic settable only by channel operators flag
+    CH_NOEXTMSGS    = 0x10,     // No external messages
+    CH_MODERATED    = 0x20      // Moderated channel
+};
+
 // Event binding
 void irc_bind_event(char* event, void* callback);       // Bind an IRC event to a callback function
 void irc_bind_command(char* command, void* callback);   // Bind a channel or private chat command to a callback function
@@ -57,6 +67,8 @@ void irc_deop(char* channel, char* nick);                   // Take operator fro
 void irc_voice(char* channel, char* nick);                  // Give voice to a user
 void irc_devoice(char* channel, char* nick);                // Take voice from a user
 void irc_kick(char* channel, char* nick, char* message);    // Kick a user from a channel
+void irc_channel_set(char* channel, unsigned char flags);   // Set the given channel flags
+void irc_channel_unset(char* channel, unsigned char flags); // Unset the given channel flags
 
 // Miscellaneous functions
 void irc_pong(char* server);                // Respond to ping message to keep connected if inactive
