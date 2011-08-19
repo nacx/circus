@@ -37,16 +37,22 @@ UserInfo user_info(char* user_ref) {
     UserInfo ui;
     char* c;
 
-    c = user_ref;
-    ui.nick = c;
+    if (user_ref == NULL) {
+        ui.nick = NULL;
+        ui.user = NULL;
+        ui.server = NULL;
+    } else {
+        c = user_ref;
+        ui.nick = c;
 
-    while (*c != '!') c++;
-    *c = '\0';
-    ui.user = c + 2;
+        while (*c != '!') c++;
+        *c = '\0';
+        ui.user = c + 2;
 
-    while (*c != '@') c++;
-    *c = '\0';
-    ui.server = c + 1;
+        while (*c != '@') c++;
+        *c = '\0';
+        ui.server = c + 1;
+    }
 
     return ui;
 }
@@ -96,7 +102,7 @@ NickEvent nick_event(struct raw_msg *raw) {
     return event;
 }
 
-QuitEvent quit_event(struct raw_msg * raw) {
+QuitEvent quit_event(struct raw_msg *raw) {
     QuitEvent event;
     event.user = user_info(raw->prefix);
     event.message = raw->params[0];
@@ -156,14 +162,15 @@ ListEvent list_event(struct raw_msg *raw) {
     return event;
 }
 
-InviteEvent invite_event(struct raw_msg* raw) {
+InviteEvent invite_event(struct raw_msg *raw) {
     InviteEvent event;
     event.user = user_info(raw->prefix);
+    event.nick = raw->params[0];
     event.channel = raw->params[1];
     return event;
 }
 
-KickEvent kick_event(struct raw_msg* raw) {
+KickEvent kick_event(struct raw_msg *raw) {
     KickEvent event;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
@@ -180,6 +187,63 @@ MessageEvent message_event(struct raw_msg *raw) {
     event.message = raw->params[1];
     return event;
 }
+
+ModeEvent mode_event(struct raw_msg *raw) {
+    ModeEvent event;
+    int i;
+    char op = '\0';  // Invalid character to initialize variable
+    unsigned short int current_flag = 0x0000;
+    char* flags = raw->params[1];
+
+    event.is_channel = (raw->params[0][0] == '#');
+    event.user = user_info(event.is_channel? raw->prefix : NULL);
+    event.target = raw->params[0];
+    event.set_flags = 0x0000;
+    event.unset_flags = 0x0000;
+    event.flag_str = flags;
+    event.num_params = raw->num_params - 2;
+
+    // Process flags
+    for (i = 0; i < strlen(flags); i++) {
+        if (flags[i] == '+' || flags[i] == '-') {
+            op = flags[i];
+            continue;
+        }
+
+        switch (flags[i]) {
+            case 'p': current_flag = CH_PRIVATE;    break;
+            case 't': current_flag = CH_TOPICLOCK;  break;
+            case 'n': current_flag = CH_NOEXTMSGS;  break;
+            case 'm': current_flag = CH_MODERATED;  break;
+            case 'b': current_flag = CH_BAN;        break;
+            case 'l': current_flag = CH_LIMIT;      break;
+            case 'v': current_flag = CH_VOICE;      break;
+            case 'k': current_flag = CH_KEY;        break;
+            case 's': current_flag = CH_SECRET;     break;
+            case 'w': current_flag = USR_WALLOPS;   break;
+            case 'i': current_flag = event.is_channel? CH_INVITEONLY : USR_INVISIBLE;       break;
+            case 'o': current_flag = event.is_channel? CH_OPERATOR   : USR_OPERATOR;        break;
+            default:  current_flag = 0x0000; break;
+        }
+
+        // Update the corresponding flags
+        if (op == '+') {
+            event.set_flags |= current_flag;
+        } else if (op == '-') {
+            event.unset_flags |= current_flag;
+        }
+    }
+
+    // Add the mode parameters (only available in channel mode)
+    if (event.num_params > 0) {
+        for (i = 0; i < event.num_params; i++) {
+            event.params[i] = raw->params[i + 2];
+        }
+    }
+
+    return event;
+}
+
 
 /* ******************** */
 /* Miscellaneous events */

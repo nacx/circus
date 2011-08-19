@@ -26,6 +26,7 @@
 #include "test.h"
 #include "../lib/utils.h"
 #include "../lib/message_handler.h"
+#include "../lib/irc.h"
 #include "../lib/events.h"
 
 
@@ -44,7 +45,7 @@ char* test_error_event_one_param() {
     ErrorEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
-   
+
     raw = parse(":nick!~user@server 401 circus-bot :Test message", buffer);
     event = error_event(&raw);
 
@@ -62,7 +63,7 @@ char* test_error_event_no_params() {
     ErrorEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
-   
+
     raw = parse(":nick!~user@server 401 :Test message", buffer);
     event = error_event(&raw);
 
@@ -79,7 +80,7 @@ char* test_generic_event_one_param() {
     GenericEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
-   
+
     raw = parse(":nick!~user@server 305 circus-bot :Test message", buffer);
     event = generic_event(&raw);
 
@@ -97,7 +98,7 @@ char* test_generic_event_no_params() {
     GenericEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
-   
+
     raw = parse(":nick!~user@server 305 :Test message", buffer);
     event = generic_event(&raw);
 
@@ -110,11 +111,162 @@ char* test_generic_event_no_params() {
     return 0;
 }
 
+char* test_channel_mode_event_set() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int set_flags = CH_INVITEONLY | CH_NOEXTMSGS | CH_MODERATED;
+
+    raw = parse(":nick!~user@server MODE #test +inm", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(event.is_channel, "test_channel_mode_event_set: is_channel should be true");
+    mu_assert(s_eq(event.target, "#test"), "test_channel_mode_event_set: target should be '#test'");
+    mu_assert(event.set_flags == set_flags, "test_channel_mode_event_set: set_flags should be 'inm'");
+    mu_assert(event.unset_flags == 0x0000, "test_channel_mode_event_set: unset_flags should be 0x0000");
+    mu_assert(event.num_params == 0, "test_channel_mode_event_set: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_channel_mode_event_unset() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int unset_flags = CH_INVITEONLY | CH_NOEXTMSGS | CH_MODERATED;
+
+    raw = parse(":nick!~user@server MODE #test -inm", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(event.is_channel, "test_channel_mode_event_unset: is_channel should be true");
+    mu_assert(s_eq(event.target, "#test"), "test_channel_mode_event_unset: target should be '#test'");
+    mu_assert(event.set_flags == 0x0000, "test_channel_mode_event_unset: set_flags should be 0x0000");
+    mu_assert(event.unset_flags == unset_flags, "test_channel_mode_event_unset: unset_flags should be 'inm'");
+    mu_assert(event.num_params == 0, "test_channel_mode_event_unset: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_channel_mode_event_setunset() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int set_flags = CH_TOPICLOCK | CH_SECRET;
+    unsigned short int unset_flags = CH_INVITEONLY | CH_NOEXTMSGS | CH_MODERATED;
+
+    raw = parse(":nick!~user@server MODE #test -i+ts-nm", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(event.is_channel, "test_channel_mode_event_setunset: is_channel should be true");
+    mu_assert(s_eq(event.target, "#test"), "test_channel_mode_event_setunset: target should be '#test'");
+    mu_assert(event.set_flags == set_flags, "test_channel_mode_event_setunset: set_flags should be 'ts'");
+    mu_assert(event.unset_flags == unset_flags, "test_channel_mode_event_setunset: unset_flags should be 'inm'");
+    mu_assert(event.num_params == 0, "test_channel_mode_event_setunset: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_channel_mode_event_params() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int set_flags = CH_INVITEONLY | CH_LIMIT | CH_BAN;
+
+    raw = parse(":nick!~user@server MODE #test +ilb 10 test *!*@*", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(event.is_channel, "test_channel_mode_event_params: is_channel should be true");
+    mu_assert(s_eq(event.target, "#test"), "test_channel_mode_event_params: target should be '#test'");
+    mu_assert(event.set_flags == set_flags, "test_channel_mode_event_params: set_flags should be 'i'");
+    mu_assert(event.unset_flags == 0x0000, "test_channel_mode_event_params: unset_flags should be 0x0000");
+    mu_assert(event.num_params == 3, "test_channel_mode_event_params: num_params should be 3");
+    mu_assert(s_eq(event.params[0], "10"), "test_channel_mode_event_params: params[0] should be '10'");
+    mu_assert(s_eq(event.params[1], "test"), "test_channel_mode_event_params: params[0] should be 'test'");
+    mu_assert(s_eq(event.params[2], "*!*@*"), "test_channel_mode_event_params: params[0] should be '*!*@*'");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_user_mode_event_set() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int set_flags = USR_INVISIBLE | USR_WALLOPS;
+
+    raw = parse(":test MODE test +iw", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(!event.is_channel, "test_user_mode_event_set: is_channel should be false");
+    mu_assert(s_eq(event.target, "test"), "test_user_mode_event_set: target should be 'test'");
+    mu_assert(event.set_flags == set_flags, "test_user_mode_event_set: set_flags should be 'iw'");
+    mu_assert(event.unset_flags == 0x0000, "test_user_mode_event_set: unset_flags should be 0x0000");
+    mu_assert(event.num_params == 0, "test_user_mode_event_set: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_user_mode_event_unset() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int unset_flags = USR_INVISIBLE | USR_WALLOPS;
+
+    raw = parse(":test MODE test -iw", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(!event.is_channel, "test_user_mode_event_unset: is_channel should be false");
+    mu_assert(s_eq(event.target, "test"), "test_user_mode_event_unset: target should be 'test'");
+    mu_assert(event.set_flags == 0x0000, "test_user_mode_event_unset: set_flags should be 0x0000");
+    mu_assert(event.unset_flags == unset_flags, "test_user_mode_event_unset: unset_flags should be 'ow'");
+    mu_assert(event.num_params == 0, "test_user_mode_event_unset: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
+
+char* test_user_mode_event_setunset() {
+    ModeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+    unsigned short int set_flags = USR_WALLOPS;
+    unsigned short int unset_flags = USR_INVISIBLE | USR_OPERATOR;
+
+    raw = parse(":test MODE test -i+w-o", buffer);
+    event = mode_event(&raw);
+
+    mu_assert(!event.is_channel, "test_user_mode_event_setunset: is_channel should be false");
+    mu_assert(s_eq(event.target, "test"), "test_user_mode_event_setunset: target should be 'test'");
+    mu_assert(event.set_flags == set_flags, "test_user_mode_event_setunset: set_flags should be 'w'");
+    mu_assert(event.unset_flags == unset_flags, "test_user_mode_event_setunset: unset_flags should be 'io'");
+    mu_assert(event.num_params == 0, "test_user_mode_event_setunset: num_params should be 0");
+
+    free(buffer);   // Cleanup
+
+    return 0;
+}
 void test_events() {
     mu_run(test_user_info);
     mu_run(test_error_event_one_param);
     mu_run(test_error_event_no_params);
     mu_run(test_generic_event_one_param);
     mu_run(test_generic_event_no_params);
+    mu_run(test_channel_mode_event_set);
+    mu_run(test_channel_mode_event_unset);
+    mu_run(test_channel_mode_event_setunset);
+    mu_run(test_channel_mode_event_params);
+    mu_run(test_user_mode_event_set);
+    mu_run(test_user_mode_event_unset);
+    mu_run(test_user_mode_event_setunset);
 }
 

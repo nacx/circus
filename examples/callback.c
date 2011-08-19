@@ -23,7 +23,7 @@
 /*
  * Read welcome.c, oper.c and binding.c exampes first.
  *
- * This first example shows generic callback features to handle error
+ * This example shows generic callback features to handle error
  * responses and to define global message handlers.
  */
 
@@ -54,7 +54,7 @@ void on_join(JoinEvent* event) {
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
         snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
-        irc_channel(event->channel, msg);                   // Send message to channel
+        irc_channel_msg(event->channel, msg);               // Send message to channel
     }
 }
 

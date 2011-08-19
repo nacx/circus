@@ -29,12 +29,24 @@
 
 // Channel flags
 enum channel_flags {
-    CH_PRIVATE      = 0x01,     // Private channel flag
-    CH_SECRET       = 0x02,     // Secret channel
-    CH_INVITEONLY   = 0X04,     // Invite only channel
-    CH_TOPICLOCK    = 0x08,     // Topic settable only by channel operators flag
-    CH_NOEXTMSGS    = 0x10,     // No external messages
-    CH_MODERATED    = 0x20      // Moderated channel
+    CH_PRIVATE      = 0x0001,       // Private channel flag
+    CH_SECRET       = 0x0002,       // Secret channel
+    CH_INVITEONLY   = 0x0004,       // Invite only channel
+    CH_TOPICLOCK    = 0x0008,       // Topic settable only by channel operators flag
+    CH_NOEXTMSGS    = 0x0010,       // No external messages
+    CH_MODERATED    = 0x0020,       // Moderated channel
+    CH_OPERATOR     = 0x0040,       // Channel operator
+    CH_BAN          = 0x0080,       // Channel ban
+    CH_LIMIT        = 0x0100,       // Channel user limit
+    CH_VOICE        = 0x0200,       // Channel voice
+    CH_KEY          = 0x0400        // Channel access key
+};
+
+// User flags
+enum user_flags {
+    USR_INVISIBLE       = 0x0001,     // Mark the user as invisible
+    USR_WALLOPS         = 0x0002,     // User receies wallops
+    USR_OPERATOR        = 0x0004      // Operator flag
 };
 
 // Event binding
@@ -53,22 +65,31 @@ void irc_login(char* nick, char* user_name, char* real_name);   // Sets the nick
 void irc_quit(char* message);                                   // Sends a quit message to the server to close the connection
 
 // Channel operations
-void irc_join(char* channel);                               // Join a channel
-void irc_join_pass(char* channel, char* pass);              // Join a password protected channel
-void irc_part(char* channel);                               // Leave a channel
-void irc_topic(char* channel, char* topic);                 // Change the topic of a channel
-void irc_names(char* channel);                              // List the users in a channel
-void irc_list();                                            // List channels and their topics
-void irc_invite(char* nick, char* channel);                 // Invite a user to a channel
-void irc_channel(char* channel, char* messge);              // Send a message to a channel
-void irc_private(char* nick, char* message);                // Send a private message to a user
-void irc_op(char* channel, char* nick);                     // Give operator to a user
-void irc_deop(char* channel, char* nick);                   // Take operator from a user
-void irc_voice(char* channel, char* nick);                  // Give voice to a user
-void irc_devoice(char* channel, char* nick);                // Take voice from a user
-void irc_kick(char* channel, char* nick, char* message);    // Kick a user from a channel
-void irc_channel_set(char* channel, unsigned char flags);   // Set the given channel flags
-void irc_channel_unset(char* channel, unsigned char flags); // Unset the given channel flags
+void irc_join(char* channel);                                       // Join a channel
+void irc_join_pass(char* channel, char* pass);                      // Join a password protected channel
+void irc_part(char* channel);                                       // Leave a channel
+void irc_topic(char* channel, char* topic);                         // Change the topic of a channel
+void irc_names(char* channel);                                      // List the users in a channel
+void irc_list();                                                    // List channels and their topics
+void irc_invite(char* nick, char* channel);                         // Invite a user to a channel
+void irc_channel_msg(char* channel, char* messge);                  // Send a message to a channel
+void irc_private_msg(char* nick, char* message);                    // Send a private message to a user
+void irc_op(char* channel, char* nick);                             // Give operator to a user
+void irc_deop(char* channel, char* nick);                           // Take operator from a user
+void irc_voice(char* channel, char* nick);                          // Give voice to a user
+void irc_devoice(char* channel, char* nick);                        // Take voice from a user
+void irc_kick(char* channel, char* nick, char* message);            // Kick a user from a channel
+void irc_ban(char* channel, char* mask);                            // Add a ban mask to the given channel
+void irc_unban(char* channel, char* mask);                          // Remove a ban mask from the given channel
+void irc_ban_list(char* channel);                                   // List ban masks set for the given channel
+void irc_limit(char* channel, int limit);                           // The the channel limit
+void irc_channel_key(char* channel, char* key);                     // Set a key for the given channel
+void irc_channel_set(char* channel, unsigned short int flags);      // Set the given channel flags
+void irc_channel_unset(char* channel, unsigned short int flags);    // Unset the given channel flags
+
+// User operations
+void irc_user_set(char* user, unsigned short int flags);    // Set the given user flags
+void irc_user_unset(char* user, unsigned short int flags);  // Unset the given user flags
 
 // Miscellaneous functions
 void irc_pong(char* server);                // Respond to ping message to keep connected if inactive

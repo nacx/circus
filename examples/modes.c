@@ -21,11 +21,11 @@
  */
 
 /*
- * Read welcome.c and oper.c examples first.
+ * Read welcome.c, oper.c and binding.c exampes first.
  *
- * This is an example bot that shows Circus event binding features.
- * It defines two control methods to enable and disable the defined
- * callbacks on the fly.
+ * This example shows how to change channel and user modes.
+ * When the bot is given operator privileges, it changes a set
+ * of modes, and thanks the user who granted the operator privileges.
  */
 
 #include <stdio.h>
@@ -37,32 +37,35 @@
 #define CONF_NICK "circus-bot"      // The nick to be used by the bot
 #define CONF_CHAN "#circus-bot"     // The channel to join
 
-// Welcome a user when joining the channel
-void welcome(JoinEvent* event) {
+
+// Print the error message
+void on_error(ErrorEvent* event) {
+    printf("Incoming error message: [%s] %s\n", event->code, event->message);
+}
+
+// Thank operator access and change some modes
+void on_mode(ModeEvent* event) {
     char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
-        irc_channel_msg(event->channel, msg);                   // Send message to channel
+    int i;
+
+    if (event->set_flags & CH_OPERATOR) {   // The operator flag is set
+        for (i = 0; i < event->num_params; i++) {
+            if (s_eq(event->params[i], CONF_NICK)) { // We've been given operator privilege
+                snprintf(msg, 30, "Thanks %s!", event->user.nick);  // Build the message to send
+                irc_channel_msg(event->target, msg);
+        
+                irc_channel_set(event->target, CH_INVITEONLY | CH_MODERATED);
+                irc_channel_unset(event->target, CH_INVITEONLY | CH_MODERATED);
+
+                irc_ban(event->target, "someone!*@*");
+                irc_ban_list(event->target);
+                irc_unban(event->target, "someone!*@*");
+
+                break;
+            }
+        }
     }
 }
-
-// Give op to the user who has requested it
-void give_op(MessageEvent* event) {
-    irc_op(event->to, event->user.nick);
-}
-
-// Disables bot callbacks
-void disable(MessageEvent* event) {
-    irc_unbind_event(JOIN);
-    irc_unbind_command("!op");
-}
-
-// Enables bot callbacks
-void enable(MessageEvent* event) {
-    irc_bind_event(JOIN, welcome);
-    irc_bind_command("!op", give_op);
-}
-
 
 int main(int argc, char **argv) {
     if (argc != 3) {
@@ -73,16 +76,18 @@ int main(int argc, char **argv) {
     char* server = argv[1];     // The IRC server
     int port = atoi(argv[2]);   // The IRC server port
 
-    // Bind IRC events and message commands to custom functions
-    irc_bind_event(JOIN, welcome);
-    irc_bind_command("!disable", disable);
-    irc_bind_command("!enable", enable);
-    irc_bind_command("!op", give_op);
+    // Bind IRC event to custom functions
+    irc_bind_event(ERROR, on_error);
+    irc_bind_event(MODE, on_mode);
 
     // Connect, login and join the configured channel
     irc_connect(server, port);
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
+
+    // Set/unset some user flags just to show how to manipulate them
+    irc_user_set(CONF_NICK, USR_WALLOPS | USR_INVISIBLE);
+    irc_user_unset(CONF_NICK, USR_WALLOPS);
 
     // Start listening to events
     // This method blocks until a quit signal is received

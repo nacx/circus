@@ -205,13 +205,13 @@ void irc_invite(char* nick, char* channel) {
     net_send(msg);
 }
 
-void irc_channel(char* channel, char* message) {
+void irc_channel_msg(char* channel, char* message) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, channel, message);
     net_send(msg);
 }
 
-void irc_private(char* nick, char* message) {
+void irc_private_msg(char* nick, char* message) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s :%s", PRIVMSG, nick, message);
     net_send(msg);
@@ -247,17 +247,65 @@ void irc_kick(char* channel, char* nick, char* message) {
     net_send(msg);
 }
 
-void irc_channel_set(char* channel, unsigned char flags) {
+void irc_ban(char* channel, char* mask) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +b %s", MODE, channel, mask);
+    net_send(msg);
+}
+
+void irc_unban(char* channel, char* mask) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s -b %s", MODE, channel, mask);
+    net_send(msg);
+}
+
+void irc_ban_list(char* channel) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +b", MODE, channel);
+    net_send(msg);
+}
+
+void irc_limit(char* channel, int limit) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +l %d", MODE, channel, limit);
+    net_send(msg);
+}
+
+void irc_channel_key(char* channel, char* key) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +k %s", MODE, channel, key);
+    net_send(msg);
+}
+
+void irc_channel_set(char* channel, unsigned short int flags) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s +", MODE, channel);
     append_channel_flags(msg, flags);
     net_send(msg);
 }
 
-void irc_channel_unset(char* channel, unsigned char flags) {
+void irc_channel_unset(char* channel, unsigned short int flags) {
     char msg[WRITE_BUF];
     snprintf(msg, WRITE_BUF, "%s %s -", MODE, channel);
     append_channel_flags(msg, flags);
+    net_send(msg);
+}
+
+/* *************** */
+/* User operations */
+/* *************** */
+
+void irc_user_set(char* user, unsigned short int flags) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s +", MODE, user);
+    append_user_flags(msg, flags);
+    net_send(msg);
+}
+
+void irc_user_unset(char* user, unsigned short int flags) {
+    char msg[WRITE_BUF];
+    snprintf(msg, WRITE_BUF, "%s %s -", MODE, user);
+    append_user_flags(msg, flags);
     net_send(msg);
 }
 

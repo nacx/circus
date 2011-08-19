@@ -124,8 +124,9 @@ typedef struct {
 
 // Fired when someone invites to a channel
 typedef struct {
-    UserInfo user;
-    char* channel;
+    UserInfo user;  // The user who generates the event
+    char* nick;     // The user being invited to the channel
+    char* channel;  // The chanel where the user is invited
 } InviteEvent;
 
 // Fired when someone is kicked in a channel
@@ -138,11 +139,23 @@ typedef struct {
 
 // Fired when a message is sent to a channel or to a user
 typedef struct {
-    UserInfo user;  // The user who sends the event
+    UserInfo user;  // The user who sends the message
     int is_channel; // If the message is sent to a channel
     char* to;       // The destination of the event (nick or channel)
     char* message;  // The text of the message
 } MessageEvent;
+
+// Fired when someone sets a mode in a channel
+typedef struct {
+    UserInfo user;                      // The user who is changing the mode
+    int is_channel;                     // If the mode applies to a channel or to a user.
+    char* target;                       // The affected channel or user
+    unsigned short int set_flags;       // The flags being set
+    unsigned short int unset_flags;     // The flags being unset
+    char* flag_str;                     // The textual flag string
+    int num_params;                     // The number of mode parameters
+    char* params[MAX_PARAMS];           // The mode parameters (user limit, ban mask, etc)
+} ModeEvent;
 
 /* ******************** */
 /* Miscellaneous events */
@@ -175,6 +188,7 @@ ListEvent       list_event(struct raw_msg *raw);
 InviteEvent     invite_event(struct raw_msg *raw);
 KickEvent       kick_event(struct raw_msg *raw);
 MessageEvent    message_event(struct raw_msg *raw);
+ModeEvent       mode_event(struct raw_msg *raw);
 PingEvent       ping_event(struct raw_msg *raw);
 NoticeEvent     notice_event(struct raw_msg *raw);
 
@@ -194,6 +208,7 @@ typedef void (*ListCallback)(ListEvent*);
 typedef void (*InviteCallback)(InviteEvent*);
 typedef void (*KickCallback)(KickEvent*);
 typedef void (*MessageCallback)(MessageEvent*);
+typedef void (*ModeCallback)(ModeEvent*);
 typedef void (*NoticeCallback)(NoticeEvent*);
 typedef void (*PingCallback)(PingEvent*);
 

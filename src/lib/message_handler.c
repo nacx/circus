@@ -139,6 +139,12 @@ void fire_event(struct raw_msg *raw) {
             MessageEvent event = message_event(raw);
             ((MessageCallback) callback)(&event);
         }
+    } else if (s_eq(raw->type, MODE)) {
+        callback = lookup_event(raw->type);
+        if (callback != NULL) {
+            ModeEvent event = mode_event(raw);
+            ((ModeCallback) callback)(&event);
+        }
     } // Miscellaneous events
     else if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);

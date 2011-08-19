@@ -29,7 +29,8 @@
 void upper(char* str);      // Modify the given string and make it upper case
 void lower(char* str);      // Modify the given string and make it lower case
 
-void append_channel_flags(char* str, unsigned char flags); // Append the given flags to the given string
+void append_channel_flags(char* str, unsigned short int flags); // Append given flags to the given string
+void append_user_flags(char* str, unsigned short int flags);         // Append the flags to the given string
 
 #endif
 

@@ -47,12 +47,23 @@ void lower(char* str) {
     }
 }
 
-void append_channel_flags(char* str, unsigned char flags) {
+void append_channel_flags(char* str, unsigned short int flags) {
     if (flags & CH_PRIVATE)     strcat(str, "p");
     if (flags & CH_SECRET)      strcat(str, "s");
     if (flags & CH_INVITEONLY)  strcat(str, "i");
     if (flags & CH_TOPICLOCK)   strcat(str, "t");
     if (flags & CH_NOEXTMSGS)   strcat(str, "n");
     if (flags & CH_MODERATED)   strcat(str, "m");
+
+    // This method is only intended to be used to parse flags that don't
+    // require arguments.
+    // CH_OPERATOR, CH_BAN, CH_LIMIT, CH_VOICE and CH_KEY flags must
+    // be set using their individual functions.
+}
+
+void append_user_flags(char* str, unsigned short int flags) {
+    if (flags & USR_INVISIBLE)     strcat(str, "i");
+    if (flags & USR_WALLOPS)       strcat(str, "w");
+    if (flags & USR_OPERATOR)      strcat(str, "o");
 }
 
