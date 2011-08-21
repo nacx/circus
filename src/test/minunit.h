@@ -29,7 +29,7 @@
 #define __MINUNIT_H__
 
 // Test macros
-#define mu_assert(test, msg) do { if (!(test)) { mu_fail(msg); return msg; } } while (0)
+#define mu_assert(test, msg) do { if (!(test)) { mu_fail(msg); return; } } while (0)
 #define mu_run(test) do { test(); tests_run++; } while (0)
 #define mu_suite(suite) do { suite(); } while (0)
 

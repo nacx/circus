@@ -30,7 +30,7 @@
 #include "../lib/message_handler.h"
 
 
-char* test_parse_empty_message() {
+void test_parse_empty_message() {
     struct raw_msg raw;
     char* buffer = NULL;
 
@@ -50,11 +50,9 @@ char* test_parse_empty_message() {
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse() {
+void test_parse() {
     struct raw_msg raw;
     char* buffer = NULL;
 
@@ -65,11 +63,9 @@ char* test_parse() {
     mu_assert(raw.num_params == 7, "test_parse: there should be 7 parameters");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse_with_prefix() {
+void test_parse_with_prefix() {
     struct raw_msg raw;
     char* buffer = NULL;
 
@@ -80,11 +76,9 @@ char* test_parse_with_prefix() {
     mu_assert(raw.num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse_with_last_param() {
+void test_parse_with_last_param() {
     char* last_param;
     struct raw_msg raw;
     char* buffer = NULL;
@@ -98,11 +92,9 @@ char* test_parse_with_last_param() {
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_last_param: last parameter should be 'last parameter'");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse_with_prefix_and_last_param() {
+void test_parse_with_prefix_and_last_param() {
     char* last_param;
     struct raw_msg raw;
     char* buffer = NULL;
@@ -116,11 +108,9 @@ char* test_parse_with_prefix_and_last_param() {
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_prefix_and_last_param: last parameter should be 'last parameter'");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse_only_last_param() {
+void test_parse_only_last_param() {
     char* last_param;
     struct raw_msg raw;
     char* buffer = NULL;
@@ -134,11 +124,9 @@ char* test_parse_only_last_param() {
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_parse_with_prefix_only_last_param() {
+void test_parse_with_prefix_only_last_param() {
     char* last_param;
     struct raw_msg raw;
     char* buffer = NULL;
@@ -152,8 +140,6 @@ char* test_parse_with_prefix_only_last_param() {
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
 
     if (buffer != NULL) free(buffer);   // Cleanup
-
-    return 0;
 }
 
 void test_message_handler() {

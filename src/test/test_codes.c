@@ -25,7 +25,7 @@
 #include "../lib/codes.h"
 
 
-char* test_is_error() {
+void test_is_error() {
     // Valid error codes
     mu_assert(is_error("400"), "test_is_error: 400 should be a valid error");
     mu_assert(is_error("427"), "test_is_error: 427 should be a valid error");
@@ -35,11 +35,9 @@ char* test_is_error() {
     mu_assert(!is_error("200"), "test_is_error: 200 should not be a valid error");
     mu_assert(!is_error("399"), "test_is_error: 299 should not be a valid error");
     mu_assert(!is_error("600"), "test_is_error: 600 should not be a valid error");
-    
-    return 0;
 }
 
-char* test_is_numeric_response() {
+void test_is_numeric_response() {
     // Valid reponse codes
     mu_assert(is_numeric_response("200"), "test_is_numeric_response: 200 should be a valid response");
     mu_assert(is_numeric_response("399"), "test_is_numeric_response: 399 should be a valid response");
@@ -49,8 +47,6 @@ char* test_is_numeric_response() {
     mu_assert(!is_numeric_response("199"), "test_is_numeric_response: 199 should not be a valid response");
     mu_assert(!is_numeric_response("400"), "test_is_numeric_response: 400 should not be a valid response");
     mu_assert(!is_numeric_response("403"), "test_is_numeric_response: 403 should not be a valid response");
-
-    return 0;
 }
 
 void test_codes() {

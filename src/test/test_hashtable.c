@@ -25,14 +25,13 @@
 #include "test.h"
 #include "../lib/hashtable.h"
 
-char* test_ht_init() {
+void test_ht_init() {
     ht_init();
     mu_assert(ht != NULL, "test_ht_init: Hash table should exist");
     mu_assert(ht_num_entries == 0, "test_ht_init: ht_num_entries should be 0");
-    return 0;
 }
 
-char* test_ht_add() {
+void test_ht_add() {
     HTData data;
     HTIndex idx;
 
@@ -46,11 +45,9 @@ char* test_ht_add() {
 
     // Cleanup
     ht_del(data);
-
-    return 0;
 }
 
-char* test_ht_add_replace() {
+void test_ht_add_replace() {
     HTData data, data2;
 
     data.key = "test-key";
@@ -65,11 +62,9 @@ char* test_ht_add_replace() {
 
     // Cleanup
     ht_del(data2);
-
-    return 0;
 }
 
-char* test_ht_add_append() {
+void test_ht_add_append() {
     HTData data, data2;
 
     data.key = "test-key";
@@ -85,11 +80,9 @@ char* test_ht_add_append() {
     // Cleanup
     ht_del(data);
     ht_del(data2);
-
-    return 0;
 }
 
-char* test_ht_del() {
+void test_ht_del() {
     HTData data;
     HTIndex idx;
 
@@ -102,11 +95,9 @@ char* test_ht_del() {
 
     mu_assert(!ht[idx], "test_ht_del: ht[idx] should not exist");
     mu_assert(ht_num_entries == 0, "test_ht_del: ht_num_entries should be 0");
-
-    return 0;
 }
 
-char* test_ht_del_unexisting() {
+void test_ht_del_unexisting() {
     HTData data;
     HTIndex idx;
 
@@ -117,11 +108,9 @@ char* test_ht_del_unexisting() {
     ht_del(data);
 
     mu_assert(!ht[idx], "test_ht_del_unexisting: ht[idx] should not exist");
-
-    return 0;
 }
 
-char* test_ht_find() {
+void test_ht_find() {
     HTData data;
     HTEntry* entry;
 
@@ -134,11 +123,9 @@ char* test_ht_find() {
 
     // Cleanup
     ht_del(data);
-
-    return 0;
 }
 
-char* test_ht_find_unexisting() {
+void test_ht_find_unexisting() {
     HTData data;
     HTEntry* entry;
 
@@ -147,8 +134,6 @@ char* test_ht_find_unexisting() {
 
     entry = ht_find(data);
     mu_assert(!entry, "test_ht_find_unexisting: Entry should not exist");
-
-    return 0;
 }
 
 void test_hashtable() {

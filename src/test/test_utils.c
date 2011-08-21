@@ -26,21 +26,19 @@
 #include "../lib/irc.h"
 #include "../lib/utils.h"
 
-char* test_upper() {
+void test_upper() {
     char text[10] = "Test Text";
     upper(text);
     mu_assert(s_eq(text, "TEST TEXT"), "test_uppper: text should be 'TEST TEXT'");
-    return 0;
 }
 
-char* test_lower() {
+void test_lower() {
     char text[10] = "Test Text";
     lower(text);
     mu_assert(s_eq(text, "test text"), "test_uppper: text should be 'test text'");
-    return 0;   
 }
 
-char* test_append_channel_flags() {
+void test_append_channel_flags() {
     char text[10] = "";
 
     // No flags set
@@ -61,11 +59,9 @@ char* test_append_channel_flags() {
     *text = '\0';
     append_channel_flags(text, 0xFFFF);
     mu_assert(s_eq(text, "psitnm"), "test_append_channel_flags: text should be 'psitnm'");
-
-    return 0;
 }
 
-char* test_append_user_flags() {
+void test_append_user_flags() {
     char text[10] = "";
 
     // No flags set
@@ -86,8 +82,6 @@ char* test_append_user_flags() {
     *text = '\0';
     append_user_flags(text, 0xFFFF);
     mu_assert(s_eq(text, "iwo"), "test_append_user_flags: text should be 'iwo'");
-
-    return 0;
 }
 
 void test_utils() {

@@ -30,18 +30,16 @@
 #include "../lib/events.h"
 
 
-char* test_user_info() {
+void test_user_info() {
     char user_ref[] = "nickname!~username@servername";
     UserInfo ui = user_info(user_ref);
 
     mu_assert(s_eq(ui.nick, "nickname"), "test_get_user_info: Nick should be 'nickname'");
     mu_assert(s_eq(ui.user, "username"), "test_get_user_info: User should be 'username'");
     mu_assert(s_eq(ui.server, "servername"), "test_get_user_info: Server should be 'servername'");
-
-    return 0;
 }
 
-char* test_error_event_one_param() {
+void test_error_event_one_param() {
     ErrorEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -55,11 +53,9 @@ char* test_error_event_one_param() {
     mu_assert(s_eq(event.message, "Test message"), "test_error_event_one_param: message should be 'Test message'");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_error_event_no_params() {
+void test_error_event_no_params() {
     ErrorEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -72,11 +68,9 @@ char* test_error_event_no_params() {
     mu_assert(s_eq(event.message, "Test message"), "test_error_event_no_params: message should be 'Test message'");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_generic_event_one_param() {
+void test_generic_event_one_param() {
     GenericEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -90,11 +84,9 @@ char* test_generic_event_one_param() {
     mu_assert(s_eq(event.message, "Test message"), "test_generic_event_one_param: message should be 'test message'");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_generic_event_no_params() {
+void test_generic_event_no_params() {
     GenericEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -107,11 +99,9 @@ char* test_generic_event_no_params() {
     mu_assert(s_eq(event.message, "Test message"), "test_generic_event_no_params: message should be 'test message'");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_channel_mode_event_set() {
+void test_channel_mode_event_set() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -127,11 +117,9 @@ char* test_channel_mode_event_set() {
     mu_assert(event.num_params == 0, "test_channel_mode_event_set: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_channel_mode_event_unset() {
+void test_channel_mode_event_unset() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -147,11 +135,9 @@ char* test_channel_mode_event_unset() {
     mu_assert(event.num_params == 0, "test_channel_mode_event_unset: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_channel_mode_event_setunset() {
+void test_channel_mode_event_setunset() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -168,11 +154,9 @@ char* test_channel_mode_event_setunset() {
     mu_assert(event.num_params == 0, "test_channel_mode_event_setunset: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_channel_mode_event_params() {
+void test_channel_mode_event_params() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -191,11 +175,9 @@ char* test_channel_mode_event_params() {
     mu_assert(s_eq(event.params[2], "*!*@*"), "test_channel_mode_event_params: params[0] should be '*!*@*'");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_user_mode_event_set() {
+void test_user_mode_event_set() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -211,11 +193,9 @@ char* test_user_mode_event_set() {
     mu_assert(event.num_params == 0, "test_user_mode_event_set: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_user_mode_event_unset() {
+void test_user_mode_event_unset() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -231,11 +211,9 @@ char* test_user_mode_event_unset() {
     mu_assert(event.num_params == 0, "test_user_mode_event_unset: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
-char* test_user_mode_event_setunset() {
+void test_user_mode_event_setunset() {
     ModeEvent event;
     char* buffer = NULL;
     struct raw_msg raw;
@@ -252,8 +230,6 @@ char* test_user_mode_event_setunset() {
     mu_assert(event.num_params == 0, "test_user_mode_event_setunset: num_params should be 0");
 
     free(buffer);   // Cleanup
-
-    return 0;
 }
 
 void test_events() {

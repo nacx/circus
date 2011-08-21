@@ -30,32 +30,28 @@ void target(char* txt) {
     // target function to test hook methods
 }
 
-char* test_bind_event() {
+void test_bind_event() {
     bind_event("test", target);
     mu_assert(ht_num_entries == 1, "test_bind_event: ht_num_entries should be 1");
     unbind_event("test"); // Cleanup
-    return 0;
 }
 
-char* test_unbind_event() {
+void test_unbind_event() {
     bind_event("test", target);
     unbind_event("test");
     mu_assert(ht_num_entries == 0, "test_unbind_event: ht_num_entries should be 0");
-    return 0;
 }
 
-char* test_lookup_event() {
+void test_lookup_event() {
     bind_event("test", target);
     void* callback = lookup_event("test");
     mu_assert(callback == target, "test_lookup_event: Found a different memory address");
     unbind_event("test"); // Cleanup
-    return 0;
 }
 
-char* test_lookup_unexisting_event() {
+void test_lookup_unexisting_event() {
     void* callback = lookup_event("test");
     mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
-    return 0;
 }
 
 void test_binding() {
