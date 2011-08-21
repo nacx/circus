@@ -5,8 +5,8 @@
 all: lib
 
 lib:
-	cd .. && $(MAKE) $@
+	$(MAKE) $@ -C ..
 
 clean:
-	cd .. && $(MAKE) clean-lib
+	$(MAKE) clean-lib -C ..
 

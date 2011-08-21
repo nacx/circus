@@ -5,8 +5,8 @@
 all: test
 
 test:
-	cd .. && $(MAKE) $@
+	$(MAKE) $@ -C ..
 
 clean:
-	cd .. && $(MAKE) clean-test
+	$(MAKE) clean-test -C ..
 

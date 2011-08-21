@@ -54,6 +54,7 @@ void on_mode(ModeEvent* event) {
                 snprintf(msg, 30, "Thanks %s!", event->user.nick);  // Build the message to send
                 irc_channel_msg(event->target, msg);
         
+                // Channel flags are defined in irc.h
                 irc_channel_set(event->target, CH_INVITEONLY | CH_MODERATED);
                 irc_channel_unset(event->target, CH_INVITEONLY | CH_MODERATED);
 
@@ -77,6 +78,7 @@ int main(int argc, char **argv) {
     int port = atoi(argv[2]);   // The IRC server port
 
     // Bind IRC event to custom functions
+    // All bindable events are defined in codes.h
     irc_bind_event(ERROR, on_error);
     irc_bind_event(MODE, on_mode);
 
@@ -86,6 +88,7 @@ int main(int argc, char **argv) {
     irc_join(CONF_CHAN);
 
     // Set/unset some user flags just to show how to manipulate them
+    // All flags are defined in irc.h
     irc_user_set(CONF_NICK, USR_WALLOPS | USR_INVISIBLE);
     irc_user_unset(CONF_NICK, USR_WALLOPS);
 

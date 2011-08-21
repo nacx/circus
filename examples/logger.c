@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     mkdir(LOG_PATH, S_IRWXU);
 
     // Bind IRC event to custom functions
+    // All bindable events are defined in codes.h
     irc_bind_event(ERR_NICKNAMEINUSE, on_nick_in_use);
     irc_bind_event(PRIVMSG, log_msg);
 

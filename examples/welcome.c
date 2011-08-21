@@ -39,7 +39,7 @@
  * Welcomes a user when joining the channel.
  * If the user is the bot itself, do nothing.
  */
-void on_join(JoinEvent* event) {
+void on_join(JoinEvent* event) {    // Events details are defined in events.h
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
         snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
@@ -51,7 +51,7 @@ void on_join(JoinEvent* event) {
  * Says goodbye to a user in a private message when leaving the channel.
  * If the user is the bot itself, do nothing.
  */
-void on_part(PartEvent* event) {
+void on_part(PartEvent* event) {    // Event details are defined in events.h
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
         snprintf(msg, 30, "Good bye %s", event->user.nick); // Build the message to send
@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
     int port = atoi(argv[2]);   // The IRC server port
 
     // Bind IRC event to custom functions
+    // All bindable events are defined in codes.h
     irc_bind_event(JOIN, on_join);
     irc_bind_event(PART, on_part);
 

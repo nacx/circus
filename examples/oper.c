@@ -34,7 +34,7 @@
 #define CONF_CHAN "#circus-bot"     // The channel to join
 
 // Give op to the user who has requested it
-void give_op(MessageEvent* event) {
+void give_op(MessageEvent* event) {     // Event details are defined in events.h
     // The event->to variable is the channel where the message comes from,
     // if the message was sent to a channel, or the sender's nick, if the
     // message was a private message
@@ -42,17 +42,17 @@ void give_op(MessageEvent* event) {
 }
 
 // Take op to the user who has requested it
-void take_op(MessageEvent* event) {
+void take_op(MessageEvent* event) {     // Event details are defined in events.h
     irc_deop(event->to, event->user.nick);
 }
 
 // Give voice to the user who has requested it
-void give_voice(MessageEvent* event) {
+void give_voice(MessageEvent* event) {  // Event details are defined in events.h
     irc_voice(event->to, event->user.nick);
 }
 
 // Take voice to the user who has requested it
-void take_voice(MessageEvent* event) {
+void take_voice(MessageEvent* event) {  // Event details are defined in events.h
     irc_devoice(event->to, event->user.nick);
 }
 

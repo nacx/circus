@@ -74,6 +74,7 @@ int main(int argc, char **argv) {
     int port = atoi(argv[2]);   // The IRC server port
 
     // Bind IRC events and message commands to custom functions
+    // All bindable events are defined in codes.h
     irc_bind_event(JOIN, welcome);
     irc_bind_command("!disable", disable);
     irc_bind_command("!enable", enable);

@@ -255,6 +255,7 @@ char* test_user_mode_event_setunset() {
 
     return 0;
 }
+
 void test_events() {
     mu_run(test_user_info);
     mu_run(test_error_event_one_param);

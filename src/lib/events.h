@@ -131,10 +131,10 @@ typedef struct {
 
 // Fired when someone is kicked in a channel
 typedef struct {
-    UserInfo user;
-    char* channel;
-    char* nick;
-    char* message;
+    UserInfo user;  // The user performing the kick
+    char* channel;  // The channel where the user is kicked from
+    char* nick;     // The nick of the user being kicked
+    char* message;  // The kick message
 } KickEvent;
 
 // Fired when a message is sent to a channel or to a user

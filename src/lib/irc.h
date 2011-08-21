@@ -62,7 +62,7 @@ void irc_listen();                                              // Listen to IRC
 void irc_nick(char* nick);                                      // Set or change the nick of the user
 void irc_user(char* user_name, char* real_name);                // Set the user information
 void irc_login(char* nick, char* user_name, char* real_name);   // Sets the nick and the user information
-void irc_quit(char* message);                                   // Sends a quit message to the server to close the connection
+void irc_quit(char* message);                                   // Sends a quit message to the server
 
 // Channel operations
 void irc_join(char* channel);                                       // Join a channel
