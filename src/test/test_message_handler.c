@@ -21,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "minunit.h"
 #include "test.h"
@@ -39,11 +40,16 @@ char* test_parse_empty_message() {
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
+    if (buffer != NULL) free(buffer);   // Cleanup
+
+
     raw = parse("", buffer);
 
     mu_assert(raw.prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
+
+    if (buffer != NULL) free(buffer);   // Cleanup
 
     return 0;
 }
@@ -58,6 +64,8 @@ char* test_parse() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse: type should be TEST"); 
     mu_assert(raw.num_params == 7, "test_parse: there should be 7 parameters");
 
+    if (buffer != NULL) free(buffer);   // Cleanup
+
     return 0;
 }
 
@@ -70,6 +78,8 @@ char* test_parse_with_prefix() {
     mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix: prefix should be 'prefix'"); 
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
     mu_assert(raw.num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
+
+    if (buffer != NULL) free(buffer);   // Cleanup
 
     return 0;
 }
@@ -87,6 +97,8 @@ char* test_parse_with_last_param() {
     mu_assert(raw.num_params == 8, "test_parse_with_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_last_param: last parameter should be 'last parameter'");
 
+    if (buffer != NULL) free(buffer);   // Cleanup
+
     return 0;
 }
 
@@ -102,6 +114,8 @@ char* test_parse_with_prefix_and_last_param() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix_and_last_param: type should be 'TEST'"); 
     mu_assert(raw.num_params == 8, "test_parse_with_prefix_and_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_prefix_and_last_param: last parameter should be 'last parameter'");
+
+    if (buffer != NULL) free(buffer);   // Cleanup
 
     return 0;
 }
@@ -119,6 +133,8 @@ char* test_parse_only_last_param() {
     mu_assert(raw.num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
 
+    if (buffer != NULL) free(buffer);   // Cleanup
+
     return 0;
 }
 
@@ -134,6 +150,8 @@ char* test_parse_with_prefix_only_last_param() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix_only_last_param: type should be 'TEST'"); 
     mu_assert(raw.num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
+
+    if (buffer != NULL) free(buffer);   // Cleanup
 
     return 0;
 }
