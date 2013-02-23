@@ -24,10 +24,10 @@ TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
 LIB = libcircus.a
 LIB_TEST = libcircus-test
-INSTALL_DIR = /usr/local/lib
+INSTALL_PREFIX = /usr/local
 
 ifdef prefix
-	INSTALL_DIR = $(prefix)
+	INSTALL_PREFIX = $(prefix)
 endif
 
 
@@ -43,10 +43,12 @@ lib: $(CIRCUS_OBJ) $(TEST_OBJ)
 test: lib
 
 install: all
-	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_DIR)
+	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_PREFIX)/lib/circus
+	install -m 0444 $(CIRCUS_PATH)/*.h $(INSTALL_PREFIX)/include/circus
 
 uninstall:
-	rm -f $(INSTALL_DIR)/$(LIB)
+	rm -rf $(INSTALL_PREFIX)/lib/circus
+	rm -rf $(INSTALL_PREFIX)/include/circus
 
 clean-lib:
 	rm -f $(CIRCUS_PATH)/*.o $(CIRCUS_PATH)/$(LIB)
