@@ -4,11 +4,12 @@
 
 TARGETS = welcome oper binding callback logger modes
 
+INCLUDEDIR = ../src/lib
 LIBDIR = ../src/lib
 
 CC = gcc
 LN = $(CC)
-CFLAGS = -pipe -O2 -Wall -I$(LIBDIR)
+CFLAGS = -pipe -O2 -Wall -I$(INCLUDEDIR)
 LDFLAGS = -L$(LIBDIR) -lcircus
 
 all: $(TARGETS)

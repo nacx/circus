@@ -23,7 +23,7 @@ If you want to install the library, you can do it as usual to install it in
 the default location, or you can provide the *prefix* parameter to customize
 it, as follows:
 
-    make install                       # will install Circus in /usr/local/lib
+    make install                       # will install Circus in /usr/local
     make install prefix=<install dir>  # will install Circus in <install dir>
 
 
@@ -34,17 +34,19 @@ To build your own Circus application, you can take a look at the *examples*
 folder. There you will find an example Makefile that you can use to build it.
 
 If you installed Circus using the *make install* command, you will need to change
-the *LIBDIR* variable to point to the location where you installed the library.
+the *INCLUDEDIR* and the *LIBDIR* variables to point to the location where you installed
+the library.
 
 
 Note on patches/pull requests
 -----------------------------
  
  * Fork the project.
- * Make your feature addition or bug fix.
- * Add tests for it. This is important so I don't break it in a future version unintentionally.
+ * Create a topic branch for your feature or bug fix.
+ * Develop in the just created feature/bug branch.
+ * Add tests for your changes. This is important so I don't break them in a future version unintentionally.
  * Commit.
- * Send me a pull request. Bonus points for topic branches.
+ * Send me a pull request.
 
 
 Issue Tracking
