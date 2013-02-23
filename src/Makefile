@@ -43,8 +43,10 @@ lib: $(CIRCUS_OBJ) $(TEST_OBJ)
 test: lib
 
 install: all
-	install -d -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_PREFIX)/lib/circus
-	install -d -m 0444 $(CIRCUS_PATH)/*.h $(INSTALL_PREFIX)/include/circus
+	install -d 0755 $(INSTALL_PREFIX)/lib/circus
+	install -d 0755 $(INSTALL_PREFIX)/include/circus
+	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_PREFIX)/lib/circus
+	install -m 0444 $(CIRCUS_PATH)/*.h $(INSTALL_PREFIX)/include/circus
 
 uninstall:
 	rm -rf $(INSTALL_PREFIX)/lib/circus
