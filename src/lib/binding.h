@@ -24,8 +24,8 @@
 #define __BINDING_H__
 
 void  bind_event(char* event, void* callback);  // Bind an event to the given callback
-char* unbind_event(char* event);			    // Remove the binding for the given event
-void* lookup_event(char* event);  		        // Lookup for the callback for the given event
+char* unbind_event(char* event);		// Remove the binding for the given event
+void* lookup_event(char* event);  		// Lookup for the callback for the given event
 
 #endif
 

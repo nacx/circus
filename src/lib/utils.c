@@ -47,6 +47,18 @@ void lower(char* str) {
     }
 }
 
+/* ************************* */
+/* Binding utility functions */
+/* ************************* */
+
+void build_command_key(char* key, char* command) {
+    snprintf(key, 50, "%s#%s", PRIVMSG, command);
+}
+
+/* ********************* */
+/* IRC utility functions */
+/* ********************* */
+
 void append_channel_flags(char* str, unsigned short int flags) {
     if (flags & CH_PRIVATE)     strcat(str, "p");
     if (flags & CH_SECRET)      strcat(str, "s");

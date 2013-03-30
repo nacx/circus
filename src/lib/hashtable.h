@@ -42,20 +42,20 @@ typedef struct entry {
     HTData data;
 } HTEntry;
 
-typedef unsigned char 	HTIndex;		// The hash table index type
-HTEntry**				ht;				// The hash table
-int						ht_size;		// The hash table size
-int						ht_num_entries; // The number of current entries
+typedef unsigned char HTIndex;	    // The hash table index type
+HTEntry** ht;			    // The hash table
+int ht_size;	                    // The hash table size
+int ht_num_entries;                 // The number of current entries
 
 /************************/
 /* Hash table functions */
 /************************/
 
-void 		ht_init();					        // Initialize the hash table
-HTIndex 	ht_hash(HTData data);		        // Compute the hash of the given data
-HTEntry* 	ht_add(HTData data, int override);	// Add an entry to the hash table
-HTData 		ht_del(HTData data);		        // Remove an entry from the hash table
-HTEntry* 	ht_find(HTData data);		        // Find an entry in the hash table
+void 	    ht_init();				// Initialize the hash table
+HTIndex     ht_hash(HTData data);		// Compute the hash of the given data
+HTEntry*    ht_add(HTData data, int override);	// Add an entry to the hash table
+HTData 	    ht_del(HTData data);		// Remove an entry from the hash table
+HTEntry*    ht_find(HTData data);		// Find an entry in the hash table
 void        ht_print_keys();                    // Print all keys in the table
 
 #endif

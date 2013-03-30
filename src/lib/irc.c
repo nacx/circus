@@ -30,6 +30,7 @@
 #include "message_handler.h"
 #include "binding.h"
 #include "utils.h"
+#include "debug.h"
 #include "irc.h"
 
 // Flag used to close the connection
@@ -41,10 +42,12 @@ int shutdown_requested = 0;
 /* *********************** */
 
 void irc_bind_event(char* event, void* callback) {
+    debug(("Binding event: %s\n", event));
     bind_event(event, callback);
 }
 
 void irc_unbind_event(char* event) {
+    debug(("Unbinding event: %s\n", event));
     unbind_event(event);
 }
 
@@ -57,6 +60,7 @@ void irc_bind_command(char* command, void* callback) {
     }
 
     build_command_key(key, command);
+    debug(("Binding command: %s\n", key));
     bind_event(key, callback);
 }
 
@@ -69,6 +73,7 @@ void irc_unbind_command(char* command) {
     }
     
     build_command_key(key, command);
+    debug(("Unbinding command: %s\n", key));
     ret = unbind_event(key);
 
     free(key);  // Free the memory allocated un this function

@@ -20,13 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef __MESSAGEHANDLER_H__
-#define __MESSAGEHANDLER_H__
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
-#define PARAM_SEP   " "         // IRC parameter separator
-
-void handle(char* msg);                             // Parse each line of an IRC message
-struct raw_msg parse(char* msg, char* buffer);      // Parse one single line of an IRC message
-
+#ifdef DEBUG
+    #define debug(msg) debug_printf msg
+    void debug_printf(char *fmt, ...); // Print a debug message
+#else
+    #define debug(msg) (void)0
 #endif
 
+#endif

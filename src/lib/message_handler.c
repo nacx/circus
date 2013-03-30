@@ -28,6 +28,7 @@
 #include "binding.h"
 #include "codes.h"
 #include "irc.h"
+#include "debug.h"
 #include "message_handler.h"
 
 /* *************** */
@@ -67,6 +68,7 @@ void fire_event(struct raw_msg *raw) {
 
     // Check if there is a concrete binding for the
     // incoming message type
+    debug(("Looking for a binding for %s\n", raw->type));
 
     // Connection registration
     if (s_eq(raw->type, NICK)) {
@@ -127,11 +129,30 @@ void fire_event(struct raw_msg *raw) {
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
         char key[50];
-        build_command_key(key, raw->params[1]);
-        callback = lookup_event(key);
+        char* buffer, *command, *command_end;
+        size_t lparam = strlen(raw->params[1]);
+
+        // The first parameter in PRIVMSG contains the whole message
+        // We need to consider only the first word
+        if ((buffer = malloc(lparam * sizeof(char))) == 0) {
+            perror("Out of memory (fire_event)");
+            exit(EXIT_FAILURE);
+        }
+
+        strncpy(buffer, raw->params[1], lparam);
+        command = strtok_r(buffer, " ", &command_end);
+
+        if (command != NULL) {
+            build_command_key(key, command);
+            debug(("Looking for command: %s\n", command));
+            callback = lookup_event(key);
+            // Remove the command name from the raw message
+            raw->params[1] = strtok_r(NULL, "\0", &command_end);
+        }
 
         // If no command binding is found, look for an event binding
         if (callback == NULL) {
+            debug(("No command found. Looking for event.\n"));
             callback = lookup_event(raw->type);
         }
 
@@ -190,7 +211,10 @@ void fire_event(struct raw_msg *raw) {
                 ((GenericCallback) callback)(&event);
             }
         }
+
     }
+
+    debug(("Binding%sfound\n", callback == NULL? " not " : " "));
 }
 
 /* *************** */
@@ -198,13 +222,14 @@ void fire_event(struct raw_msg *raw) {
 /* *************** */
 
 struct raw_msg parse(char* msg, char* buffer) {
-    int msg_len, i = 0, is_last_parameter = 0;
+    int i = 0, is_last_parameter = 0;
+    size_t msg_len;
     struct raw_msg raw = new_raw_message();
     char *token, *token_end = NULL;
 
     if (msg != NULL && (msg_len = strlen(msg)) > 0) {
 
-        if ((buffer = malloc(msg_len * sizeof(char*))) == 0) {
+        if ((buffer = malloc(msg_len * sizeof(char))) == 0) {
             perror("Out of memory (parse)");
             exit(EXIT_FAILURE);
         }
@@ -264,13 +289,5 @@ void handle(char* msg) {
     if (buffer != NULL) {
         free(buffer);
     }
-}
-
-/* ************************* */
-/* Binding utility functions */
-/* ************************* */
-
-void build_command_key(char* key, char* command) {
-    snprintf(key, 50, "%s%s%s", PRIVMSG, CMD_SEP, command);
 }
 

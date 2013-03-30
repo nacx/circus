@@ -4,14 +4,20 @@
 
 CC = gcc
 LN = $(CC)
-CFLAGS = -pipe -O2 -Wall
+
+ifdef debug
+    CFLAGS = -pipe -O2 -Wall -DDEBUG
+else
+    CFLAGS = -pipe -O2 -Wall
+endif
 
 # Circus build
 CIRCUS_PATH = lib
 CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/binding.c \
 			 $(CIRCUS_PATH)/network.c $(CIRCUS_PATH)/message_handler.c \
 			 $(CIRCUS_PATH)/events.c $(CIRCUS_PATH)/utils.c \
-			 $(CIRCUS_PATH)/codes.c $(CIRCUS_PATH)/irc.c
+			 $(CIRCUS_PATH)/codes.c $(CIRCUS_PATH)/irc.c \
+			 $(CIRCUS_PATH)/debug.c
 CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
 
 # Test build
