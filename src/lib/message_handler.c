@@ -129,18 +129,18 @@ void fire_event(struct raw_msg *raw) {
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
         char key[50];
-        char* buffer, *command, *command_end;
+        char* buffer, *command, *command_params;
         size_t lparam = strlen(raw->params[1]);
 
         // The first parameter in PRIVMSG contains the whole message
         // We need to consider only the first word
-        if ((buffer = malloc(lparam * sizeof(char))) == 0) {
+        if ((buffer = malloc((lparam + 1) * sizeof(char))) == 0) {
             perror("Out of memory (fire_event)");
             exit(EXIT_FAILURE);
         }
 
         strncpy(buffer, raw->params[1], lparam);
-        command = strtok_r(buffer, " ", &command_end);
+        command = strtok_r(buffer, " ", &command_params);
 
         if (command != NULL) {
             build_command_key(key, command);
@@ -148,7 +148,7 @@ void fire_event(struct raw_msg *raw) {
             callback = lookup_event(key);
             if (callback != NULL) {
                 // Remove the command name from the raw message
-                raw->params[1] = strtok_r(NULL, "\0", &command_end);
+                raw->params[1] = command_params;
             }
         }
 
@@ -231,7 +231,7 @@ struct raw_msg parse(char* msg, char* buffer) {
 
     if (msg != NULL && (msg_len = strlen(msg)) > 0) {
 
-        if ((buffer = malloc(msg_len * sizeof(char))) == 0) {
+        if ((buffer = malloc((msg_len + 1) * sizeof(char))) == 0) {
             perror("Out of memory (parse)");
             exit(EXIT_FAILURE);
         }
