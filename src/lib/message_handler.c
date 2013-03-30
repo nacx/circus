@@ -68,7 +68,7 @@ void fire_event(struct raw_msg *raw) {
 
     // Check if there is a concrete binding for the
     // incoming message type
-    debug(("Looking for a binding for %s\n", raw->type));
+    debug(("handler: Looking for a binding for %s\n", raw->type));
 
     // Connection registration
     if (s_eq(raw->type, NICK)) {
@@ -145,7 +145,7 @@ void fire_event(struct raw_msg *raw) {
 
         if (command != NULL) {
             build_command_key(key, command);
-            debug(("Looking for command: %s\n", command));
+            debug(("handler: Looking for command: %s\n", command));
             callback = lookup_event(key);
             if (callback != NULL) {
                 // Remove the command name from the raw message
@@ -155,7 +155,7 @@ void fire_event(struct raw_msg *raw) {
 
         // If no command binding is found, look for an event binding
         if (callback == NULL) {
-            debug(("No command found. Looking for event.\n"));
+            debug(("handler: No command found. Looking for event.\n"));
             callback = lookup_event(raw->type);
         }
 
@@ -217,7 +217,7 @@ void fire_event(struct raw_msg *raw) {
 
     }
 
-    debug(("Binding%sfound\n", callback == NULL? " not " : " "));
+    debug(("handler: Binding%sfound\n", callback == NULL? " not " : " "));
 }
 
 /* *************** */

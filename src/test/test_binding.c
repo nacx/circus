@@ -23,23 +23,10 @@
 #include <stdio.h>
 #include "minunit.h"
 #include "test.h"
-#include "../lib/hashtable.h"
 #include "../lib/binding.h"
 
 void target(char* txt) {
     // target function to test hook methods
-}
-
-void test_bind_event() {
-    bind_event("test", target);
-    mu_assert(ht_num_entries == 1, "test_bind_event: ht_num_entries should be 1");
-    unbind_event("test"); // Cleanup
-}
-
-void test_unbind_event() {
-    bind_event("test", target);
-    unbind_event("test");
-    mu_assert(ht_num_entries == 0, "test_unbind_event: ht_num_entries should be 0");
 }
 
 void test_lookup_event() {
@@ -50,14 +37,17 @@ void test_lookup_event() {
 }
 
 void test_lookup_unexisting_event() {
-    void* callback = lookup_event("test");
+    void* callback = lookup_event("test-unexisting");
     mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
 }
 
+void test_cleanup_bindings() {
+    cleanup_bindings();
+}
+
 void test_binding() {
-    mu_run(test_bind_event);
-    mu_run(test_unbind_event);
     mu_run(test_lookup_event);
     mu_run(test_lookup_unexisting_event);
+    mu_run(test_cleanup_bindings);
 }
 

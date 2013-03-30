@@ -31,8 +31,8 @@
 #include "network.h"
 
 
-int   _socket;  // The socket to the IRC server
-FILE* _sd;      // A file pointer to be able to read from the socket line by line
+static int   _socket;  // The socket to the IRC server
+static FILE* _sd;      // A file pointer to be able to read from the socket line by line
 
 void net_connect(char* address, int port) {
     struct hostent *host_entry;     // Host name

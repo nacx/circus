@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "debug.h"
 #include "hashtable.h"
 
 
@@ -34,32 +35,63 @@ HTIndex ht_hash(HTData data) {
     return h;
 }
 
-void ht_init() {
+HTable* ht_create() {
     int i;
-    ht_size = 256;
-    ht_num_entries = 0;
+    HTable* ht;
+    HTEntry** entries;
 
-    if ((ht = malloc(ht_size * sizeof(HTEntry*))) == 0) {
-        perror("Out of memory (ht_init)");
+    debug(("hashtable: Creating table of size %d\n", HT_SIZE));
+
+    if ((entries = malloc(HT_SIZE * sizeof(HTEntry*))) == 0) {
+        perror("Out of memory (ht_create_entries)");
         exit(EXIT_FAILURE);
     }
 
-    for (i = 0; i < ht_size; i++) {
-        ht[i] = NULL;
+    for (i = 0; i < HT_SIZE; i++) {
+        entries[i] = NULL;
     }
+
+    if ((ht = malloc(sizeof(HTable))) == 0) {
+        perror("Out of memory (ht_create)");
+        exit(EXIT_FAILURE);
+    }
+
+    ht->num_entries = 0;
+    ht->size = HT_SIZE;
+    ht->entries = entries;
+
+    return ht;
 }
 
-HTEntry* ht_add(HTData data, int override) {
+void ht_destroy(HTable* ht) {
+    HTEntry* current, *previous;
+    int i = 0;
+
+    debug(("hashtable: Destroying\n"));
+
+    for (i = 0; i < ht->size; i++) {
+        if (ht->entries[i] != NULL) {
+            current = ht->entries[i];
+            while (current != NULL) {
+                previous = current;
+                current = current->next;
+                free(previous);
+            }
+        }
+    }
+
+    free(ht->entries);
+    free(ht);
+}
+
+HTEntry* ht_add(HTable* ht, HTData data) {
     HTEntry *current, *old;
     HTIndex idx;
 
-    // Make sure hash table is always initialized
-    if (ht == NULL) {
-        ht_init();
-    }
+    debug(("hashtable: Adding entry with key %s\n", data.key));
 
     idx = ht_hash(data);
-    current = ht[idx];
+    current = ht->entries[idx];
 
     // Find the key (if already exists)
     while (current != NULL && !ht_eq(current->data, data)) {
@@ -69,17 +101,17 @@ HTEntry* ht_add(HTData data, int override) {
 
     // If key does not exist or it must not be overriden,
     // add the new element at the beginning of the list
-    if (current == NULL || override == 0) {
+    if (current == NULL) {
         if ((current = malloc(sizeof(HTEntry))) == 0) {
             perror("Out of memory (ht_add)");
             exit(EXIT_FAILURE);
         }
 
-        old = ht[idx];
-        ht[idx] = current;
+        old = ht->entries[idx];
+        ht->entries[idx] = current;
         current->next = old;
         current->data = data;
-        ht_num_entries++;
+        ht->num_entries++;
     } else {
         current->data = data;
     }
@@ -87,10 +119,12 @@ HTEntry* ht_add(HTData data, int override) {
     return current;
 }
 
-HTData ht_del(HTData data) {
+HTData ht_del(HTable* ht, HTData data) {
     HTEntry *current, *old;
     HTIndex idx;
     HTData ret;
+    
+    debug(("hashtable: Deleting entry with key %s\n", data.key));
 
     ret.key = NULL;
     ret.value = NULL;
@@ -98,7 +132,7 @@ HTData ht_del(HTData data) {
     // Find entry
     old = 0;
     idx = ht_hash(data);
-    current = ht[idx];
+    current = ht->entries[idx];
 
     while (current != NULL && !ht_eq(current->data, data)) {
         old = current;
@@ -109,35 +143,39 @@ HTData ht_del(HTData data) {
         return ret;
 
     if (old != NULL) {
-        old->next = current->next; /* not first node, old points to previous node */
+        old->next = current->next;          // Not first node, old points to previous node
     } else {
-        ht[idx] = current->next; /* first node on chain */
+        ht->entries[idx] = current->next;   // First node on chain
     }
 
     ret = current->data;
     free(current);
-    ht_num_entries--;
+    ht->num_entries--;
 
     return ret;
 }
 
-HTEntry* ht_find(HTData data) {
+HTEntry* ht_find(HTable* ht, HTData data) {
     HTEntry *current;
+    
+    debug(("hashtable: Looking for key %s\n", data.key));
 
-    current = ht[ht_hash(data)];
+    current = ht->entries[ht_hash(data)];
     while (current != NULL && !ht_eq(current->data, data)) {
         current = current->next;
     }
     return current;
 }
 
-void ht_print_keys() {
+void ht_print_keys(HTable* ht) {
     HTEntry* current;
     int i = 0;
 
-    for (i = 0; i < ht_size; i++) {
-        if (ht[i] != NULL) {
-            current = ht[i];
+    debug(("hashtable: Dumping keys\n"));
+
+    for (i = 0; i < ht->size; i++) {
+        if (ht->entries[i] != NULL) {
+            current = ht->entries[i];
             while (current != NULL) {
                 printf("Key: %s\n", current->data.key);
                 current = current->next;

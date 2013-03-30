@@ -23,6 +23,9 @@
 #ifndef __HASHTABLE_H__
 #define __HASHTABLE_H__
 
+#define HT_SIZE 256
+#define ht_eq(a, b) (strcmp(a.key, b.key) == 0)     // Data equallity macro
+
 /*************************/
 /* Hash table definition */
 /*************************/
@@ -33,30 +36,33 @@ typedef struct {
     void* value;
 } HTData;
 
-// Data equallity macro
-#define ht_eq(a, b) (strcmp(a.key, b.key) == 0)
-
 // Hash table entry
 typedef struct entry {
     struct entry *next;
     HTData data;
 } HTEntry;
 
-typedef unsigned char HTIndex;	    // The hash table index type
-HTEntry** ht;			    // The hash table
-int ht_size;	                    // The hash table size
-int ht_num_entries;                 // The number of current entries
+// Hash table data structure
+typedef struct {
+    HTEntry** entries;	    // The hash table
+    size_t size;            // The size of the hash table
+    int num_entries;        // The number of current entries
+} HTable;
+
+// Hash table index
+typedef unsigned char HTIndex;
 
 /************************/
 /* Hash table functions */
 /************************/
 
-void 	    ht_init();				// Initialize the hash table
-HTIndex     ht_hash(HTData data);		// Compute the hash of the given data
-HTEntry*    ht_add(HTData data, int override);	// Add an entry to the hash table
-HTData 	    ht_del(HTData data);		// Remove an entry from the hash table
-HTEntry*    ht_find(HTData data);		// Find an entry in the hash table
-void        ht_print_keys();                    // Print all keys in the table
+HTable*     ht_create();			    // Create a new hash table
+void        ht_destroy(HTable* ht);                 // Destroy the given hash table
+HTEntry*    ht_add(HTable* ht, HTData data);        // Add an entry to the hash table
+HTData 	    ht_del(HTable* ht, HTData data);	    // Remove an entry from the hash table
+HTEntry*    ht_find(HTable* ht, HTData data);	    // Find an entry in the hash table
+void        ht_print_keys(HTable* ht);              // Print all keys in the table
+HTIndex     ht_hash(HTData data);                   // Compute the hash for the given data
 
 #endif
 

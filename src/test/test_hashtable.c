@@ -25,10 +25,12 @@
 #include "test.h"
 #include "../lib/hashtable.h"
 
-void test_ht_init() {
-    ht_init();
-    mu_assert(ht != NULL, "test_ht_init: Hash table should exist");
-    mu_assert(ht_num_entries == 0, "test_ht_init: ht_num_entries should be 0");
+static HTable* ht = NULL;
+
+void test_ht_create() {
+    ht = ht_create();
+    mu_assert(ht != NULL, "test_ht_create: Hash table should exist");
+    mu_assert(ht->num_entries == 0, "test_ht_create: ht->num_entries should be 0");
 }
 
 void test_ht_add() {
@@ -37,14 +39,14 @@ void test_ht_add() {
 
     data.key = "test-key";
     data.value = NULL;
-    ht_add(data, 1);
+    ht_add(ht, data);
 
     idx = ht_hash(data);
-    mu_assert(ht[idx], "test_ht_add: ht[idx] should exist");
-    mu_assert(ht_num_entries == 1, "test_ht_add: ht_num_entries should be 1");
+    mu_assert(ht->entries[idx], "test_ht_add: ht->entries[idx] should exist");
+    mu_assert(ht->num_entries == 1, "test_ht_add: ht->num_entries should be 1");
 
     // Cleanup
-    ht_del(data);
+    ht_del(ht, data);
 }
 
 void test_ht_add_replace() {
@@ -52,34 +54,16 @@ void test_ht_add_replace() {
 
     data.key = "test-key";
     data.value = NULL;
-    ht_add(data, 1);
+    ht_add(ht, data);
 
     data2.key = "test-key";
     data2.value = NULL;
-    ht_add(data2, 1);
+    ht_add(ht, data2);
 
-    mu_assert(ht_num_entries == 1, "test_ht_add_replace: ht_num_entries should be 1");
-
-    // Cleanup
-    ht_del(data2);
-}
-
-void test_ht_add_append() {
-    HTData data, data2;
-
-    data.key = "test-key";
-    data.value = NULL;
-    ht_add(data, 0);
-
-    data2.key = "test-key";
-    data2.value = NULL;
-    ht_add(data2, 0);
-
-    mu_assert(ht_num_entries == 2, "test_ht_add_append: ht_num_entries should be 2");
+    mu_assert(ht->num_entries == 1, "test_ht_add_replace: ht->num_entries should be 1");
 
     // Cleanup
-    ht_del(data);
-    ht_del(data2);
+    ht_del(ht, data2);
 }
 
 void test_ht_del() {
@@ -88,13 +72,13 @@ void test_ht_del() {
 
     data.key = "test-key";
     data.value = NULL;
-    ht_add(data, 1);
+    ht_add(ht, data);
 
     idx = ht_hash(data);
-    ht_del(data);
+    ht_del(ht, data);
 
-    mu_assert(!ht[idx], "test_ht_del: ht[idx] should not exist");
-    mu_assert(ht_num_entries == 0, "test_ht_del: ht_num_entries should be 0");
+    mu_assert(!ht->entries[idx], "test_ht_del: ht->entries[idx] should not exist");
+    mu_assert(ht->num_entries == 0, "test_ht_del: ht->num_entries should be 0");
 }
 
 void test_ht_del_unexisting() {
@@ -105,9 +89,9 @@ void test_ht_del_unexisting() {
     data.value = NULL;
 
     idx = ht_hash(data);
-    ht_del(data);
+    ht_del(ht, data);
 
-    mu_assert(!ht[idx], "test_ht_del_unexisting: ht[idx] should not exist");
+    mu_assert(!ht->entries[idx], "test_ht_del_unexisting: ht->entries[idx] should not exist");
 }
 
 void test_ht_find() {
@@ -116,13 +100,13 @@ void test_ht_find() {
 
     data.key = "test-key";
     data.value = NULL;
-    ht_add(data, 1);
+    ht_add(ht, data);
 
-    entry = ht_find(data);
+    entry = ht_find(ht, data);
     mu_assert(entry->data.key == data.key, "test_ht_find: key does not match");
 
     // Cleanup
-    ht_del(data);
+    ht_del(ht, data);
 }
 
 void test_ht_find_unexisting() {
@@ -132,18 +116,23 @@ void test_ht_find_unexisting() {
     data.key = "test-key";
     data.value = NULL;
 
-    entry = ht_find(data);
+    entry = ht_find(ht, data);
     mu_assert(!entry, "test_ht_find_unexisting: Entry should not exist");
 }
 
+void test_ht_destroy() {
+    ht_destroy(ht);
+}
+
 void test_hashtable() {
-    mu_run(test_ht_init);
+    mu_run(test_ht_create);
     mu_run(test_ht_add);
     mu_run(test_ht_add_replace);
-    mu_run(test_ht_add_append);
     mu_run(test_ht_del);
     mu_run(test_ht_del_unexisting);
     mu_run(test_ht_find);
     mu_run(test_ht_find_unexisting);
+    mu_run(test_ht_destroy);
+
 }
 

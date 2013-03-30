@@ -22,41 +22,58 @@
 
 #include <stdio.h>
 #include <stdio.h>
-#include "binding.h"
+#include "debug.h"
 #include "hashtable.h"
+#include "binding.h"
 
+static HTable* ht = NULL;
 
 void bind_event(char* event, void* callback) {
-    HTData entry;
+    HTData data;
 
-    entry.key = event;
-    entry.value = callback;
+    if (ht == NULL) {
+        debug(("binding: Creating table\n"));
+        ht = ht_create();
+    }
 
-    ht_add(entry, 1);   // Add the key and override it
+    data.key = event;
+    data.value = callback;
+
+    debug(("binding: Adding event %s\n", event));
+    ht_add(ht, data);
 }
 
 char* unbind_event(char* event) {
-    HTData entry;
+    HTData data;
 
-    entry.key = event;
-    entry.value = NULL;
+    data.key = event;
+    data.value = NULL;
 
-    entry = ht_del(entry);
-    return entry.key;
+    debug(("binding: Removing event %s\n", event));
+    data = ht_del(ht, data);
+    return data.key;
 }
 
 void* lookup_event(char* event) {
-    HTData entry;
+    HTData data;
+    HTEntry* entry;
     void* callback = NULL;
 
-    entry.key = event;
-    entry.value = NULL;
+    debug(("binding: Looking for event %s\n", event));
 
-    HTEntry* current = ht_find(entry);
-    if (current != NULL) {
-        callback = current->data.value;
+    data.key = event;
+    data.value = NULL;
+
+    entry = ht_find(ht, data);
+    if (entry != NULL) {
+        callback = entry->data.value;
     }
 
     return callback;
+}
+
+void cleanup_bindings() {
+    debug(("binding: Cleaning up\n"));
+    ht_destroy(ht);
 }
 
