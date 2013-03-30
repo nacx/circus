@@ -146,8 +146,10 @@ void fire_event(struct raw_msg *raw) {
             build_command_key(key, command);
             debug(("Looking for command: %s\n", command));
             callback = lookup_event(key);
-            // Remove the command name from the raw message
-            raw->params[1] = strtok_r(NULL, "\0", &command_end);
+            if (callback != NULL) {
+                // Remove the command name from the raw message
+                raw->params[1] = strtok_r(NULL, "\0", &command_end);
+            }
         }
 
         // If no command binding is found, look for an event binding
