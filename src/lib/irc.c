@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <stdarg.h>
+#include <string.h>
 #include "network.h"
 #include "message_handler.h"
 #include "binding.h"
@@ -59,6 +60,7 @@ void irc_bind_command(char* command, void* callback) {
         exit(EXIT_FAILURE);
     }
 
+    memset(key, '\0', 50);
     build_command_key(key, command);
     debug(("Binding command: %s\n", key));
     bind_event(key, callback);
@@ -72,6 +74,7 @@ void irc_unbind_command(char* command) {
         exit(EXIT_FAILURE);
     }
     
+    memset(key, '\0', 50);
     build_command_key(key, command);
     debug(("Unbinding command: %s\n", key));
     ret = unbind_event(key);

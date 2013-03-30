@@ -139,6 +139,7 @@ void fire_event(struct raw_msg *raw) {
             exit(EXIT_FAILURE);
         }
 
+        memset(buffer, '\0', lparam + 1);
         strncpy(buffer, raw->params[1], lparam);
         command = strtok_r(buffer, " ", &command_params);
 
@@ -236,6 +237,7 @@ struct raw_msg parse(char* msg, char* buffer) {
             exit(EXIT_FAILURE);
         }
 
+        memset(buffer, '\0', msg_len + 1);
         strncpy(buffer, msg, msg_len);
 
         token = strtok_r(buffer, PARAM_SEP, &token_end);
