@@ -15,6 +15,10 @@ Compiling Circus
 To compile Circus, you can simply run:
 
     make
+    
+If you want to enable debug messages, you can also compile Circus with debug support:
+
+    make debug=1
 
 This will compile the Circus library, run all unit tests, and build all the
 examples in the *examples* directory, so you can run them.
