@@ -75,56 +75,75 @@ void fire_event(struct raw_msg *raw) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             NickEvent event = nick_event(raw);
-            ((NickCallback) callback)(&event);
+            // Make funprt <-> void* cast C99 compliant
+            NickCallback nick_callback;
+            memcpy(&nick_callback, &callback, sizeof(callback));
+            nick_callback(&event);
         }
     } else if (s_eq(raw->type, QUIT)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             QuitEvent event = quit_event(raw);
-            ((QuitCallback) callback)(&event);
+            QuitCallback quit_callback;
+            memcpy(&quit_callback, &callback, sizeof(callback));
+            quit_callback(&event);
         }
     } // Channel operations
     else if (s_eq(raw->type, JOIN)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             JoinEvent event = join_event(raw);
-            ((JoinCallback) callback)(&event);
+            JoinCallback join_callback;
+            memcpy(&join_callback, &callback, sizeof(callback));
+            join_callback(&event);
         }
     } else if (s_eq(raw->type, PART)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             PartEvent event = part_event(raw);
-            ((PartCallback) callback)(&event);
+            PartCallback part_callback;
+            memcpy(&part_callback, &callback, sizeof(callback));
+            part_callback(&event);
         }
     } else if (s_eq(raw->type, TOPIC)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             TopicEvent event = topic_event(raw);
-            ((TopicCallback) callback)(&event);
+            TopicCallback topic_callback;
+            memcpy(&topic_callback, &callback, sizeof(callback));
+            topic_callback(&event);
         }
     } else if (s_eq(raw->type, RPL_NAMREPLY) || s_eq(raw->type, RPL_ENDOFNAMES)) {
         callback = lookup_event(NAMES);
         if (callback != NULL) {
             NamesEvent event = names_event(raw);
-            ((NamesCallback) callback)(&event);
+            NamesCallback names_callback;
+            memcpy(&names_callback, &callback, sizeof(callback));
+            names_callback(&event);
         }
     } else if (s_eq(raw->type, RPL_LIST) || s_eq(raw->type, RPL_LISTEND)) {
         callback = lookup_event(LIST);
         if (callback != NULL) {
             ListEvent event = list_event(raw);
-            ((ListCallback) callback)(&event);
+            ListCallback list_callback;
+            memcpy(&list_callback, &callback, sizeof(callback));
+            list_callback(&event);
         }
     } else if (s_eq(raw->type, INVITE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             InviteEvent event = invite_event(raw);
-            ((InviteCallback) callback)(&event);
+            InviteCallback invite_callback;
+            memcpy(&invite_callback, &callback, sizeof(callback));
+            invite_callback(&event);
         }
     } else if (s_eq(raw->type, KICK)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             KickEvent event = kick_event(raw);
-            ((KickCallback) callback)(&event);
+            KickCallback kick_callback;
+            memcpy(&kick_callback, &callback, sizeof(callback));
+            kick_callback(&event);
         }
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
@@ -161,13 +180,17 @@ void fire_event(struct raw_msg *raw) {
 
         if (callback != NULL) {
             MessageEvent event = message_event(raw);
-            ((MessageCallback) callback)(&event);
+            MessageCallback message_callback;
+            memcpy(&message_callback, &callback, sizeof(callback));
+            message_callback(&event);
         }
     } else if (s_eq(raw->type, MODE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             ModeEvent event = mode_event(raw);
-            ((ModeCallback) callback)(&event);
+            ModeCallback mode_callback;
+            memcpy(&mode_callback, &callback, sizeof(callback));
+            mode_callback(&event);
         }
     } // Miscellaneous events
     else if (s_eq(raw->type, PING)) {
@@ -175,13 +198,17 @@ void fire_event(struct raw_msg *raw) {
         __circus__ping_handler(&event);    // Call the system callback for ping before calling the bindings
         callback = lookup_event(raw->type);
         if (callback != NULL) {
-            ((PingCallback) callback)(&event);
+            PingCallback ping_callback;
+            memcpy(&ping_callback, &callback, sizeof(callback));
+            ping_callback(&event);
         }
     } else if (s_eq(raw->type, NOTICE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             NoticeEvent event = notice_event(raw);
-            ((NoticeCallback) callback)(&event);
+            NoticeCallback notice_callback;
+            memcpy(&notice_callback, &callback, sizeof(callback));
+            notice_callback(&event);
         }
     }
 
@@ -199,7 +226,9 @@ void fire_event(struct raw_msg *raw) {
 
             if (callback != NULL) {
                 ErrorEvent event = error_event(raw);
-                ((ErrorCallback) callback)(&event);
+                ErrorCallback error_callback;
+                memcpy(&error_callback, &callback, sizeof(callback));
+                error_callback(&event);
             }
         } else {
             // Look for a concrete message binding
@@ -211,10 +240,11 @@ void fire_event(struct raw_msg *raw) {
 
             if (callback != NULL) {
                 GenericEvent event = generic_event(raw);
-                ((GenericCallback) callback)(&event);
+                GenericCallback generic_callback;
+                memcpy(&generic_callback, &callback, sizeof(callback));
+                generic_callback(&event);
             }
         }
-
     }
 
     debug(("handler: Binding%sfound\n", callback == NULL? " not " : " "));

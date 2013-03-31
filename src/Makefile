@@ -4,7 +4,7 @@
 
 CC = gcc
 LN = $(CC)
-CFLAGS = -pipe -O2 -Wall
+CFLAGS = -pipe -O2 -Wall -std=c99
 
 ifdef DEBUG
     CFLAGS += -DDEBUG

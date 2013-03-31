@@ -9,7 +9,7 @@ LIBDIR = ../src/lib
 
 CC = gcc
 LN = $(CC)
-CFLAGS = -pipe -O2 -Wall -I$(INCLUDEDIR)
+CFLAGS = -pipe -O2 -Wall -std=c99 -I$(INCLUDEDIR)
 LDFLAGS = -L$(LIBDIR) -lcircus
 
 all: $(TARGETS)
