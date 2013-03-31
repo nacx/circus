@@ -7,7 +7,7 @@ TARGETS = lib test install uninstall clean-lib clean-test
 all:
 	$(MAKE) $@ -C src
 	$(MAKE) examples
-	@echo "\n*** Hint: Run 'make test' to make sure everything is working as expected! ***\n"
+	@echo "\n*** Done! Run 'make test' to make sure everything is working as expected! ***\n"
 
 $(TARGETS):
 	$(MAKE) $@ -C src
