@@ -260,22 +260,178 @@ void test_fire_topic_event() {
 }
 
 void test_fire_names_event() {
-    struct raw_msg raw1, raw2;
+    struct raw_msg raw;
     char* buffer = NULL;
 
-    irc_bind_event(RPL_NAMREPLY, on_names);
-    irc_bind_event(RPL_ENDOFNAMES, on_names);
+    irc_bind_event(NAMES, on_names);
 
-    raw1 = parse("353 test-nick @ #circus :test1 test2", buffer);
-    fire_event(&raw1);
-    mu_assert(names_events == 1, "test_fire_names_event: topic_events should be '1'");
+    raw = parse("353 test-nick @ #circus :test1 test2", buffer);
+    fire_event(&raw);
+    mu_assert(names_events == 1, "test_fire_names_event: names_events should be '1'");
+    free(buffer);
 
-    raw2 = parse("366 test-nick #circus :End of /NAMES list", buffer);
-    fire_event(&raw2);
-    mu_assert(names_events == 2, "test_fire_names_event: topic_events should be '1'");
+    raw = parse("366 test-nick #circus :End of /NAMES list", buffer);
+    fire_event(&raw);
+    mu_assert(names_events == 2, "test_fire_names_event: names_events should be '2'");
+    free(buffer);
 
-    irc_unbind_event(RPL_NAMREPLY);
-    irc_unbind_event(RPL_ENDOFNAMES);
+    irc_unbind_event(NAMES);
+}
+
+void test_fire_list_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(LIST, on_list);
+
+    raw = parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework", buffer);
+    fire_event(&raw);
+    mu_assert(list_events == 1, "test_fire_list_event: list_events should be '1'");
+    free(buffer);
+
+    raw = parse(":moorcock.freenode.net 323 circus-bot :End of /LIST", buffer);
+    fire_event(&raw);
+    mu_assert(list_events == 2, "test_fire_list_event: list_events should be '2'");
+    free(buffer);
+
+    irc_unbind_event(LIST);
+}
+
+void test_fire_invite_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(INVITE, on_invite);
+    raw = parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus", buffer);
+    fire_event(&raw);
+
+    mu_assert(invite_events == 1, "test_fire_invite_event: invite_events should be '1'");
+
+    irc_unbind_event(INVITE);
+    free(buffer);
+}
+
+void test_fire_kick_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(KICK, on_kick);
+    raw = parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo", buffer);
+    fire_event(&raw);
+
+    mu_assert(kick_events == 1, "test_fire_kick_event: kick_events should be '1'");
+
+    irc_unbind_event(KICK);
+    free(buffer);
+}
+
+void test_fire_message_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(PRIVMSG, on_message);
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there", buffer);
+    fire_event(&raw);
+    mu_assert(message_events == 1, "test_fire_message_event: message_events should be '1'");
+    free(buffer);
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :Hi there", buffer);
+    fire_event(&raw);
+    mu_assert(message_events == 2, "test_fire_message_event: message_events should be '2'");
+    free(buffer);
+
+    irc_unbind_event(PRIVMSG);
+    irc_bind_command("!cmd", on_message);
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :!cmd Do it", buffer);
+    fire_event(&raw);
+    mu_assert(message_events == 3, "test_fire_message_event: message_events should be '3'");
+    free(buffer);
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :!cmd", buffer);
+    fire_event(&raw);
+    mu_assert(message_events == 4, "test_fire_message_event: message_events should be '2'");
+    free(buffer);
+
+    irc_unbind_command("!cmd");
+}
+
+void test_fire_mode_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(MODE, on_mode);
+    raw = parse(":nick!~user@server MODE #test +inm", buffer);
+    fire_event(&raw);
+
+    mu_assert(mode_events == 1, "test_fire_mode_event: mode_events should be '1'");
+
+    irc_unbind_event(MODE);
+    free(buffer);
+}
+
+void test_fire_ping_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(PING, on_ping);
+    raw = parse("PING :zelazny.freenode.net", buffer);
+    fire_event(&raw);
+
+    mu_assert(ping_events == 1, "test_fire_ping_event: ping_events should be '1'");
+
+    irc_unbind_event(PING);
+    free(buffer);
+}
+
+void test_fire_notice_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(NOTICE, on_notice);
+    raw = parse(":moorcock.freenode.net NOTICE * :Message", buffer);
+    fire_event(&raw);
+
+    mu_assert(notice_events == 1, "test_fire_notice_event: notice_events should be '1'");
+
+    irc_unbind_event(NOTICE);
+    free(buffer);
+}
+
+void test_fire_error_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    raw = parse(":nick!~user@server 401 circus-bot :Test message", buffer);
+
+    irc_bind_event(ERR_NOSUCHNICK, on_error);
+    fire_event(&raw);
+    mu_assert(error_events == 1, "test_fire_error_event: error_events should be '1'");
+
+    irc_unbind_event(ERR_NOSUCHNICK);
+    irc_bind_event(ERROR, on_error);
+    fire_event(&raw);
+    mu_assert(error_events == 2, "test_fire_error_event: error_events should be '2'");
+
+    free(buffer);
+}
+
+void test_fire_generic_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    raw = parse(":nick!~user@server 305 circus-bot :Test message", buffer);
+
+    irc_bind_event(RPL_UNAWAY, on_generic);
+    fire_event(&raw);
+    mu_assert(generic_events == 1, "test_fire_generic_event: generic_events should be '1'");
+
+    irc_unbind_event(RPL_UNAWAY);
+    irc_bind_event(ALL, on_generic);
+    fire_event(&raw);
+    mu_assert(generic_events == 2, "test_fire_generic_event: generic_events should be '2'");
+
     free(buffer);
 }
 
@@ -295,6 +451,15 @@ void test_message_handler() {
     mu_run(test_fire_part_event);
     mu_run(test_fire_topic_event);
     mu_run(test_fire_names_event);
+    mu_run(test_fire_list_event);
+    mu_run(test_fire_invite_event);
+    mu_run(test_fire_kick_event);
+    mu_run(test_fire_message_event);
+    mu_run(test_fire_mode_event);
+    mu_run(test_fire_ping_event);
+    mu_run(test_fire_notice_event);
+    mu_run(test_fire_error_event);
+    mu_run(test_fire_generic_event);
 
     cleanup_bindings();
 }
