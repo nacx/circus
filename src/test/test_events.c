@@ -145,10 +145,11 @@ void test_part_event() {
     char* buffer = NULL;
     struct raw_msg raw;
 
-    raw = parse("PART #circus", buffer);
+    raw = parse("PART #circus :Bye", buffer);
     event = part_event(&raw);
 
     mu_assert(s_eq(event.channel, "#circus"), "test_part_event: channel should be '#circus'");
+    mu_assert(s_eq(event.message, "Bye"), "test_part_event: message should be 'Bye'");
 
     free(buffer);   // Cleanup
 }
@@ -195,6 +196,128 @@ void test_topic_event() {
 
     mu_assert(s_eq(event.channel, "#circus"), "test_topic_event: channel should be '#circus'");
     mu_assert(s_eq(event.topic, "New topic"), "test_topic_event: topic should be 'New topic'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_list_event_partial() {
+    ListEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework", buffer);
+    event = list_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_list_event_partial: channel should be '#circus'");
+    mu_assert(!event.finished, "test_list_event_partial: event should not be finished");
+    mu_assert(event.num_users == 7, "test_list_event_partial: num_users should be '7'");
+    mu_assert(s_eq(event.topic, "Circus IRC framework"), "test_list_event_partial: topic should be 'Circus IRC framework'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_list_event_finished() {
+    ListEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":moorcock.freenode.net 323 circus-bot :End of /LIST", buffer);
+    event = list_event(&raw);
+
+    mu_assert(event.channel == NULL, "test_list_event_finished: channel should be 'NULL'");
+    mu_assert(event.finished, "test_list_event_finished: event should be finished");
+    mu_assert(event.num_users == 0, "test_list_event_finished: num_users should be '0'");
+    mu_assert(event.topic == NULL, "test_list_event_finished: topic should be 'NULL'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_invite_event() {
+    InviteEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus", buffer);
+    event = invite_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_invite_event: channel should be '#circus'");
+    mu_assert(s_eq(event.nick, "circus-bot"), "test_invite_event: nick should be 'circus-bot'");
+    mu_assert(s_eq(event.user.nick, "nacx"), "test_invite_event: user.nick should be 'nacx'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_kick_event() {
+    KickEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo", buffer);
+    event = kick_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_kick_event: channel should be '#circus'");
+    mu_assert(s_eq(event.nick, "circus-bot"), "test_kick_event: nick should be 'circus-bot'");
+    mu_assert(s_eq(event.message, "Foo"), "test_kick_event: message should be 'Foo'");
+    mu_assert(s_eq(event.user.nick, "nacx"), "test_kick_event: user.nick should be 'nacx'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_message_event_channel() {
+    MessageEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there", buffer);
+    event = message_event(&raw);
+
+    mu_assert(s_eq(event.to, "#circus"), "test_message_event_channel: event.to should be '#circus'");
+    mu_assert(event.is_channel, "test_message_event_channel: event.is_channel should be 'true'");
+    mu_assert(s_eq(event.message, "Hi there"), "test_message_event_channel: message should be 'Hi there'");
+    mu_assert(s_eq(event.user.nick, "nacx"), "test_message_event_channel: user.nick should be 'nacx'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_message_event_private() {
+    MessageEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :Hi there", buffer);
+    event = message_event(&raw);
+
+    mu_assert(s_eq(event.to, "circus-bot"), "test_message_event_channel: event.to should be 'circus-bot'");
+    mu_assert(!event.is_channel, "test_message_event_channel: event.is_channel should be 'false'");
+    mu_assert(s_eq(event.message, "Hi there"), "test_message_event_channel: message should be 'Hi there'");
+    mu_assert(s_eq(event.user.nick, "nacx"), "test_message_event_channel: user.nick should be 'nacx'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_ping_event() {
+    PingEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("PING :zelazny.freenode.net", buffer);
+    event = ping_event(&raw);
+
+    mu_assert(s_eq(event.server, "zelazny.freenode.net"), "test_ping_event: server should be 'zelazny.freenode.net'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_notice_event() {
+    NoticeEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse(":moorcock.freenode.net NOTICE * :Message", buffer);
+    event = notice_event(&raw);
+
+    mu_assert(s_eq(event.to, "*"), "test_notice_event: event.to should be '*'");
+    mu_assert(s_eq(event.text, "Message"), "test_notice_event: event.text should be 'Message'");
 
     free(buffer);   // Cleanup
 }
@@ -343,6 +466,14 @@ void test_events() {
     mu_run(test_names_event_partial);
     mu_run(test_names_event_finished);
     mu_run(test_topic_event);
+    mu_run(test_list_event_partial);
+    mu_run(test_list_event_finished);
+    mu_run(test_invite_event);
+    mu_run(test_kick_event);
+    mu_run(test_message_event_channel);
+    mu_run(test_message_event_private);
+    mu_run(test_ping_event);
+    mu_run(test_notice_event);
     mu_run(test_channel_mode_event_set);
     mu_run(test_channel_mode_event_unset);
     mu_run(test_channel_mode_event_setunset);
