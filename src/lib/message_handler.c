@@ -35,7 +35,7 @@
 /* Utility methods */
 /* *************** */
 
-struct raw_msg new_raw_message() {
+static struct raw_msg new_raw_message() {
     int i;
     struct raw_msg raw;
 
@@ -54,7 +54,7 @@ struct raw_msg new_raw_message() {
 /* System event handlers */
 /* ********************* */
 
-void on_ping(PingEvent* event) {
+static void __circus__ping_handler(PingEvent* event) {
     irc_pong(event->server);
 }
 
@@ -172,7 +172,7 @@ void fire_event(struct raw_msg *raw) {
     } // Miscellaneous events
     else if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);
-        on_ping(&event);    // Call the system callback for ping before calling the bindings
+        __circus__ping_handler(&event);    // Call the system callback for ping before calling the bindings
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             ((PingCallback) callback)(&event);

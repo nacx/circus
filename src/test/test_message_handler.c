@@ -26,8 +26,43 @@
 #include "minunit.h"
 #include "test.h"
 #include "../lib/utils.h"
-#include "../lib/events.h"
+#include "../lib/irc.h"
+#include "../lib/binding.h"
 #include "../lib/message_handler.c"
+
+// Event counters
+int nick_events = 0;
+int quit_events = 0;
+int join_events = 0;
+int part_events = 0;
+int topic_events = 0;
+int names_events = 0;
+int list_events = 0;
+int invite_events = 0;
+int kick_events = 0;
+int message_events = 0;
+int mode_events = 0;
+int ping_events = 0;
+int notice_events = 0;
+int error_events = 0;
+int generic_events = 0;
+
+// Handler functions
+void on_nick(NickEvent* event) { nick_events++; }
+void on_quit(QuitEvent* event) { quit_events++; }
+void on_join(JoinEvent* event) { join_events++; }
+void on_part(PartEvent* event) { part_events++; }
+void on_topic(TopicEvent* event) { topic_events++; }
+void on_names(NamesEvent* event) { names_events++; }
+void on_list(ListEvent* event) { list_events++; }
+void on_invite(InviteEvent* event) { invite_events++; }
+void on_kick(KickEvent* event) { kick_events++; }
+void on_message(MessageEvent* event) { message_events++; }
+void on_mode(ModeEvent* event) { mode_events++; }
+void on_ping(PingEvent* event) { ping_events++; }
+void on_notice(NoticeEvent* event) { notice_events++; }
+void on_error(ErrorEvent* event) { error_events++; }
+void on_generic(GenericEvent* event) { generic_events++; }
 
 
 void test_new_raw_message() {
@@ -52,7 +87,7 @@ void test_parse_empty_message() {
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 
 
     raw = parse("", buffer);
@@ -61,7 +96,7 @@ void test_parse_empty_message() {
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse() {
@@ -74,7 +109,7 @@ void test_parse() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse: type should be TEST"); 
     mu_assert(raw.num_params == 7, "test_parse: there should be 7 parameters");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse_with_prefix() {
@@ -87,7 +122,7 @@ void test_parse_with_prefix() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
     mu_assert(raw.num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse_with_last_param() {
@@ -103,7 +138,7 @@ void test_parse_with_last_param() {
     mu_assert(raw.num_params == 8, "test_parse_with_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_last_param: last parameter should be 'last parameter'");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse_with_prefix_and_last_param() {
@@ -119,7 +154,7 @@ void test_parse_with_prefix_and_last_param() {
     mu_assert(raw.num_params == 8, "test_parse_with_prefix_and_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_prefix_and_last_param: last parameter should be 'last parameter'");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse_only_last_param() {
@@ -135,7 +170,7 @@ void test_parse_only_last_param() {
     mu_assert(raw.num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
 }
 
 void test_parse_with_prefix_only_last_param() {
@@ -151,7 +186,97 @@ void test_parse_with_prefix_only_last_param() {
     mu_assert(raw.num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
 
-    if (buffer != NULL) free(buffer);   // Cleanup
+    free(buffer);   // Cleanup
+}
+
+void test_fire_nick_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(NICK, on_nick);
+    raw = parse("NICK test-nick", buffer);
+    fire_event(&raw);
+
+    mu_assert(nick_events == 1, "test_fire_nick_event: nick_events should be '1'");
+
+    irc_unbind_event(NICK);
+    free(buffer);
+}
+
+void test_fire_quit_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(QUIT, on_quit);
+    raw = parse("QUIT :Bye bye!", buffer);
+    fire_event(&raw);
+
+    mu_assert(quit_events == 1, "test_fire_quit_event: quit_events should be '1'");
+
+    irc_unbind_event(QUIT);
+    free(buffer);
+}
+
+void test_fire_join_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(JOIN, on_join);
+    raw = parse("JOIN #circus", buffer);
+    fire_event(&raw);
+
+    mu_assert(join_events == 1, "test_fire_join_event: join_events should be '1'");
+
+    irc_unbind_event(JOIN);
+    free(buffer);
+}
+
+void test_fire_part_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(PART, on_part);
+    raw = parse("PART #circus :Bye", buffer);
+    fire_event(&raw);
+
+    mu_assert(part_events == 1, "test_fire_part_event: part_events should be '1'");
+
+    irc_unbind_event(PART);
+    free(buffer);
+}
+
+void test_fire_topic_event() {
+    struct raw_msg raw;
+    char* buffer = NULL;
+
+    irc_bind_event(TOPIC, on_topic);
+    raw = parse("TOPIC #circus :New topic", buffer);
+    fire_event(&raw);
+
+    mu_assert(topic_events == 1, "test_fire_topic_event: topic_events should be '1'");
+
+    irc_unbind_event(TOPIC);
+    free(buffer);
+}
+
+void test_fire_names_event() {
+    struct raw_msg raw1, raw2;
+    char* buffer = NULL;
+
+    irc_bind_event(RPL_NAMREPLY, on_names);
+    irc_bind_event(RPL_ENDOFNAMES, on_names);
+
+    raw1 = parse("353 test-nick @ #circus :test1 test2", buffer);
+    fire_event(&raw1);
+    mu_assert(names_events == 1, "test_fire_names_event: topic_events should be '1'");
+
+    raw2 = parse("366 test-nick #circus :End of /NAMES list", buffer);
+    fire_event(&raw2);
+    mu_assert(names_events == 2, "test_fire_names_event: topic_events should be '1'");
+
+    irc_unbind_event(RPL_NAMREPLY);
+    irc_unbind_event(RPL_ENDOFNAMES);
+    free(buffer);
 }
 
 void test_message_handler() {
@@ -163,5 +288,14 @@ void test_message_handler() {
     mu_run(test_parse_with_prefix_and_last_param);
     mu_run(test_parse_only_last_param);
     mu_run(test_parse_with_prefix_only_last_param);
+
+    mu_run(test_fire_nick_event);
+    mu_run(test_fire_quit_event);
+    mu_run(test_fire_join_event);
+    mu_run(test_fire_part_event);
+    mu_run(test_fire_topic_event);
+    mu_run(test_fire_names_event);
+
+    cleanup_bindings();
 }
 

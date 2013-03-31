@@ -73,7 +73,10 @@ void* lookup_event(char* event) {
 }
 
 void cleanup_bindings() {
-    debug(("binding: Cleaning up\n"));
-    ht_destroy(ht);
+    if (ht != NULL) {
+        debug(("binding: Cleaning up\n"));
+        ht_destroy(ht);
+        ht = NULL;
+    }
 }
 

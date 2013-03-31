@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include "minunit.h"
 #include "test.h"
-#include "../lib/binding.h"
+#include "../lib/binding.c"
 
 void target(char* txt) {
     // target function to test hook methods
@@ -43,6 +43,7 @@ void test_lookup_unexisting_event() {
 
 void test_cleanup_bindings() {
     cleanup_bindings();
+    mu_assert(ht == NULL, "test_cleanup_bindings: Hash table should be NULL");
 }
 
 void test_binding() {
