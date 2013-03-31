@@ -96,7 +96,6 @@ typedef struct {
 typedef struct {
     UserInfo user;  // The user who leaved the channel
     char* channel;  // The channel name
-    char* message;  // The part message
 } PartEvent;
 
 // Fired when someone changes the topic of a channel

@@ -124,7 +124,6 @@ PartEvent part_event(struct raw_msg *raw) {
     PartEvent event;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
-    event.message = raw->params[1];
     return event;
 }
 
@@ -137,13 +136,17 @@ TopicEvent topic_event(struct raw_msg *raw) {
 }
 
 NamesEvent names_event(struct raw_msg *raw) {
-    int i;
+    char* token, *next;
     NamesEvent event;
     event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
-    event.channel = raw->params[2];
-    event.num_names = event.finished? 0 : raw->num_params - 3;
-    for (i = 0 ; i < event.num_names; i++) {
-        event.names[i] = raw->params[i + 3];
+    event.channel = raw->params[event.finished? 1 : 2];
+    event.num_names = 0;
+    if (!event.finished) {
+        token = strtok_r(raw->params[3], " ", &next);
+        while(token != NULL) {
+            event.names[event.num_names++] = token;
+            token = strtok_r(NULL, " ", &next);
+        }
     }
     return event;
 }

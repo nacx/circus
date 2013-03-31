@@ -101,6 +101,104 @@ void test_generic_event_no_params() {
     free(buffer);   // Cleanup
 }
 
+void test_nick_event() {
+    NickEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("NICK test-nick", buffer);
+    event = nick_event(&raw);
+
+    mu_assert(s_eq(event.new_nick, "test-nick"), "test_nick_event: nick should be 'test-nick'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_quit_event() {
+    QuitEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("QUIT :Bye bye!", buffer);
+    event = quit_event(&raw);
+
+    mu_assert(s_eq(event.message, "Bye bye!"), "test_quit_event: message should be 'Bye bye!'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_join_event() {
+    JoinEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("JOIN #circus", buffer);
+    event = join_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_join_event: channel should be '#circus'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_part_event() {
+    PartEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("PART #circus", buffer);
+    event = part_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_part_event: channel should be '#circus'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_names_event_partial() {
+    NamesEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("353 test-nick @ #circus :test1 test2", buffer);
+    event = names_event(&raw);
+
+    mu_assert(!event.finished, "test_names_event_partial: event should not be finished");
+    mu_assert(s_eq(event.channel, "#circus"), "test_names_event_partial: channel should be '#circus'");
+    mu_assert(event.num_names == 2, "test_names_event_partial: num_names should be '2'");
+    mu_assert(s_eq(event.names[0], "test1"), "test_names_event_partial: event.names[0] should be 'test1'");
+    mu_assert(s_eq(event.names[1], "test2"), "test_names_event_partial: event.names[1] should be 'test2'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_names_event_finished() {
+    NamesEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("366 test-nick #circus :End of /NAMES list", buffer);
+    event = names_event(&raw);
+
+    mu_assert(event.finished, "test_names_event_finished: event should be finished");
+    mu_assert(s_eq(event.channel, "#circus"), "test_names_event_finished: channel should be '#circus'");
+    mu_assert(event.num_names == 0, "test_names_event_finished: num_names should be '0'");
+
+    free(buffer);   // Cleanup
+}
+
+void test_topic_event() {
+    TopicEvent event;
+    char* buffer = NULL;
+    struct raw_msg raw;
+
+    raw = parse("TOPIC #circus :New topic", buffer);
+    event = topic_event(&raw);
+
+    mu_assert(s_eq(event.channel, "#circus"), "test_topic_event: channel should be '#circus'");
+    mu_assert(s_eq(event.topic, "New topic"), "test_topic_event: topic should be 'New topic'");
+
+    free(buffer);   // Cleanup
+}
+
 void test_channel_mode_event_set() {
     ModeEvent event;
     char* buffer = NULL;
@@ -238,6 +336,13 @@ void test_events() {
     mu_run(test_error_event_no_params);
     mu_run(test_generic_event_one_param);
     mu_run(test_generic_event_no_params);
+    mu_run(test_nick_event);
+    mu_run(test_quit_event);
+    mu_run(test_join_event);
+    mu_run(test_part_event);
+    mu_run(test_names_event_partial);
+    mu_run(test_names_event_finished);
+    mu_run(test_topic_event);
     mu_run(test_channel_mode_event_set);
     mu_run(test_channel_mode_event_unset);
     mu_run(test_channel_mode_event_setunset);

@@ -4,11 +4,10 @@
 
 CC = gcc
 LN = $(CC)
+CFLAGS = -pipe -O2 -Wall
 
 ifdef debug
-    CFLAGS = -pipe -O2 -Wall -DDEBUG
-else
-    CFLAGS = -pipe -O2 -Wall
+    CFLAGS += -DDEBUG
 endif
 
 # Circus build
@@ -33,7 +32,7 @@ LIB_TEST = libcircus-test
 INSTALL_PREFIX = /usr/local
 
 ifdef prefix
-	INSTALL_PREFIX = $(prefix)
+    INSTALL_PREFIX = $(prefix)
 endif
 
 
