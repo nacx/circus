@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#ifdef DEBUG
-
 #include <stdio.h>
 #include <stdarg.h>
 #include "debug.h"
@@ -33,4 +31,3 @@ void debug_printf(char *fmt, ...) {
     va_end(ap);
 }
 
-#endif

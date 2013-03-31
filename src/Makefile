@@ -6,7 +6,7 @@ CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall
 
-ifdef debug
+ifdef DEBUG
     CFLAGS += -DDEBUG
 endif
 
@@ -29,33 +29,29 @@ TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
 LIB = libcircus.a
 LIB_TEST = libcircus-test
-INSTALL_PREFIX = /usr/local
-
-ifdef prefix
-    INSTALL_PREFIX = $(prefix)
-endif
+PREFIX ?= /usr/local
 
 
 all: $(LIB)
 
-$(LIB): lib test
+$(LIB): lib
 
-lib: $(CIRCUS_OBJ) $(TEST_OBJ)
+lib: $(CIRCUS_OBJ)
 	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $(CIRCUS_OBJ)
+
+test: lib $(TEST_OBJ)
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
 	$(TEST_PATH)/$(LIB_TEST)
 
-test: lib
-
 install: all
-	install -d -m 0755 $(INSTALL_PREFIX)/lib/circus
-	install -d -m 0755 $(INSTALL_PREFIX)/include/circus
-	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(INSTALL_PREFIX)/lib/circus
-	install -m 0444 $(CIRCUS_PATH)/*.h $(INSTALL_PREFIX)/include/circus
+	install -d -m 0755 $(PREFIX)/lib/circus
+	install -d -m 0755 $(PREFIX)/include/circus
+	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(PREFIX)/lib/circus
+	install -m 0444 $(CIRCUS_PATH)/*.h $(PREFIX)/include/circus
 
 uninstall:
-	rm -rf $(INSTALL_PREFIX)/lib/circus
-	rm -rf $(INSTALL_PREFIX)/include/circus
+	rm -rf $(PREFIX)/lib/circus
+	rm -rf $(PREFIX)/include/circus
 
 clean-lib:
 	rm -f $(CIRCUS_PATH)/*.o $(CIRCUS_PATH)/$(LIB)
@@ -64,4 +60,6 @@ clean-test:
 	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(LIB_TEST)
 
 clean: clean-lib clean-test
+
+.PHONY: install uninstall clean-lib clean-test clean
 

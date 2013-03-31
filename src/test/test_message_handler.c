@@ -27,8 +27,20 @@
 #include "test.h"
 #include "../lib/utils.h"
 #include "../lib/events.h"
-#include "../lib/message_handler.h"
+#include "../lib/message_handler.c"
 
+
+void test_new_raw_message() {
+    int i;
+    struct raw_msg raw = new_raw_message();
+
+    mu_assert(raw.prefix == NULL, "test_new_raw_message: prefix should be NULL");
+    mu_assert(raw.type == NULL, "test_new_raw_message: type should be NULL");
+    mu_assert(raw.num_params == 0, "test_new_raw_message: num_params should be '0'");
+    for (i = 0; i < MAX_PARAMS; i++) {
+        mu_assert(raw.params[i] == NULL, "test_new_raw_message: params[i] should be NULL");
+    }
+}
 
 void test_parse_empty_message() {
     struct raw_msg raw;
@@ -143,6 +155,7 @@ void test_parse_with_prefix_only_last_param() {
 }
 
 void test_message_handler() {
+    mu_run(test_new_raw_message);
     mu_run(test_parse_empty_message);
     mu_run(test_parse);
     mu_run(test_parse_with_prefix);

@@ -38,6 +38,16 @@ void test_lower() {
     mu_assert(s_eq(text, "test text"), "test_uppper: text should be 'test text'");
 }
 
+void test_build_command_key() {
+    char key[50];
+
+    build_command_key(key, "cmd");
+    mu_assert(s_eq(key, "PRIVMSG#cmd"), "test_build_command_key: key should be 'PRIVMSG#cmd'");
+
+    build_command_key(key, "");
+    mu_assert(s_eq(key, "PRIVMSG#"), "test_build_command_key: key should be 'PRIVMSG#'");
+}
+
 void test_append_channel_flags() {
     char text[10] = "";
 
@@ -87,6 +97,7 @@ void test_append_user_flags() {
 void test_utils() {
     mu_run(test_upper);
     mu_run(test_lower);
+    mu_run(test_build_command_key);
     mu_run(test_append_channel_flags);
     mu_run(test_append_user_flags);
 }

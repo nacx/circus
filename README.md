@@ -16,16 +16,22 @@ To compile Circus, you can simply run:
 
     make
     
-If you want to enable debug messages, you can also compile Circus with debug support:
+If you want to enable debug messages, you can also compile Circus with debug support. It might
+be too verbose, so you'd better use it just during development:
 
-    make debug=1
+    make DEBUG=1
 
-This will compile the Circus library, run all unit tests, and build all the
-examples in the *examples* directory, so you can run them.
+This will compile the Circus library and build all the examples in the *examples* directory, so
+you can start playing with them. It is a good starting point to modify the existing examples and
+make them do some cool stuff :)
 
-If you want to install the library, you can do it as usual to install it in
-the default location, or you can provide the *prefix* parameter to customize
-it, as follows:
+Before you start coding, it is usually a good idea to run the unit tests. This way you will make
+sure everything is working as expected:
+
+    make test
+
+If you want to install the library, you can do it as usual. It will be installed by default in
+/usr/local, but you can customize the installation directory by adding the *PREFIX* parameter:
 
     make install                       # will install Circus in /usr/local
     make install prefix=<install dir>  # will install Circus in <install dir>
@@ -35,29 +41,32 @@ Building Circus based applications
 ----------------------------------
 
 To build your own Circus application, you can take a look at the *examples*
-folder. There you will find an example Makefile that you can use to build it.
+folder. There you will find an example Makefile that you can modify to build your application.
 
 If you installed Circus using the *make install* command, you will need to change
 the *INCLUDEDIR* and the *LIBDIR* variables to point to the location where you installed
 the library.
 
 
-Note on patches/pull requests
------------------------------
+How to contribute
+-----------------
+
+Contributions are always welcome. Feel free to share your code!
  
  * Fork the project.
  * Create a topic branch for your feature or bug fix.
- * Develop in the just created feature/bug branch.
+ * Develop in the just created topic branch.
  * Add tests for your changes. This is important so I don't break them in a future version unintentionally.
  * Commit.
+ * Rebase to the latest upstream version to make sure your topic branch is up to date.
  * Send me a pull request.
 
 
 Issue Tracking
 --------------
 
-If you find any issue, please submit it to the [Bug tracking system](https://github.com/nacx/circus/issues) and we
-will do our best to fix it.
+If you find any issue or want to ask for a feature, please submit your request to the
+[Bug tracking system](https://github.com/nacx/circus/issues) and I'll do my best to fix/add it.
 
 
 License

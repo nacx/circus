@@ -24,3 +24,4 @@ clean:
 	rm -f *.o
 	rm -f $(TARGETS)
 
+.PHONY: clean
