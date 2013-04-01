@@ -20,29 +20,16 @@
  * THE SOFTWARE.
  */
 
-#ifndef __NETWORK_H__
-#define __NETWORK_H__
+#ifndef __MOCKS_C__
+#define __MOCKS_C__
 
-#define MSG_SIZE 512    // The maximum message size of an IRC message
-#define MSG_SEP "\r\n"  // The message separator
+/*
+ * This file should not be included by any test file.
+ * It is only provided to the linker, to override the following
+ * functions in the library.
+ */
 
-#define READ_BUF (MSG_SIZE + 1)     // The read buffer size
-#define WRITE_BUF (MSG_SIZE - 2)    // The write buffer size
-
-// Network status
-enum net_status {
-    NET_READY,      // There is data to be read from the socket
-    NET_ERROR,      // Unexpected error while reading
-    NET_CLOSE,      // The connection must terminate
-    NET_IGNORE      // Ignore the status and continue
-};
-
-// Network functions. Allow them to be redefined or mocked for testing purposes
-__attribute__((weak)) void net_connect(char* address, int port);  // Connect to the IRC server
-__attribute__((weak)) void net_disconnect();                      // Disconnect from the server
-__attribute__((weak)) int  net_send(char* msg);                   // Send a message to the server
-__attribute__((weak)) void net_recv(char* msg);                   // Receive a message from the server
-__attribute__((weak)) enum net_status net_listen();               // Listen for incoming messages
+int net_send(char* msg) { return 0; }
 
 #endif
 
