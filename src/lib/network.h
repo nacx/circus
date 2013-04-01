@@ -38,11 +38,18 @@ enum net_status {
 };
 
 // Network functions. Allow them to be redefined or mocked for testing purposes
-__attribute__((weak)) void net_connect(char* address, int port);  // Connect to the IRC server
-__attribute__((weak)) void net_disconnect();                      // Disconnect from the server
-__attribute__((weak)) int  net_send(char* msg);                   // Send a message to the server
-__attribute__((weak)) void net_recv(char* msg);                   // Receive a message from the server
-__attribute__((weak)) enum net_status net_listen();               // Listen for incoming messages
+void net_connect(char* address, int port);  // Connect to the IRC server
+void net_disconnect();                      // Disconnect from the server
+void net_recv(char* msg);                   // Receive a message from the server
+enum net_status net_listen();               // Listen for incoming messages
+
+#ifdef __GNUC__
+// Not portable. Try to define the weak attribute to allow to redefine the
+// functions and mock them in tests.
+__attribute__((weak)) int net_send(char* msg);   // Send a message to the server
+#else
+int net_send(char* msg);   // Send a message to the server
+#endif
 
 #endif
 
