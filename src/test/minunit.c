@@ -46,10 +46,10 @@ void mu_fail(char* msg) {
     f->msg = msg;
     f->next = NULL;
 
-    // Add the error at the end of the list
+    /* Add the error at the end of the list */
     for (it = fails; it && it->next; it = it->next);
 
-    if (!it) { // First error
+    if (!it) { /* First error */
         fails = f;
     } else {
         it->next = f;

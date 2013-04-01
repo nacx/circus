@@ -23,36 +23,36 @@
 #ifndef __EVENTS_H__
 #define __EVENTS_H__
 
-// Maximum number of parameters in an IRC message
+/* Maximum number of parameters in an IRC message */
 #define MAX_PARAMS 15
 
-// Raw IRC message
+/* Raw IRC message */
 struct raw_msg {
-    char* type;                 // The IRC message type
-    char* prefix;               // The message prefix (if any)
-    int   num_params;           // The number of parameters
-    char* params[MAX_PARAMS];   // The parameter array
+    char* type;                 /* The IRC message type */
+    char* prefix;               /* The message prefix (if any) */
+    int   num_params;           /* The number of parameters */
+    char* params[MAX_PARAMS];   /* The parameter array */
 };
 
 /* ********************************** */
 /* User information utility functions */
 /* ********************************** */
 
-// Information of the user who generates an event
+/* Information of the user who generates an event */
 typedef struct {
     char* nick;
     char* user;
     char* server;
 } UserInfo;
 
-// Parse the given user string and build the UserInfo struct
+/* Parse the given user string and build the UserInfo struct */
 UserInfo user_info(char* user_ref);
 
 /* ******************* */
 /* Generic event types */
 /* ******************* */
 
-// Fired when an error message arrives
+/* Fired when an error message arrives */
 typedef struct {
     char* code;
     int   num_params;
@@ -60,7 +60,7 @@ typedef struct {
     char* message;
 } ErrorEvent;
 
-// Fired when no specific parsing is defined fot the reveiced event
+/* Fired when no specific parsing is defined fot the reveiced event */
 typedef struct {
     char* code;
     int   num_params;
@@ -86,90 +86,90 @@ typedef struct {
 /* Channel operation events */
 /* ************************ */
 
-// Fired when a user joins a channel
+/* Fired when a user joins a channel */
 typedef struct {
-    UserInfo user;  // The user who joined a channel
-    char* channel;  // The channel name
+    UserInfo user;  /* The user who joined a channel */
+    char* channel;  /* The channel name */
 } JoinEvent;
 
-// Fired when a user leaves a channel
+/* Fired when a user leaves a channel */
 typedef struct {
-    UserInfo user;  // The user who leaved the channel
-    char* channel;  // The channel name
-    char* message;  // The part message
+    UserInfo user;  /* The user who leaved the channel */
+    char* channel;  /* The channel name */
+    char* message;  /* The part message */
 } PartEvent;
 
-// Fired when someone changes the topic of a channel
+/* Fired when someone changes the topic of a channel */
 typedef struct {
-    UserInfo user;  // The user who has changed the topic
-    char* channel;  // The channel name
-    char* topic;    // The new topic
+    UserInfo user;  /* The user who has changed the topic */
+    char* channel;  /* The channel name */
+    char* topic;    /* The new topic */
 } TopicEvent;
 
-// Fired when the response to the NAMES arrives
+/* Fired when the response to the NAMES arrives */
 typedef struct {
-    int finished;               // If there are no more users to process (NAMES response is multi-message)
-    char* channel;              // The channel
-    int num_names;              // The number of names in the current names list
-    char* names[MAX_PARAMS];    // The list of users in channel
+    int finished;               /* If there are no more users to process (NAMES response is multi-message) */
+    char* channel;              /* The channel */
+    int num_names;              /* The number of names in the current names list */
+    char* names[MAX_PARAMS];    /* The list of users in channel */
 } NamesEvent;
 
-// Fired when the response to the NAMES arrives
+/* Fired when the response to the NAMES arrives */
 typedef struct {
-    int finished;       // If there are no more channels to process (LIST response is multi-message)
-    char* channel;      // The name of the current channel
-    int num_users;      // The number of users in the channel
-    char* topic;        // The current topic in the channel
+    int finished;       /* If there are no more channels to process (LIST response is multi-message) */
+    char* channel;      /* The name of the current channel */
+    int num_users;      /* The number of users in the channel */
+    char* topic;        /* The current topic in the channel */
 } ListEvent;
 
-// Fired when someone invites to a channel
+/* Fired when someone invites to a channel */
 typedef struct {
-    UserInfo user;  // The user who generates the event
-    char* nick;     // The user being invited to the channel
-    char* channel;  // The chanel where the user is invited
+    UserInfo user;  /* The user who generates the event */
+    char* nick;     /* The user being invited to the channel */
+    char* channel;  /* The chanel where the user is invited */
 } InviteEvent;
 
-// Fired when someone is kicked in a channel
+/* Fired when someone is kicked in a channel */
 typedef struct {
-    UserInfo user;  // The user performing the kick
-    char* channel;  // The channel where the user is kicked from
-    char* nick;     // The nick of the user being kicked
-    char* message;  // The kick message
+    UserInfo user;  /* The user performing the kick */
+    char* channel;  /* The channel where the user is kicked from */
+    char* nick;     /* The nick of the user being kicked */
+    char* message;  /* The kick message */
 } KickEvent;
 
-// Fired when a message is sent to a channel or to a user
+/* Fired when a message is sent to a channel or to a user */
 typedef struct {
-    UserInfo user;  // The user who sends the message
-    int is_channel; // If the message is sent to a channel
-    char* to;       // The destination of the event (nick or channel)
-    char* message;  // The text of the message
+    UserInfo user;  /* The user who sends the message */
+    int is_channel; /* If the message is sent to a channel */
+    char* to;       /* The destination of the event (nick or channel) */
+    char* message;  /* The text of the message */
 } MessageEvent;
 
-// Fired when someone sets a mode in a channel
+/* Fired when someone sets a mode in a channel */
 typedef struct {
-    UserInfo user;                      // The user who is changing the mode
-    int is_channel;                     // If the mode applies to a channel or to a user.
-    char* target;                       // The affected channel or user
-    unsigned short int set_flags;       // The flags being set
-    unsigned short int unset_flags;     // The flags being unset
-    char* flag_str;                     // The textual flag string
-    int num_params;                     // The number of mode parameters
-    char* params[MAX_PARAMS];           // The mode parameters (user limit, ban mask, etc)
+    UserInfo user;                      /* The user who is changing the mode */
+    int is_channel;                     /* If the mode applies to a channel or to a user. */
+    char* target;                       /* The affected channel or user */
+    unsigned short int set_flags;       /* The flags being set */
+    unsigned short int unset_flags;     /* The flags being unset */
+    char* flag_str;                     /* The textual flag string */
+    int num_params;                     /* The number of mode parameters */
+    char* params[MAX_PARAMS];           /* The mode parameters (user limit, ban mask, etc) */
 } ModeEvent;
 
 /* ******************** */
 /* Miscellaneous events */
 /* ******************** */
 
-// Fired when a ping message arrives
+/* Fired when a ping message arrives */
 typedef struct {
-    char* server;   // Server where the pong response must be sent
+    char* server;   /* Server where the pong response must be sent */
 } PingEvent;
 
-// Fired when a notice arrives
+/* Fired when a notice arrives */
 typedef struct {
-    char* to;       // The destination of the message
-    char* text;     // The text of the message
+    char* to;       /* The destination of the message */
+    char* text;     /* The text of the message */
 } NoticeEvent;
 
 /* ************************ */
@@ -196,10 +196,10 @@ NoticeEvent     notice_event(struct raw_msg *raw);
 /* Callback types */
 /* ************** */
 
-// Generic callback pointer
+/* Generic callback pointer */
 typedef void (*CallbackPtr)(void);
 
-// Macros to convert to the appropriate function pointer type for each event
+/* Macros to convert to the appropriate function pointer type for each event */
 #define ErrorCallback(callback) ((void (*)(ErrorEvent*)) callback)
 #define GenericCallback(callback) ((void (*)(GenericEvent*)) callback)
 #define NickCallback(callback) ((void (*)(NickEvent*)) callback)

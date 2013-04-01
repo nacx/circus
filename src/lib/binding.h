@@ -25,10 +25,10 @@
 
 #include "events.h"
 
-void  bind_event(char* event, CallbackPtr callback);    // Bind an event to the given callback
-char* unbind_event(char* event);		        // Remove the binding for the given event
-CallbackPtr lookup_event(char* event);  		// Lookup for the callback for the given event
-void  cleanup_bindings();                               // Cleanup all bindings
+void  bind_event(char* event, CallbackPtr callback);    /* Bind an event to the given callback */
+char* unbind_event(char* event);		        /* Remove the binding for the given event */
+CallbackPtr lookup_event(char* event);  		/* Lookup for the callback for the given event */
+void  cleanup_bindings();                               /* Cleanup all bindings */
  
 #endif
 

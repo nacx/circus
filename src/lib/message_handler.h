@@ -23,10 +23,10 @@
 #ifndef __MESSAGEHANDLER_H__
 #define __MESSAGEHANDLER_H__
 
-#define PARAM_SEP   " "         // IRC parameter separator
+#define PARAM_SEP   " "         /* IRC parameter separator */
 
-void handle(char* msg);                             // Parse each line of an IRC message
-struct raw_msg parse(char* msg, char* buffer);      // Parse one single line of an IRC message
+void handle(char* msg);                             /* Parse each line of an IRC message */
+struct raw_msg parse(char* msg, char* buffer);      /* Parse one single line of an IRC message */
 
 #endif
 

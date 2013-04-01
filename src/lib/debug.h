@@ -25,9 +25,10 @@
 
 #ifdef DEBUG
     #define debug(msg) debug_printf msg
-    void debug_printf(char *fmt, ...); // Print a debug message
 #else
     #define debug(msg) (void)0
 #endif
+
+void debug_printf(char *fmt, ...); /* Print a debug message */
 
 #endif

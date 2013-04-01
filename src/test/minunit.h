@@ -28,17 +28,17 @@
 #ifndef __MINUNIT_H__
 #define __MINUNIT_H__
 
-// Test macros
+/* Test macros */
 #define mu_assert(test, msg) do { if (!(test)) { mu_fail(msg); return; } } while (0)
 #define mu_run(test) do { test(); tests_run++; } while (0)
 #define mu_suite(suite) do { suite(); } while (0)
 
-extern int tests_run;       // Number of executed tests
-extern int test_fails;      // Number of failed tests
+extern int tests_run;       /* Number of executed tests */
+extern int test_fails;      /* Number of failed tests */
 
-void mu_fail(char* msg);    // Mark a test as failed
-void mu_results();          // Print test results
-void mu_free();             // Free memory used in testing
+void mu_fail(char* msg);    /* Mark a test as failed */
+void mu_results();          /* Print test results */
+void mu_free();             /* Free memory used in testing */
 
 #endif
 

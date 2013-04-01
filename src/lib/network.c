@@ -31,41 +31,41 @@
 #include "network.h"
 
 
-static int   _socket;  // The socket to the IRC server
-static FILE* _sd;      // A file pointer to be able to read from the socket line by line
+static int   _socket;  /* The socket to the IRC server */
+static FILE* _sd;      /* A file pointer to be able to read from the socket line by line */
 
 void net_connect(char* address, int port) {
-    struct hostent *host_entry;     // Host name
-    struct sockaddr_in sock_addr;   // Remote address
+    struct hostent *host_entry;     /* Host name */
+    struct sockaddr_in sock_addr;   /* Remote address */
 
-    // Get remote host address
+    /* Get remote host address */
     if ((host_entry = gethostbyname(address)) == NULL) {
         perror("gethostbyname error");
         exit(EXIT_FAILURE);
     }
 
-    // Write zeros into remote address structure
+    /* Write zeros into remote address structure */
     memset(&sock_addr, 0, sizeof(sock_addr));
 
-    // Family type, server port and host address
+    /* Family type, server port and host address */
     sock_addr.sin_family = AF_INET;
     sock_addr.sin_port = htons(port);
     sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
 
-    // Socket creation
+    /* Socket creation */
     if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket creation error");
         exit(EXIT_FAILURE);
     }
 
-    // Create a connection with the remote host
+    /* Create a connection with the remote host */
     if (connect(_socket, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
         perror("connect error");
         exit(EXIT_FAILURE);
     }
 
-    _sd = fdopen(_socket, "r");     // Create the file descriptor to read from the socket line by line
-    setvbuf(_sd, NULL, _IONBF, 0);  // Turn off buffering to avoid blocking input
+    _sd = fdopen(_socket, "r");     /* Create the file descriptor to read from the socket line by line */
+    setvbuf(_sd, NULL, _IONBF, 0);  /* Turn off buffering to avoid blocking input */
 }
 
 void net_disconnect() {
@@ -76,8 +76,8 @@ void net_disconnect() {
 int net_send(char* msg) {
     char out[MSG_SIZE];
 
-    strncpy(out, msg, WRITE_BUF);   // Cut the message to the maximum size
-    strcat(out, MSG_SEP);           // Messages must end like this
+    strncpy(out, msg, WRITE_BUF);   /* Cut the message to the maximum size */
+    strcat(out, MSG_SEP);           /* Messages must end like this */
 
     printf(">> %s", out);
 
@@ -87,7 +87,7 @@ int net_send(char* msg) {
 void net_recv(char* msg) {
     char* ret;
 
-    // Read only a single line from the socket
+    /* Read only a single line from the socket */
     ret = fgets(msg, READ_BUF, _sd);
 
     if (ret == NULL) {
@@ -102,16 +102,16 @@ enum net_status net_listen() {
     int read, ret;
     fd_set read_fd_set;
 
-    // Initialize the set of active sockets
+    /* Initialize the set of active sockets */
     FD_ZERO(&read_fd_set);
     FD_SET(_socket, &read_fd_set);
 
-    // Check if there is some data to be read (avoid blocking read)
+    /* Check if there is some data to be read (avoid blocking read) */
     read = select(_socket + 1, &read_fd_set, NULL, NULL, NULL);
 
-    // If there is an error in select, abort except
-    // if the error is an interrupt signal. We'll just
-    // ignore it since we are handling the signals.
+    /* If there is an error in select, abort except */
+    /* if the error is an interrupt signal. We'll just */
+    /* ignore it since we are handling the signals. */
     if (read < 0) {
         ret = (errno == EINTR)? NET_CLOSE : NET_ERROR;
     } else if (read > 0 && FD_ISSET(_socket, &read_fd_set)) {

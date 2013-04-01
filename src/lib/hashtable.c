@@ -93,14 +93,14 @@ HTEntry* ht_add(HTable* ht, HTData data) {
     idx = ht_hash(data);
     current = ht->entries[idx];
 
-    // Find the key (if already exists)
+    /* Find the key (if already exists) */
     while (current != NULL && !ht_eq(current->data, data)) {
         old = current;
         current = current->next;
     }
 
-    // If key does not exist or it must not be overriden,
-    // add the new element at the beginning of the list
+    /* If key does not exist or it must not be overriden, */
+    /* add the new element at the beginning of the list */
     if (current == NULL) {
         if ((current = malloc(sizeof(HTEntry))) == 0) {
             perror("Out of memory (ht_add)");
@@ -130,7 +130,7 @@ HTData ht_del(HTable* ht, HTData data) {
     ret.value = NULL;
     ret.function = NULL;
 
-    // Find entry
+    /* Find entry */
     old = 0;
     idx = ht_hash(data);
     current = ht->entries[idx];
@@ -144,9 +144,9 @@ HTData ht_del(HTable* ht, HTData data) {
         return ret;
 
     if (old != NULL) {
-        old->next = current->next;          // Not first node, old points to previous node
+        old->next = current->next;          /* Not first node, old points to previous node */
     } else {
-        ht->entries[idx] = current->next;   // First node on chain
+        ht->entries[idx] = current->next;   /* First node on chain */
     }
 
     ret = current->data;

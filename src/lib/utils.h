@@ -23,19 +23,19 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#define s_eq(a,b) (strcmp(a,b) == 0)    // String equals
-#define s_ne(a,b) (strcmp(a,b) != 0)    // String not equals
+#define s_eq(a,b) (strcmp(a,b) == 0)    /* String equals */
+#define s_ne(a,b) (strcmp(a,b) != 0)    /* String not equals */
 
-// String utils
-void upper(char* str);      // Modify the given string and make it upper case
-void lower(char* str);      // Modify the given string and make it lower case
+/* String utils */
+void upper(char* str);      /* Modify the given string and make it upper case */
+void lower(char* str);      /* Modify the given string and make it lower case */
 
-// Binding utils
-void build_command_key(char* key, char* command);   // Build the binding key for a command binding
+/* Binding utils */
+void build_command_key(char* key, char* command);   /* Build the binding key for a command binding */
 
-// IRC utils
-void append_channel_flags(char* str, unsigned short int flags);     // Append given flags to the given string
-void append_user_flags(char* str, unsigned short int flags);        // Append the flags to the given string
+/* IRC utils */
+void append_channel_flags(char* str, unsigned short int flags);     /* Append given flags to the given string */
+void append_user_flags(char* str, unsigned short int flags);        /* Append the flags to the given string */
 
 #endif
 

@@ -51,21 +51,21 @@ void test_build_command_key() {
 void test_append_channel_flags() {
     char text[10] = "";
 
-    // No flags set
+    /* No flags set */
     append_channel_flags(text, 0x0000);
     mu_assert(s_eq(text, ""), "test_append_channel_flags: text should be an empty string");
 
-    // Single flag
+    /* Single flag */
     *text = '\0';
     append_channel_flags(text, CH_MODERATED);
     mu_assert(s_eq(text, "m"), "test_append_channel_flags: text should be 'm'");
 
-    // Multiple flags are set in the order defined in the append_channel_flags function
+    /* Multiple flags are set in the order defined in the append_channel_flags function */
     *text = '\0';
     append_channel_flags(text, CH_INVITEONLY | CH_NOEXTMSGS | CH_TOPICLOCK);
     mu_assert(s_eq(text, "itn"), "test_append_channel_flags: text should be 'itn'");
 
-    // All flags
+    /* All flags */
     *text = '\0';
     append_channel_flags(text, 0xFFFF);
     mu_assert(s_eq(text, "psitnm"), "test_append_channel_flags: text should be 'psitnm'");
@@ -74,21 +74,21 @@ void test_append_channel_flags() {
 void test_append_user_flags() {
     char text[10] = "";
 
-    // No flags set
+    /* No flags set */
     append_user_flags(text, 0x0000);
     mu_assert(s_eq(text, ""), "test_append_user_flags: text should be an empty string");
 
-    // Single flag
+    /* Single flag */
     *text = '\0';
     append_user_flags(text, USR_INVISIBLE);
     mu_assert(s_eq(text, "i"), "test_append_user_flags: text should be 'i'");
 
-    // Multiple flags are set in the order defined in the append_channel_flags function
+    /* Multiple flags are set in the order defined in the append_channel_flags function */
     *text = '\0';
     append_user_flags(text, USR_WALLOPS | USR_INVISIBLE);
     mu_assert(s_eq(text, "iw"), "test_append_user_flags: text should be 'iw'");
 
-    // All flags
+    /* All flags */
     *text = '\0';
     append_user_flags(text, 0xFFFF);
     mu_assert(s_eq(text, "iwo"), "test_append_user_flags: text should be 'iwo'");

@@ -33,13 +33,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include "irc.h"                    // IRC protocol functions
+#include "irc.h"                    /* IRC protocol functions */
 
-// The location of the log files
+/* The location of the log files */
 #define LOG_PATH "/tmp/circus"
 
 
-// Disconnect if the nick is in use
+/* Disconnect if the nick is in use */
 void on_nick_in_use(ErrorEvent* event) {
     printf("Nick %s is already in use\n", event->params[1]);
     irc_quit("Bye");
@@ -47,7 +47,7 @@ void on_nick_in_use(ErrorEvent* event) {
     exit(EXIT_FAILURE);
 }
 
-// Log message to the log file
+/* Log message to the log file */
 void log_msg(MessageEvent* event) {
     char log_file[30];
     FILE* f;
@@ -69,32 +69,32 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    server = argv[1];       // The IRC server
-    port = atoi(argv[2]);   // The IRC server port
-    nick = argv[3];         // The nick to use
+    server = argv[1];       /* The IRC server */
+    port = atoi(argv[2]);   /* The IRC server port */
+    nick = argv[3];         /* The nick to use */
 
-    // Create the log directory
+    /* Create the log directory */
     mkdir(LOG_PATH, S_IRWXU);
 
-    // Bind IRC event to custom functions
-    // All bindable events are defined in codes.h
+    /* Bind IRC event to custom functions */
+    /* All bindable events are defined in codes.h */
     irc_bind_event(ERR_NICKNAMEINUSE, (CallbackPtr) on_nick_in_use);
     irc_bind_event(PRIVMSG, (CallbackPtr) log_msg);
 
-    // Connect, login and join the configured channel
+    /* Connect, login and join the configured channel */
     irc_connect(server, port);
     irc_login(nick, "Circus", "Circus IRC bot");
 
-    // Join the given channels
+    /* Join the given channels */
     for (i = 4; i < argc; i++) {
         irc_join(argv[i]);
     }
 
-    // Start listening to events
-    // This method blocks until a quit signal is received
+    /* Start listening to events */
+    /* This method blocks until a quit signal is received */
     irc_listen();
 
-    // Send quit message and close connection
+    /* Send quit message and close connection */
     irc_quit("Bye");
     irc_disconnect();
 

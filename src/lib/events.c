@@ -195,7 +195,7 @@ MessageEvent message_event(struct raw_msg *raw) {
 ModeEvent mode_event(struct raw_msg *raw) {
     ModeEvent event;
     int i;
-    char op = '\0';  // Invalid character to initialize variable
+    char op = '\0';  /* Invalid character to initialize variable */
     unsigned short int current_flag = 0x0000;
     char* flags = raw->params[1];
 
@@ -207,7 +207,7 @@ ModeEvent mode_event(struct raw_msg *raw) {
     event.flag_str = flags;
     event.num_params = raw->num_params - 2;
 
-    // Process flags
+    /* Process flags */
     for (i = 0; i < strlen(flags); i++) {
         if (flags[i] == '+' || flags[i] == '-') {
             op = flags[i];
@@ -230,7 +230,7 @@ ModeEvent mode_event(struct raw_msg *raw) {
             default:  current_flag = 0x0000; break;
         }
 
-        // Update the corresponding flags
+        /* Update the corresponding flags */
         if (op == '+') {
             event.set_flags |= current_flag;
         } else if (op == '-') {
@@ -238,7 +238,7 @@ ModeEvent mode_event(struct raw_msg *raw) {
         }
     }
 
-    // Add the mode parameters (only available in channel mode)
+    /* Add the mode parameters (only available in channel mode) */
     if (event.num_params > 0) {
         for (i = 0; i < event.num_params; i++) {
             event.params[i] = raw->params[i + 2];

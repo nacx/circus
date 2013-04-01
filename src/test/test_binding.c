@@ -26,14 +26,15 @@
 #include "../lib/binding.c"
 
 void target(char* txt) {
-    // target function to test hook methods
+    /* target function to test hook methods */
 }
 
 void test_lookup_event() {
+    CallbackPtr callback;
     bind_event("test", (CallbackPtr) target);
-    CallbackPtr callback = lookup_event("test");
+    callback = lookup_event("test");
     mu_assert(callback == (CallbackPtr) target, "test_lookup_event: Found a different memory address");
-    unbind_event("test"); // Cleanup
+    unbind_event("test"); /* Cleanup */
 }
 
 void test_lookup_unexisting_event() {

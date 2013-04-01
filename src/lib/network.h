@@ -23,32 +23,32 @@
 #ifndef __NETWORK_H__
 #define __NETWORK_H__
 
-#define MSG_SIZE 512    // The maximum message size of an IRC message
-#define MSG_SEP "\r\n"  // The message separator
+#define MSG_SIZE 512    /* The maximum message size of an IRC message */
+#define MSG_SEP "\r\n"  /* The message separator */
 
-#define READ_BUF (MSG_SIZE + 1)     // The read buffer size
-#define WRITE_BUF (MSG_SIZE - 2)    // The write buffer size
+#define READ_BUF (MSG_SIZE + 1)     /* The read buffer size */
+#define WRITE_BUF (MSG_SIZE - 2)    /* The write buffer size */
 
-// Network status
+/* Network status */
 enum net_status {
-    NET_READY,      // There is data to be read from the socket
-    NET_ERROR,      // Unexpected error while reading
-    NET_CLOSE,      // The connection must terminate
-    NET_IGNORE      // Ignore the status and continue
+    NET_READY,      /* There is data to be read from the socket */
+    NET_ERROR,      /* Unexpected error while reading */
+    NET_CLOSE,      /* The connection must terminate */
+    NET_IGNORE      /* Ignore the status and continue */
 };
 
-// Network functions. Allow them to be redefined or mocked for testing purposes
-void net_connect(char* address, int port);  // Connect to the IRC server
-void net_disconnect();                      // Disconnect from the server
-void net_recv(char* msg);                   // Receive a message from the server
-enum net_status net_listen();               // Listen for incoming messages
+/* Network functions. Allow them to be redefined or mocked for testing purposes */
+void net_connect(char* address, int port);  /* Connect to the IRC server */
+void net_disconnect();                      /* Disconnect from the server */
+void net_recv(char* msg);                   /* Receive a message from the server */
+enum net_status net_listen();               /* Listen for incoming messages */
 
 #ifdef __GNUC__
-// Not portable. Try to define the weak attribute to allow to redefine the
-// functions and mock them in tests.
-__attribute__((weak)) int net_send(char* msg);   // Send a message to the server
+/* Not portable. Try to define the weak attribute to allow to redefine the */
+/* functions and mock them in tests. */
+__attribute__((weak)) int net_send(char* msg);   /* Send a message to the server */
 #else
-int net_send(char* msg);   // Send a message to the server
+int net_send(char* msg);   /* Send a message to the server */
 #endif
 
 #endif

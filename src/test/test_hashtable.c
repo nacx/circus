@@ -45,7 +45,7 @@ void test_ht_add() {
     mu_assert(ht->entries[idx], "test_ht_add: ht->entries[idx] should exist");
     mu_assert(ht->num_entries == 1, "test_ht_add: ht->num_entries should be 1");
 
-    // Cleanup
+    /* Cleanup */
     ht_del(ht, data);
 }
 
@@ -62,7 +62,7 @@ void test_ht_add_replace() {
 
     mu_assert(ht->num_entries == 1, "test_ht_add_replace: ht->num_entries should be 1");
 
-    // Cleanup
+    /* Cleanup */
     ht_del(ht, data2);
 }
 
@@ -105,7 +105,7 @@ void test_ht_find() {
     entry = ht_find(ht, data);
     mu_assert(entry->data.key == data.key, "test_ht_find: key does not match");
 
-    // Cleanup
+    /* Cleanup */
     ht_del(ht, data);
 }
 

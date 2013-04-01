@@ -31,11 +31,11 @@
 #include "../lib/message_handler.c"
 
 #ifdef __GNUC__
-// Not portable. Only redefine the function if it is defined weak.
+/* Not portable. Only redefine the function if it is defined weak. */
 int net_send(char* msg) { return 0; }
 #endif
 
-// Event counters
+/* Event counters */
 int nick_events = 0;
 int quit_events = 0;
 int join_events = 0;
@@ -52,7 +52,7 @@ int notice_events = 0;
 int error_events = 0;
 int generic_events = 0;
 
-// Handler functions
+/* Handler functions */
 void on_nick(NickEvent* event) { nick_events++; }
 void on_quit(QuitEvent* event) { quit_events++; }
 void on_join(JoinEvent* event) { join_events++; }
@@ -92,7 +92,7 @@ void test_parse_empty_message() {
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 
 
     raw = parse("", buffer);
@@ -101,7 +101,7 @@ void test_parse_empty_message() {
     mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
     mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse() {
@@ -114,7 +114,7 @@ void test_parse() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse: type should be TEST"); 
     mu_assert(raw.num_params == 7, "test_parse: there should be 7 parameters");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse_with_prefix() {
@@ -127,7 +127,7 @@ void test_parse_with_prefix() {
     mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
     mu_assert(raw.num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse_with_last_param() {
@@ -143,7 +143,7 @@ void test_parse_with_last_param() {
     mu_assert(raw.num_params == 8, "test_parse_with_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_last_param: last parameter should be 'last parameter'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse_with_prefix_and_last_param() {
@@ -159,7 +159,7 @@ void test_parse_with_prefix_and_last_param() {
     mu_assert(raw.num_params == 8, "test_parse_with_prefix_and_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_prefix_and_last_param: last parameter should be 'last parameter'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse_only_last_param() {
@@ -175,7 +175,7 @@ void test_parse_only_last_param() {
     mu_assert(raw.num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_parse_with_prefix_only_last_param() {
@@ -191,7 +191,7 @@ void test_parse_with_prefix_only_last_param() {
     mu_assert(raw.num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_fire_nick_event() {

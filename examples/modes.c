@@ -31,30 +31,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"                  // Utility functions and macros
-#include "irc.h"                    // IRC protocol functions
+#include "utils.h"                  /* Utility functions and macros */
+#include "irc.h"                    /* IRC protocol functions */
 
-#define CONF_NICK "circus-bot"      // The nick to be used by the bot
-#define CONF_CHAN "#circus-bot"     // The channel to join
+#define CONF_NICK "circus-bot"      /* The nick to be used by the bot */
+#define CONF_CHAN "#circus-bot"     /* The channel to join */
 
 
-// Print the error message
+/* Print the error message */
 void on_error(ErrorEvent* event) {
     printf("Incoming error message: [%s] %s\n", event->code, event->message);
 }
 
-// Thank operator access and change some modes
+/* Thank operator access and change some modes */
 void on_mode(ModeEvent* event) {
     char msg[30];
     int i;
 
-    if (event->set_flags & CH_OPERATOR) {   // The operator flag is set
+    if (event->set_flags & CH_OPERATOR) {   /* The operator flag is set */
         for (i = 0; i < event->num_params; i++) {
-            if (s_eq(event->params[i], CONF_NICK)) { // We've been given operator privilege
-                snprintf(msg, 30, "Thanks %s!", event->user.nick);  // Build the message to send
+            if (s_eq(event->params[i], CONF_NICK)) { /* We've been given operator privilege */
+                snprintf(msg, 30, "Thanks %s!", event->user.nick);  /* Build the message to send */
                 irc_channel_msg(event->target, msg);
         
-                // Channel flags are defined in irc.h
+                /* Channel flags are defined in irc.h */
                 irc_channel_set(event->target, CH_INVITEONLY | CH_MODERATED);
                 irc_channel_unset(event->target, CH_INVITEONLY | CH_MODERATED);
 
@@ -69,34 +69,37 @@ void on_mode(ModeEvent* event) {
 }
 
 int main(int argc, char **argv) {
+    char* server;
+    int port;
+
     if (argc != 3) {
         printf("Usage: %s <server> <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    char* server = argv[1];     // The IRC server
-    int port = atoi(argv[2]);   // The IRC server port
+    server = argv[1];     /* The IRC server */
+    port = atoi(argv[2]);   /* The IRC server port */
 
-    // Bind IRC event to custom functions
-    // All bindable events are defined in codes.h
+    /* Bind IRC event to custom functions */
+    /* All bindable events are defined in codes.h */
     irc_bind_event(ERROR, (CallbackPtr) on_error);
     irc_bind_event(MODE, (CallbackPtr) on_mode);
 
-    // Connect, login and join the configured channel
+    /* Connect, login and join the configured channel */
     irc_connect(server, port);
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    // Set/unset some user flags just to show how to manipulate them
-    // All flags are defined in irc.h
+    /* Set/unset some user flags just to show how to manipulate them */
+    /* All flags are defined in irc.h */
     irc_user_set(CONF_NICK, USR_WALLOPS | USR_INVISIBLE);
     irc_user_unset(CONF_NICK, USR_WALLOPS);
 
-    // Start listening to events
-    // This method blocks until a quit signal is received
+    /* Start listening to events */
+    /* This method blocks until a quit signal is received */
     irc_listen();
 
-    // Send quit message and close connection
+    /* Send quit message and close connection */
     irc_quit("Bye");
     irc_disconnect();
 

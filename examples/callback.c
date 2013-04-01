@@ -30,13 +30,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"                  // Utility functions and macros
-#include "irc.h"                    // IRC protocol functions
+#include "utils.h"                  /* Utility functions and macros */
+#include "irc.h"                    /* IRC protocol functions */
 
-#define CONF_NICK "circus-bot"      // The nick to be used by the bot
-#define CONF_CHAN "#circus-bot"     // The channel to join
+#define CONF_NICK "circus-bot"      /* The nick to be used by the bot */
+#define CONF_CHAN "#circus-bot"     /* The channel to join */
 
-// Disconnect if the nick is in use
+/* Disconnect if the nick is in use */
 void on_nick_in_use(ErrorEvent* event) {
     printf("Nick %s is already in use\n", event->params[1]);
     irc_quit("Bye");
@@ -44,51 +44,54 @@ void on_nick_in_use(ErrorEvent* event) {
     exit(EXIT_FAILURE);
 }
 
-// Print the error message
+/* Print the error message */
 void on_error(ErrorEvent* event) {
     printf("Incoming error message: [%s] %s\n", event->code, event->message);
 }
 
-// Welcome a user when joining
+/* Welcome a user when joining */
 void on_join(JoinEvent* event) {
     char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
-        irc_channel_msg(event->channel, msg);               // Send message to channel
+    if (s_ne(event->user.nick, CONF_NICK)) {                /* String not-equal macro from utils.h */
+        snprintf(msg, 30, "Welcome %s", event->user.nick);  /* Build the message to send */
+        irc_channel_msg(event->channel, msg);               /* Send message to channel */
     }
 }
 
-// Print the incoming message
+/* Print the incoming message */
 void on_message(GenericEvent* event) {
     printf("Incoming message: [%s] %s\n", event->code, event->message);
 }
 
 int main(int argc, char **argv) {
+    char* server;
+    int port;
+
     if (argc != 3) {
         printf("Usage: %s <server> <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    char* server = argv[1];     // The IRC server
-    int port = atoi(argv[2]);   // The IRC server port
+    server = argv[1];     /* The IRC server */
+    port = atoi(argv[2]);   /* The IRC server port */
 
-    // Bind IRC event to custom functions
-    // All bindable events are defined in codes.h
+    /* Bind IRC event to custom functions */
+    /* All bindable events are defined in codes.h */
     irc_bind_event(ERR_NICKNAMEINUSE, (CallbackPtr) on_nick_in_use);
     irc_bind_event(ERROR, (CallbackPtr) on_error);
     irc_bind_event(JOIN, (CallbackPtr) on_join);
     irc_bind_event(ALL, (CallbackPtr) on_message);
 
-    // Connect, login and join the configured channel
+    /* Connect, login and join the configured channel */
     irc_connect(server, port);
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    // Start listening to events
-    // This method blocks until a quit signal is received
+    /* Start listening to events */
+    /* This method blocks until a quit signal is received */
     irc_listen();
 
-    // Send quit message and close connection
+    /* Send quit message and close connection */
     irc_quit("Bye");
     irc_disconnect();
 

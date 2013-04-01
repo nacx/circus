@@ -31,27 +31,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"                  // Utility functions and macros
-#include "irc.h"                    // IRC protocol functions
+#include "utils.h"                  /* Utility functions and macros */
+#include "irc.h"                    /* IRC protocol functions */
 
-#define CONF_NICK "circus-bot"      // The nick to be used by the bot
-#define CONF_CHAN "#circus-bot"     // The channel to join
+#define CONF_NICK "circus-bot"      /* The nick to be used by the bot */
+#define CONF_CHAN "#circus-bot"     /* The channel to join */
 
-// Welcome a user when joining the channel
+/* Welcome a user when joining the channel */
 void welcome(JoinEvent* event) {
     char msg[30];
-    if (s_ne(event->user.nick, CONF_NICK)) {                // String not-equal macro from utils.h
-        snprintf(msg, 30, "Welcome %s", event->user.nick);  // Build the message to send
-        irc_channel_msg(event->channel, msg);                   // Send message to channel
+    if (s_ne(event->user.nick, CONF_NICK)) {                /* String not-equal macro from utils.h */
+        snprintf(msg, 30, "Welcome %s", event->user.nick);  /* Build the message to send */
+        irc_channel_msg(event->channel, msg);                   /* Send message to channel */
     }
 }
 
-// Give op to the user who has requested it
+/* Give op to the user who has requested it */
 void give_op(MessageEvent* event) {
     irc_op(event->to, event->user.nick);
 }
 
-// Disables bot callbacks
+/* Disables bot callbacks */
 void disable(MessageEvent* event) {
     irc_unbind_event(JOIN);
     irc_unbind_command("!op");
@@ -64,31 +64,34 @@ void enable(MessageEvent* event) {
 
 
 int main(int argc, char **argv) {
+    char* server;
+    int port;
+
     if (argc != 3) {
         printf("Usage: %s <server> <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    char* server = argv[1];     // The IRC server
-    int port = atoi(argv[2]);   // The IRC server port
+    server = argv[1];     /* The IRC server */
+    port = atoi(argv[2]);   /* The IRC server port */
 
-    // Bind IRC events and message commands to custom functions
-    // All bindable events are defined in codes.h
+    /* Bind IRC events and message commands to custom functions */
+    /* All bindable events are defined in codes.h */
     irc_bind_event(JOIN, (CallbackPtr) welcome);
     irc_bind_command("!disable", (CallbackPtr) disable);
     irc_bind_command("!enable", (CallbackPtr) enable);
     irc_bind_command("!op", (CallbackPtr) give_op);
 
-    // Connect, login and join the configured channel
+    /* Connect, login and join the configured channel */
     irc_connect(server, port);
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    // Start listening to events
-    // This method blocks until a quit signal is received
+    /* Start listening to events */
+    /* This method blocks until a quit signal is received */
     irc_listen();
 
-    // Send quit message and close connection
+    /* Send quit message and close connection */
     irc_quit("Bye");
     irc_disconnect();
 

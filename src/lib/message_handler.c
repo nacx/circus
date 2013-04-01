@@ -66,11 +66,11 @@ void fire_event(struct raw_msg *raw) {
     CallbackPtr callback = NULL;
     upper(raw->type);
 
-    // Check if there is a concrete binding for the
-    // incoming message type
+    /* Check if there is a concrete binding for the */
+    /* incoming message type */
     debug(("handler: Looking for a binding for %s\n", raw->type));
 
-    // Connection registration
+    /* Connection registration */
     if (s_eq(raw->type, NICK)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
@@ -83,7 +83,7 @@ void fire_event(struct raw_msg *raw) {
             QuitEvent event = quit_event(raw);
             QuitCallback(callback)(&event);
         }
-    } // Channel operations
+    } /* Channel operations */
     else if (s_eq(raw->type, JOIN)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
@@ -127,13 +127,13 @@ void fire_event(struct raw_msg *raw) {
             KickCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, PRIVMSG)) {
-        // Look for a command binding
+        /* Look for a command binding */
         char key[50];
         char* buffer, *command, *command_params;
         size_t lparam = strlen(raw->params[1]);
 
-        // The first parameter in PRIVMSG contains the whole message
-        // We need to consider only the first word
+        /* The first parameter in PRIVMSG contains the whole message */
+        /* We need to consider only the first word */
         if ((buffer = malloc((lparam + 1) * sizeof(char))) == 0) {
             perror("Out of memory (fire_event)");
             exit(EXIT_FAILURE);
@@ -148,12 +148,12 @@ void fire_event(struct raw_msg *raw) {
             debug(("handler: Looking for command: %s\n", command));
             callback = lookup_event(key);
             if (callback != NULL) {
-                // Remove the command name from the raw message
+                /* Remove the command name from the raw message */
                 raw->params[1] = command_params;
             }
         }
 
-        // If no command binding is found, look for an event binding
+        /* If no command binding is found, look for an event binding */
         if (callback == NULL) {
             debug(("handler: No command found. Looking for event.\n"));
             callback = lookup_event(raw->type);
@@ -169,10 +169,10 @@ void fire_event(struct raw_msg *raw) {
             ModeEvent event = mode_event(raw);
             ModeCallback(callback)(&event);
         }
-    } // Miscellaneous events
+    } /* Miscellaneous events */
     else if (s_eq(raw->type, PING)) {
         PingEvent event = ping_event(raw);
-        __circus__ping_handler(&event);    // Call the system callback for ping before calling the bindings
+        __circus__ping_handler(&event);    /* Call the system callback for ping before calling the bindings */
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             PingCallback(callback)(&event);
@@ -185,14 +185,14 @@ void fire_event(struct raw_msg *raw) {
         }
     }
 
-    // If no specific callback is found, check if there is
-    // a global binding defined to handle the incoming message
+    /* If no specific callback is found, check if there is */
+    /* a global binding defined to handle the incoming message */
 
     if (callback == NULL) {
         if (is_error(raw->type)) {
-            // Look for a concrete error binding
+            /* Look for a concrete error binding */
             callback = lookup_event(raw->type);
-            // If none is found, look for a generic error binding
+            /* If none is found, look for a generic error binding */
             if (callback == NULL) {
                 callback = lookup_event(ERROR);
             }
@@ -202,9 +202,9 @@ void fire_event(struct raw_msg *raw) {
                 ErrorCallback(callback)(&event);
             }
         } else {
-            // Look for a concrete message binding
+            /* Look for a concrete message binding */
             callback = lookup_event(raw->type);
-            // If none is found, look for a generic message binding
+            /* If none is found, look for a generic message binding */
             if (callback == NULL) {
                 callback = lookup_event(ALL);
             }
@@ -243,37 +243,37 @@ struct raw_msg parse(char* msg, char* buffer) {
         while(token != NULL)
         {
             if (raw.type == NULL) {
-                // If type is not set, we must check if there
-                // is a message prefix
+                /* If type is not set, we must check if there */
+                /* is a message prefix */
                 if (token[0] == ':') {
-                    raw.prefix = token + 1; // Ignore the ':'
+                    raw.prefix = token + 1; /* Ignore the ':' */
                 } else {
                     raw.type = token;
                 }
-            } else { // If the type is set the token is a parameter
-                // If a parameter begins with ':' then it is
-                // the last parameter and it is all the remaining message
+            } else { /* If the type is set the token is a parameter */
+                /* If a parameter begins with ':' then it is */
+                /* the last parameter and it is all the remaining message */
                 if (token[0] == ':') {
-                    // Do not increment the parameter count
-                    raw.params[i] = token + 1; // Ignore the ':'
-                    is_last_parameter = 1;       // Set the last parameter flag
+                    /* Do not increment the parameter count */
+                    raw.params[i] = token + 1; /* Ignore the ':' */
+                    is_last_parameter = 1;       /* Set the last parameter flag */
                 } else {
                     if (is_last_parameter == 0) {
                         raw.params[i++] = token;
                     } else {
-                        // If it is the last parameter, just concatenate
-                        // the tokens
+                        /* If it is the last parameter, just concatenate */
+                        /* the tokens */
                         sprintf(raw.params[i], "%s %s", raw.params[i], token);
                     }
                 }
             }
 
-            // Continue with the next token
+            /* Continue with the next token */
             token = strtok_r(NULL, PARAM_SEP, &token_end);
         }
 
-        // If we have a last parameter we should increment now the parameter
-        // counter
+        /* If we have a last parameter we should increment now the parameter */
+        /* counter */
         raw.num_params = (is_last_parameter == 0)? i : i + 1;
     }
 
@@ -284,11 +284,11 @@ void handle(char* msg) {
     char* buffer = NULL;
     struct raw_msg raw;
 
-    msg[strlen(msg) - 2] = '\0';    // Remove the line terminaion before parsing
-    raw = parse(msg, buffer);       // Parse the input and get the raw message
-    fire_event(&raw);               // Fire the event
+    msg[strlen(msg) - 2] = '\0';    /* Remove the line terminaion before parsing */
+    raw = parse(msg, buffer);       /* Parse the input and get the raw message */
+    fire_event(&raw);               /* Fire the event */
 
-    // Free memory used to parse the message once it has been handled
+    /* Free memory used to parse the message once it has been handled */
     if (buffer != NULL) {
         free(buffer);
     }

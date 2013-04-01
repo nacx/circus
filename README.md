@@ -1,7 +1,7 @@
 Circus: An event-driven IRC framework written in C
 ==================================================
 
-Circus is an event-driven IRC framework written in C that provides a simple
+Circus is an event-driven IRC framework written in ANSI C that provides a simple
 way to write IRC clients in pure C. Its main purpose is to provide a base
 to write IRC bots, but it may be extended to implement fully-featured IRC
 clients.

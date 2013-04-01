@@ -23,7 +23,7 @@
 #ifndef __TEST_H__
 #define __TEST_H__
 
-// Unit test suites
+/* Unit test suites */
 void test_hashtable();
 void test_binding();
 void test_utils();

@@ -52,7 +52,7 @@ void test_error_event_one_param() {
     mu_assert(s_eq(event.params[0], "circus-bot"), "test_error_event_one_param: params[0] should be 'circus-bot'");
     mu_assert(s_eq(event.message, "Test message"), "test_error_event_one_param: message should be 'Test message'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_error_event_no_params() {
@@ -67,7 +67,7 @@ void test_error_event_no_params() {
     mu_assert(event.num_params == 0, "test_error_event_no_params: num_params should be 0");
     mu_assert(s_eq(event.message, "Test message"), "test_error_event_no_params: message should be 'Test message'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_generic_event_one_param() {
@@ -83,7 +83,7 @@ void test_generic_event_one_param() {
     mu_assert(s_eq(event.params[0], "circus-bot"), "test_generic_event_one_param: params[0] should be 'circus-bot'");
     mu_assert(s_eq(event.message, "Test message"), "test_generic_event_one_param: message should be 'test message'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_generic_event_no_params() {
@@ -98,7 +98,7 @@ void test_generic_event_no_params() {
     mu_assert(event.num_params == 0, "test_generic_event_no_params: num_params should be 0");
     mu_assert(s_eq(event.message, "Test message"), "test_generic_event_no_params: message should be 'test message'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_nick_event() {
@@ -111,7 +111,7 @@ void test_nick_event() {
 
     mu_assert(s_eq(event.new_nick, "test-nick"), "test_nick_event: nick should be 'test-nick'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_quit_event() {
@@ -124,7 +124,7 @@ void test_quit_event() {
 
     mu_assert(s_eq(event.message, "Bye bye!"), "test_quit_event: message should be 'Bye bye!'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_join_event() {
@@ -137,7 +137,7 @@ void test_join_event() {
 
     mu_assert(s_eq(event.channel, "#circus"), "test_join_event: channel should be '#circus'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_part_event() {
@@ -151,7 +151,7 @@ void test_part_event() {
     mu_assert(s_eq(event.channel, "#circus"), "test_part_event: channel should be '#circus'");
     mu_assert(s_eq(event.message, "Bye"), "test_part_event: message should be 'Bye'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_names_event_partial() {
@@ -168,7 +168,7 @@ void test_names_event_partial() {
     mu_assert(s_eq(event.names[0], "test1"), "test_names_event_partial: event.names[0] should be 'test1'");
     mu_assert(s_eq(event.names[1], "test2"), "test_names_event_partial: event.names[1] should be 'test2'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_names_event_finished() {
@@ -183,7 +183,7 @@ void test_names_event_finished() {
     mu_assert(s_eq(event.channel, "#circus"), "test_names_event_finished: channel should be '#circus'");
     mu_assert(event.num_names == 0, "test_names_event_finished: num_names should be '0'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_topic_event() {
@@ -197,7 +197,7 @@ void test_topic_event() {
     mu_assert(s_eq(event.channel, "#circus"), "test_topic_event: channel should be '#circus'");
     mu_assert(s_eq(event.topic, "New topic"), "test_topic_event: topic should be 'New topic'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_list_event_partial() {
@@ -213,7 +213,7 @@ void test_list_event_partial() {
     mu_assert(event.num_users == 7, "test_list_event_partial: num_users should be '7'");
     mu_assert(s_eq(event.topic, "Circus IRC framework"), "test_list_event_partial: topic should be 'Circus IRC framework'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_list_event_finished() {
@@ -229,7 +229,7 @@ void test_list_event_finished() {
     mu_assert(event.num_users == 0, "test_list_event_finished: num_users should be '0'");
     mu_assert(event.topic == NULL, "test_list_event_finished: topic should be 'NULL'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_invite_event() {
@@ -244,7 +244,7 @@ void test_invite_event() {
     mu_assert(s_eq(event.nick, "circus-bot"), "test_invite_event: nick should be 'circus-bot'");
     mu_assert(s_eq(event.user.nick, "nacx"), "test_invite_event: user.nick should be 'nacx'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_kick_event() {
@@ -260,7 +260,7 @@ void test_kick_event() {
     mu_assert(s_eq(event.message, "Foo"), "test_kick_event: message should be 'Foo'");
     mu_assert(s_eq(event.user.nick, "nacx"), "test_kick_event: user.nick should be 'nacx'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_message_event_channel() {
@@ -276,7 +276,7 @@ void test_message_event_channel() {
     mu_assert(s_eq(event.message, "Hi there"), "test_message_event_channel: message should be 'Hi there'");
     mu_assert(s_eq(event.user.nick, "nacx"), "test_message_event_channel: user.nick should be 'nacx'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_message_event_private() {
@@ -292,7 +292,7 @@ void test_message_event_private() {
     mu_assert(s_eq(event.message, "Hi there"), "test_message_event_channel: message should be 'Hi there'");
     mu_assert(s_eq(event.user.nick, "nacx"), "test_message_event_channel: user.nick should be 'nacx'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_ping_event() {
@@ -305,7 +305,7 @@ void test_ping_event() {
 
     mu_assert(s_eq(event.server, "zelazny.freenode.net"), "test_ping_event: server should be 'zelazny.freenode.net'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_notice_event() {
@@ -319,7 +319,7 @@ void test_notice_event() {
     mu_assert(s_eq(event.to, "*"), "test_notice_event: event.to should be '*'");
     mu_assert(s_eq(event.text, "Message"), "test_notice_event: event.text should be 'Message'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_channel_mode_event_set() {
@@ -337,7 +337,7 @@ void test_channel_mode_event_set() {
     mu_assert(event.unset_flags == 0x0000, "test_channel_mode_event_set: unset_flags should be 0x0000");
     mu_assert(event.num_params == 0, "test_channel_mode_event_set: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_channel_mode_event_unset() {
@@ -355,7 +355,7 @@ void test_channel_mode_event_unset() {
     mu_assert(event.unset_flags == unset_flags, "test_channel_mode_event_unset: unset_flags should be 'inm'");
     mu_assert(event.num_params == 0, "test_channel_mode_event_unset: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_channel_mode_event_setunset() {
@@ -374,7 +374,7 @@ void test_channel_mode_event_setunset() {
     mu_assert(event.unset_flags == unset_flags, "test_channel_mode_event_setunset: unset_flags should be 'inm'");
     mu_assert(event.num_params == 0, "test_channel_mode_event_setunset: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_channel_mode_event_params() {
@@ -395,7 +395,7 @@ void test_channel_mode_event_params() {
     mu_assert(s_eq(event.params[1], "test"), "test_channel_mode_event_params: params[0] should be 'test'");
     mu_assert(s_eq(event.params[2], "*!*@*"), "test_channel_mode_event_params: params[0] should be '*!*@*'");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_user_mode_event_set() {
@@ -413,7 +413,7 @@ void test_user_mode_event_set() {
     mu_assert(event.unset_flags == 0x0000, "test_user_mode_event_set: unset_flags should be 0x0000");
     mu_assert(event.num_params == 0, "test_user_mode_event_set: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_user_mode_event_unset() {
@@ -431,7 +431,7 @@ void test_user_mode_event_unset() {
     mu_assert(event.unset_flags == unset_flags, "test_user_mode_event_unset: unset_flags should be 'ow'");
     mu_assert(event.num_params == 0, "test_user_mode_event_unset: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_user_mode_event_setunset() {
@@ -450,7 +450,7 @@ void test_user_mode_event_setunset() {
     mu_assert(event.unset_flags == unset_flags, "test_user_mode_event_setunset: unset_flags should be 'io'");
     mu_assert(event.num_params == 0, "test_user_mode_event_setunset: num_params should be 0");
 
-    free(buffer);   // Cleanup
+    free(buffer);   /* Cleanup */
 }
 
 void test_events() {
