@@ -196,21 +196,25 @@ NoticeEvent     notice_event(struct raw_msg *raw);
 /* Callback types */
 /* ************** */
 
-typedef void (*ErrorCallback)(ErrorEvent*);
-typedef void (*GenericCallback)(GenericEvent*);
-typedef void (*NickCallback)(NickEvent*);
-typedef void (*QuitCallback)(QuitEvent*);
-typedef void (*JoinCallback)(JoinEvent*);
-typedef void (*PartCallback)(PartEvent*);
-typedef void (*TopicCallback)(TopicEvent*);
-typedef void (*NamesCallback)(NamesEvent*);
-typedef void (*ListCallback)(ListEvent*);
-typedef void (*InviteCallback)(InviteEvent*);
-typedef void (*KickCallback)(KickEvent*);
-typedef void (*MessageCallback)(MessageEvent*);
-typedef void (*ModeCallback)(ModeEvent*);
-typedef void (*NoticeCallback)(NoticeEvent*);
-typedef void (*PingCallback)(PingEvent*);
+// Generic callback pointer
+typedef void (*CallbackPtr)(void);
+
+// Macros to convert to the appropriate function pointer type for each event
+#define ErrorCallback(callback) ((void (*)(ErrorEvent*)) callback)
+#define GenericCallback(callback) ((void (*)(GenericEvent*)) callback)
+#define NickCallback(callback) ((void (*)(NickEvent*)) callback)
+#define QuitCallback(callback) ((void (*)(QuitEvent*)) callback)
+#define JoinCallback(callback) ((void (*)(JoinEvent*)) callback)
+#define PartCallback(callback) ((void (*)(PartEvent*)) callback)
+#define TopicCallback(callback) ((void (*)(TopicEvent*)) callback)
+#define NamesCallback(callback) ((void (*)(NamesEvent*)) callback)
+#define ListCallback(callback) ((void (*)(ListEvent*)) callback)
+#define InviteCallback(callback) ((void (*)(InviteEvent*)) callback)
+#define KickCallback(callback) ((void (*)(KickEvent*)) callback)
+#define MessageCallback(callback) ((void (*)(MessageEvent*)) callback)
+#define ModeCallback(callback) ((void (*)(ModeEvent*)) callback)
+#define NoticeCallback(callback) ((void (*)(NoticeEvent*)) callback)
+#define PingCallback(callback) ((void (*)(PingEvent*)) callback)
 
 #endif
 

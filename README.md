@@ -1,8 +1,6 @@
 Circus: An event-driven IRC framework written in C
 ==================================================
 
-[![Build Status](https://secure.travis-ci.org/nacx/circus.png)](http://travis-ci.org/nacx/circus)
-
 Circus is an event-driven IRC framework written in C that provides a simple
 way to write IRC clients in pure C. Its main purpose is to provide a base
 to write IRC bots, but it may be extended to implement fully-featured IRC

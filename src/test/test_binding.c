@@ -30,14 +30,14 @@ void target(char* txt) {
 }
 
 void test_lookup_event() {
-    bind_event("test", target);
-    void* callback = lookup_event("test");
-    mu_assert(callback == target, "test_lookup_event: Found a different memory address");
+    bind_event("test", (CallbackPtr) target);
+    CallbackPtr callback = lookup_event("test");
+    mu_assert(callback == (CallbackPtr) target, "test_lookup_event: Found a different memory address");
     unbind_event("test"); // Cleanup
 }
 
 void test_lookup_unexisting_event() {
-    void* callback = lookup_event("test-unexisting");
+    CallbackPtr callback = lookup_event("test-unexisting");
     mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
 }
 

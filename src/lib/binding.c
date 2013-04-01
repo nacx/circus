@@ -28,7 +28,7 @@
 
 static HTable* ht = NULL;
 
-void bind_event(char* event, void* callback) {
+void bind_event(char* event, CallbackPtr callback) {
     HTData data;
 
     if (ht == NULL) {
@@ -37,7 +37,7 @@ void bind_event(char* event, void* callback) {
     }
 
     data.key = event;
-    data.value = callback;
+    data.function = callback;
 
     debug(("binding: Adding event %s\n", event));
     ht_add(ht, data);
@@ -48,25 +48,27 @@ char* unbind_event(char* event) {
 
     data.key = event;
     data.value = NULL;
+    data.function = NULL;
 
     debug(("binding: Removing event %s\n", event));
     data = ht_del(ht, data);
     return data.key;
 }
 
-void* lookup_event(char* event) {
+CallbackPtr lookup_event(char* event) {
     HTData data;
     HTEntry* entry;
-    void* callback = NULL;
+    CallbackPtr callback = NULL;
 
     debug(("binding: Looking for event %s\n", event));
 
     data.key = event;
     data.value = NULL;
+    data.function = NULL;
 
     entry = ht_find(ht, data);
     if (entry != NULL) {
-        callback = entry->data.value;
+        callback = entry->data.function;
     }
 
     return callback;

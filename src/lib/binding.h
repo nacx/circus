@@ -23,10 +23,12 @@
 #ifndef __BINDING_H__
 #define __BINDING_H__
 
-void  bind_event(char* event, void* callback);  // Bind an event to the given callback
-char* unbind_event(char* event);		// Remove the binding for the given event
-void* lookup_event(char* event);  		// Lookup for the callback for the given event
-void  cleanup_bindings();                       // Cleanup all bindings
+#include "events.h"
+
+void  bind_event(char* event, CallbackPtr callback);    // Bind an event to the given callback
+char* unbind_event(char* event);		        // Remove the binding for the given event
+CallbackPtr lookup_event(char* event);  		// Lookup for the callback for the given event
+void  cleanup_bindings();                               // Cleanup all bindings
  
 #endif
 

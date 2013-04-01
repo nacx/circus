@@ -26,20 +26,22 @@
 #define HT_SIZE 256
 #define ht_eq(a, b) (strcmp(a.key, b.key) == 0)     // Data equallity macro
 
+
 /*************************/
 /* Hash table definition */
 /*************************/
 
 // The data being stored in the hashtable
 typedef struct {
-    char* key;
-    void* value;
+    char* key;                  // The key for the data
+    void* value;                // The object value of the data, if value is an object or pointer
+    void (*function)(void);     // The function pointer of the data, if value is a function
 } HTData;
 
 // Hash table entry
 typedef struct entry {
-    struct entry *next;
-    HTData data;
+    struct entry *next;         // Pointer for the next entry of the same hash
+    HTData data;                // Data stored in the current entry
 } HTEntry;
 
 // Hash table data structure

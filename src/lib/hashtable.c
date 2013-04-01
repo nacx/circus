@@ -128,6 +128,7 @@ HTData ht_del(HTable* ht, HTData data) {
 
     ret.key = NULL;
     ret.value = NULL;
+    ret.function = NULL;
 
     // Find entry
     old = 0;

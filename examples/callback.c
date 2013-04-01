@@ -74,10 +74,10 @@ int main(int argc, char **argv) {
 
     // Bind IRC event to custom functions
     // All bindable events are defined in codes.h
-    irc_bind_event(ERR_NICKNAMEINUSE, on_nick_in_use);
-    irc_bind_event(ERROR, on_error);
-    irc_bind_event(JOIN, on_join);
-    irc_bind_event(ALL, on_message);
+    irc_bind_event(ERR_NICKNAMEINUSE, (CallbackPtr) on_nick_in_use);
+    irc_bind_event(ERROR, (CallbackPtr) on_error);
+    irc_bind_event(JOIN, (CallbackPtr) on_join);
+    irc_bind_event(ALL, (CallbackPtr) on_message);
 
     // Connect, login and join the configured channel
     irc_connect(server, port);

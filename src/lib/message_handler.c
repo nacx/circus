@@ -63,7 +63,7 @@ static void __circus__ping_handler(PingEvent* event) {
 /* **************** */
 
 void fire_event(struct raw_msg *raw) {
-    void* callback = NULL;
+    CallbackPtr callback = NULL;
     upper(raw->type);
 
     // Check if there is a concrete binding for the
@@ -75,75 +75,56 @@ void fire_event(struct raw_msg *raw) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             NickEvent event = nick_event(raw);
-            // Make funprt <-> void* cast C99 compliant
-            NickCallback nick_callback;
-            memcpy(&nick_callback, &callback, sizeof(callback));
-            nick_callback(&event);
+            NickCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, QUIT)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             QuitEvent event = quit_event(raw);
-            QuitCallback quit_callback;
-            memcpy(&quit_callback, &callback, sizeof(callback));
-            quit_callback(&event);
+            QuitCallback(callback)(&event);
         }
     } // Channel operations
     else if (s_eq(raw->type, JOIN)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             JoinEvent event = join_event(raw);
-            JoinCallback join_callback;
-            memcpy(&join_callback, &callback, sizeof(callback));
-            join_callback(&event);
+            JoinCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, PART)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             PartEvent event = part_event(raw);
-            PartCallback part_callback;
-            memcpy(&part_callback, &callback, sizeof(callback));
-            part_callback(&event);
+            PartCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, TOPIC)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             TopicEvent event = topic_event(raw);
-            TopicCallback topic_callback;
-            memcpy(&topic_callback, &callback, sizeof(callback));
-            topic_callback(&event);
+            TopicCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, RPL_NAMREPLY) || s_eq(raw->type, RPL_ENDOFNAMES)) {
         callback = lookup_event(NAMES);
         if (callback != NULL) {
             NamesEvent event = names_event(raw);
-            NamesCallback names_callback;
-            memcpy(&names_callback, &callback, sizeof(callback));
-            names_callback(&event);
+            NamesCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, RPL_LIST) || s_eq(raw->type, RPL_LISTEND)) {
         callback = lookup_event(LIST);
         if (callback != NULL) {
             ListEvent event = list_event(raw);
-            ListCallback list_callback;
-            memcpy(&list_callback, &callback, sizeof(callback));
-            list_callback(&event);
+            ListCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, INVITE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             InviteEvent event = invite_event(raw);
-            InviteCallback invite_callback;
-            memcpy(&invite_callback, &callback, sizeof(callback));
-            invite_callback(&event);
+            InviteCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, KICK)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             KickEvent event = kick_event(raw);
-            KickCallback kick_callback;
-            memcpy(&kick_callback, &callback, sizeof(callback));
-            kick_callback(&event);
+            KickCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, PRIVMSG)) {
         // Look for a command binding
@@ -180,17 +161,13 @@ void fire_event(struct raw_msg *raw) {
 
         if (callback != NULL) {
             MessageEvent event = message_event(raw);
-            MessageCallback message_callback;
-            memcpy(&message_callback, &callback, sizeof(callback));
-            message_callback(&event);
+            MessageCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, MODE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             ModeEvent event = mode_event(raw);
-            ModeCallback mode_callback;
-            memcpy(&mode_callback, &callback, sizeof(callback));
-            mode_callback(&event);
+            ModeCallback(callback)(&event);
         }
     } // Miscellaneous events
     else if (s_eq(raw->type, PING)) {
@@ -198,17 +175,13 @@ void fire_event(struct raw_msg *raw) {
         __circus__ping_handler(&event);    // Call the system callback for ping before calling the bindings
         callback = lookup_event(raw->type);
         if (callback != NULL) {
-            PingCallback ping_callback;
-            memcpy(&ping_callback, &callback, sizeof(callback));
-            ping_callback(&event);
+            PingCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, NOTICE)) {
         callback = lookup_event(raw->type);
         if (callback != NULL) {
             NoticeEvent event = notice_event(raw);
-            NoticeCallback notice_callback;
-            memcpy(&notice_callback, &callback, sizeof(callback));
-            notice_callback(&event);
+            NoticeCallback(callback)(&event);
         }
     }
 
@@ -226,9 +199,7 @@ void fire_event(struct raw_msg *raw) {
 
             if (callback != NULL) {
                 ErrorEvent event = error_event(raw);
-                ErrorCallback error_callback;
-                memcpy(&error_callback, &callback, sizeof(callback));
-                error_callback(&event);
+                ErrorCallback(callback)(&event);
             }
         } else {
             // Look for a concrete message binding
@@ -240,9 +211,7 @@ void fire_event(struct raw_msg *raw) {
 
             if (callback != NULL) {
                 GenericEvent event = generic_event(raw);
-                GenericCallback generic_callback;
-                memcpy(&generic_callback, &callback, sizeof(callback));
-                generic_callback(&event);
+                GenericCallback(callback)(&event);
             }
         }
     }

@@ -41,7 +41,7 @@ static int shutdown_requested = 0;
 /* Event binding functions */
 /* *********************** */
 
-void irc_bind_event(char* event, void* callback) {
+void irc_bind_event(char* event, CallbackPtr callback) {
     bind_event(event, callback);
 }
 
@@ -49,7 +49,7 @@ void irc_unbind_event(char* event) {
     unbind_event(event);
 }
 
-void irc_bind_command(char* command, void* callback) {
+void irc_bind_command(char* command, CallbackPtr callback) {
     char* key;
 
     if ((key = malloc(50 * sizeof(char))) == 0) {

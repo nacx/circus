@@ -23,7 +23,6 @@
 #ifndef __IRC_H__
 #define __IRC_H__
 
-// Include the common files, so circus apps only need to include this file
 #include "codes.h"
 #include "events.h"
 
@@ -50,10 +49,10 @@ enum user_flags {
 };
 
 // Event binding
-void irc_bind_event(char* event, void* callback);       // Bind an IRC event to a callback function
-void irc_bind_command(char* command, void* callback);   // Bind a channel or private chat command to a callback function
-void irc_unbind_event(char* event);                     // Unbind an IRC event
-void irc_unbind_command(char* command);                 // Unbind a channel or private message chat command
+void irc_bind_event(char* event, CallbackPtr callback);         // Bind an IRC event to a callback function
+void irc_bind_command(char* command, CallbackPtr callback);     // Bind a channel or private chat command to a callback function
+void irc_unbind_event(char* event);                             // Unbind an IRC event
+void irc_unbind_command(char* command);                         // Unbind a channel or private message chat command
 
 // Connection registration
 void irc_connect(char* address, int port);                      // Connect to the IRC server
