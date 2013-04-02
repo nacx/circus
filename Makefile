@@ -4,9 +4,9 @@
 
 TARGETS = lib test install uninstall clean-lib clean-test
 
-all:
-	$(MAKE) $@ -C src
-	$(MAKE) examples
+LIB = src/lib/libcircus.a
+
+all: lib examples
 	@echo "\n*** Done! Run 'make test' to make sure everything is working as expected! ***\n"
 
 $(TARGETS):
@@ -14,9 +14,11 @@ $(TARGETS):
 
 clean: clean-lib clean-test clean-examples
 
-examples: lib
+examples:
+	[ -a $(LIB) ] || $(MAKE) lib
 	$(MAKE) $@ -C examples
 
 clean-examples:
 	$(MAKE) clean -C examples
 
+.PHONY: examples clean clean-lib clean-test clean-examples

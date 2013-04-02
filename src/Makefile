@@ -28,7 +28,7 @@ TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
-LIB = libcircus.a
+LIB = $(CIRCUS_PATH)/libcircus.a
 LIB_TEST = libcircus-test
 PREFIX ?= /usr/local
 
@@ -41,16 +41,17 @@ gen-version:
 	sh gen-version.sh
 
 lib: gen-version $(CIRCUS_OBJ)
-	$(AR) -rv $(CIRCUS_PATH)/$(LIB) $(CIRCUS_OBJ)
+	$(AR) -rv $(LIB) $(CIRCUS_OBJ)
 
-test: lib $(TEST_OBJ)
+test: $(TEST_OBJ)
+	[ -a $(LIB) ] || $(MAKE) lib
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
 	$(TEST_PATH)/$(LIB_TEST)
 
 install: all
 	install -d -m 0755 $(PREFIX)/lib/circus
 	install -d -m 0755 $(PREFIX)/include/circus
-	install -m 0444 $(CIRCUS_PATH)/$(LIB) $(PREFIX)/lib/circus
+	install -m 0444 $(LIB) $(PREFIX)/lib/circus
 	install -m 0444 $(CIRCUS_PATH)/*.h $(PREFIX)/include/circus
 
 uninstall:
@@ -58,7 +59,7 @@ uninstall:
 	rm -rf $(PREFIX)/include/circus
 
 clean-lib:
-	rm -f $(CIRCUS_PATH)/*.o $(CIRCUS_PATH)/$(LIB)
+	rm -f $(CIRCUS_PATH)/*.o $(LIB)
 
 clean-test:
 	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(LIB_TEST)

@@ -10,3 +10,4 @@ lib:
 clean:
 	$(MAKE) clean-lib -C ..
 
+.PHONY: clean

@@ -10,3 +10,4 @@ test:
 clean:
 	$(MAKE) clean-test -C ..
 
+.PHONY: clean
