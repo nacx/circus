@@ -33,6 +33,7 @@
 #include "message_handler.h"
 #include "binding.h"
 #include "utils.h"
+#include "version.h"
 #include "irc.h"
 
 /* Flag used to close the connection */
@@ -116,6 +117,9 @@ void irc_listen() {
     signal(SIGHUP, shutdown_handler);
     signal(SIGTERM, shutdown_handler);
     signal(SIGINT, shutdown_handler);
+
+    printf("Starting %s %s\n  Git: %s\n  Build: %s\n  Platform: %s...\n",
+        lib_name, lib_version, git_revision, build_date, build_platform);
 
     while (shutdown_requested == 0) {
         status = net_listen();

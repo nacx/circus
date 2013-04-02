@@ -20,17 +20,20 @@
  * THE SOFTWARE.
  */
 
-#ifndef __TEST_H__
-#define __TEST_H__
+#include <string.h>
+#include "minunit.h"
+#include "test.h"
+#include "../lib/version.h"
 
-/* Unit test suites */
-void test_version();
-void test_hashtable();
-void test_binding();
-void test_utils();
-void test_message_handler();
-void test_events();
-void test_codes();
+void test_version_values() {
+    mu_assert(strlen(lib_name) > 0, "test_version_values: lib_name is not set");
+    mu_assert(strlen(lib_version) > 0, "test_version_values: lib_version is not set");
+    mu_assert(strlen(git_revision) > 0, "test_version_values: git_revision is not set");
+    mu_assert(strlen(build_platform) > 0, "test_version_values: build_platform is not set");
+    mu_assert(strlen(build_date) > 0, "test_version_values: build_date is not set");
+}
 
-#endif
+void test_version() {
+    mu_run(test_version_values);
+}
 

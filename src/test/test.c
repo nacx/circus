@@ -26,6 +26,7 @@
 
 
 void run_all_tests() {
+    mu_suite(test_version);
     mu_suite(test_hashtable);
     mu_suite(test_binding);
     mu_suite(test_utils);

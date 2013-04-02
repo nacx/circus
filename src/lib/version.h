@@ -20,17 +20,16 @@
  * THE SOFTWARE.
  */
 
-#ifndef __TEST_H__
-#define __TEST_H__
+#ifndef __VERSION_H__
+#define __VERSION_H__
 
-/* Unit test suites */
-void test_version();
-void test_hashtable();
-void test_binding();
-void test_utils();
-void test_message_handler();
-void test_events();
-void test_codes();
+/* Library properties */
+extern const char* lib_name;
+extern const char* lib_version;
+
+/* Build properties */
+extern const char* git_revision;
+extern const char* build_platform;
+extern const char* build_date;
 
 #endif
-

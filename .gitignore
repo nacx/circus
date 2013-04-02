@@ -1,6 +1,7 @@
 *.o
 *.swp
 *.a
+version.c
 src/test/libcircus-test
 examples/welcome
 examples/oper
