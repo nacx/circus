@@ -48,7 +48,8 @@ test: $(TEST_OBJ)
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
 	$(TEST_PATH)/$(LIB_TEST)
 
-install: all
+install: 
+	test -f $(LIB) || $(MAKE) lib
 	install -d -m 0755 $(PREFIX)/lib/circus
 	install -d -m 0755 $(PREFIX)/include/circus
 	install -m 0444 $(LIB) $(PREFIX)/lib/circus
