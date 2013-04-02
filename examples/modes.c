@@ -28,6 +28,8 @@
  * of modes, and thanks the user who granted the operator privileges.
  */
 
+#define _POSIX_C_SOURCE 200112L      /* Use snprintf */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

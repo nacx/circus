@@ -20,10 +20,13 @@
  * THE SOFTWARE.
  */
 
+#define _POSIX_SOURCE /* Required for fdopen */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <errno.h>
 #include <netdb.h>
@@ -50,7 +53,7 @@ void net_connect(char* address, int port) {
     /* Family type, server port and host address */
     sock_addr.sin_family = AF_INET;
     sock_addr.sin_port = htons(port);
-    sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr);
+    sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr_list[0]);
 
     /* Socket creation */
     if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {

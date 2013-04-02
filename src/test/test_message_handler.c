@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#define _XOPEN_SOURCE   /* Support strtok_r in POSIX and BSD environments */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

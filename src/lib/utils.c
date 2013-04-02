@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#define _POSIX_C_SOURCE 200112L      /* Use snprintf */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
