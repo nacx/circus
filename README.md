@@ -33,15 +33,15 @@ sure everything is working as expected:
 If you want to install the library, you can do it as usual. It will be installed by default in
 /usr/local, but you can customize the installation directory by adding the *PREFIX* parameter:
 
-    make install                       # will install Circus in /usr/local
-    make install prefix=<install dir>  # will install Circus in <install dir>
+    make install                       # Installs Circus in /usr/local
+    make install PREFIX=<install dir>  # Installs Circus in <install dir>
 
 
 Building Circus based applications
 ----------------------------------
 
 To build your own Circus application, you can take a look at the *examples* folder.
-There you will find the *Makefile.example* file that you can copy and modify to build
+There you will find the `Makefile.example` file that you can copy and modify to build
 your application. The example Makefile assumes that you installed Circus in a default location
 (such as /usr or /usr/local); if you installed it in a different place, you may need to configure
 the `CFLAGS` and the `LDFLAGS` variables accordingly.
