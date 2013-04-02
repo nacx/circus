@@ -15,7 +15,7 @@ $(TARGETS):
 clean: clean-lib clean-test clean-examples
 
 examples:
-	[ -a $(LIB) ] || $(MAKE) lib
+	test -f $(LIB) || $(MAKE) lib
 	$(MAKE) $@ -C examples
 
 clean-examples:

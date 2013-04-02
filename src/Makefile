@@ -44,7 +44,7 @@ lib: gen-version $(CIRCUS_OBJ)
 	$(AR) -rv $(LIB) $(CIRCUS_OBJ)
 
 test: $(TEST_OBJ)
-	[ -a $(LIB) ] || $(MAKE) lib
+	test -f $(LIB) || $(MAKE) lib
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
 	$(TEST_PATH)/$(LIB_TEST)
 
