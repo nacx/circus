@@ -28,7 +28,8 @@ TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
-LIB = $(CIRCUS_PATH)/libcircus.a
+LIB_NAME = libcircus.a
+LIB = $(CIRCUS_PATH)/$(LIB_NAME)
 LIB_TEST = libcircus-test
 PREFIX ?= /usr/local
 
@@ -50,13 +51,13 @@ test: $(TEST_OBJ)
 
 install: 
 	test -f $(LIB) || $(MAKE) lib
-	install -d -m 0755 $(PREFIX)/lib/circus
+	install -d -m 0755 $(PREFIX)/lib
 	install -d -m 0755 $(PREFIX)/include/circus
-	install -m 0444 $(LIB) $(PREFIX)/lib/circus
+	install -m 0444 $(LIB) $(PREFIX)/lib
 	install -m 0444 $(CIRCUS_PATH)/*.h $(PREFIX)/include/circus
 
 uninstall:
-	rm -rf $(PREFIX)/lib/circus
+	rm -f $(PREFIX)/lib/$(LIB_NAME)
 	rm -rf $(PREFIX)/include/circus
 
 clean-lib:

@@ -1,0 +1,34 @@
+# Example Makefile
+# Copyright (c) 2013 Ignasi Barrera
+# This file is released under the MIT License, see LICENSE file.
+
+BINARY_NAME = binary_name
+
+TARGETS = $(BINARY_NAME)
+
+CC = gcc
+LN = $(CC)
+CFLAGS = -pipe -O2 -Wall
+LDFLAGS = -lcircus
+
+PREFIX ?= /usr/local
+
+all: $(TARGETS)
+
+$(TARGETS):
+	$(CC) $(CFLAGS) -c $@.c
+	$(LN) -o $@ $@.o $(LDFLAGS)
+
+install: all
+	install -d -m 0755 $(PREFIX)/bin
+	install -m 0555 $(BINARY_NAME) $(PREFIX)/bin
+
+uninstall:
+	rm -f $(PREFIX)/bin/$(BINARY_NAME)
+
+clean:
+	rm -f *.o
+	rm -f $(BINARY_NAME)
+
+.PHONY: install uninstall clean
+

@@ -40,12 +40,19 @@ If you want to install the library, you can do it as usual. It will be installed
 Building Circus based applications
 ----------------------------------
 
-To build your own Circus application, you can take a look at the *examples*
-folder. There you will find an example Makefile that you can modify to build your application.
+To build your own Circus application, you can take a look at the *examples* folder.
+There you will find the *Makefile.example* file that you can copy and modify to build
+your application. The example Makefile assumes that you installed Circus in a default location
+(such as /usr or /usr/local); if you installed it in a different place, you may need to configure
+the `CFLAGS` and the `LDFLAGS` variables accordingly.
 
-If you installed Circus using the *make install* command, you will need to change
-the *INCLUDEDIR* and the *LIBDIR* variables to point to the location where you installed
-the library.
+When including the Circus header files in your source code files, you can include them as follows:
+
+    #include <circus/irc.h>
+
+The code examples include the library in a different way, because they point to the library in the
+compilation directory. The common pattern is, however, to have the Circus library installed in your
+system and reference the headers files as shown above.
 
 
 How to contribute
