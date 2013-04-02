@@ -1,2 +1,2 @@
--language: c
--script: make lib test examples
+language: c
+script: make lib test examples
