@@ -40,9 +40,9 @@ struct raw_msg {
 
 /* Information of the user who generates an event */
 typedef struct {
-    char* nick;
-    char* user;
-    char* server;
+    char* nick;         /* The nickname of the user */
+    char* user;         /* The user name of the user */
+    char* server;       /* The server of the user */
 } UserInfo;
 
 /* Parse the given user string and build the UserInfo struct */
@@ -54,32 +54,34 @@ UserInfo user_info(char* user_ref);
 
 /* Fired when an error message arrives */
 typedef struct {
-    char* code;
-    int   num_params;
-    char* params[MAX_PARAMS];
-    char* message;
+    char* code;                 /* The error code */
+    int   num_params;           /* The number of parameters in the message */
+    char* params[MAX_PARAMS];   /* The parameters of the message */
+    char* message;              /* The error message */
 } ErrorEvent;
 
 /* Fired when no specific parsing is defined fot the reveiced event */
 typedef struct {
-    char* code;
-    int   num_params;
-    char* params[MAX_PARAMS];
-    char* message;
+    char* code;                 /* The message code */
+    int   num_params;           /* The number of parameters in the message */
+    char* params[MAX_PARAMS];   /* The parameters of the message */
+    char* message;              /* The message */
 } GenericEvent;
 
 /* ****************************** */
 /* Connection registration events */
 /* ****************************** */
 
+/* Fired when the nick is changed */
 typedef struct {
-    UserInfo user;
-    char* new_nick;
+    UserInfo user;      /* The user who generates the event */
+    char* new_nick;     /* The new nick for the user */
 } NickEvent;
 
+/* Fired when someone quits */
 typedef struct {
-    UserInfo user;
-    char* message;
+    UserInfo user;      /* The user who generates the event */
+    char* message;      /* The quit message */
 } QuitEvent;
 
 /* ************************ */

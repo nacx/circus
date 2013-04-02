@@ -44,7 +44,7 @@ enum channel_flags {
 /* User flags */
 enum user_flags {
     USR_INVISIBLE       = 0x0001,     /* Mark the user as invisible */
-    USR_WALLOPS         = 0x0002,     /* User receies wallops */
+    USR_WALLOPS         = 0x0002,     /* User receives wallops */
     USR_OPERATOR        = 0x0004      /* Operator flag */
 };
 
@@ -91,7 +91,7 @@ void irc_user_set(char* user, unsigned short int flags);    /* Set the given use
 void irc_user_unset(char* user, unsigned short int flags);  /* Unset the given user flags */
 
 /* Miscellaneous functions */
-void irc_pong(char* server);                /* Respond to ping message to keep connected if inactive */
+void irc_pong(char* server);                /* Reply to ping message to keep connected if inactive */
 
 /* System functions */
 void irc_raw(char* prefix, char* type, char* message);      /* Send a raw message to the IRC server */

@@ -37,7 +37,7 @@ enum net_status {
     NET_IGNORE      /* Ignore the status and continue */
 };
 
-/* Network functions. Allow them to be redefined or mocked for testing purposes */
+/* Network functions  */
 void net_connect(char* address, int port);  /* Connect to the IRC server */
 void net_disconnect();                      /* Disconnect from the server */
 void net_recv(char* msg);                   /* Receive a message from the server */
