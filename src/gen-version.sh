@@ -12,8 +12,7 @@ VFILE=lib/version.c
 
 license() {
     echo "/*" >$1
-    cat $LFILE >>$1
-    sed  -i '' -e '2,$s/^\(.*\)$/ \* \1/g' $1
+    cat $LFILE | nl -b a -s ' * ' | cut -c7- >>$1
     echo " */\n" >>$1
 }
 
