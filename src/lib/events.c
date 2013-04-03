@@ -139,7 +139,7 @@ TopicEvent topic_event(struct raw_msg *raw) {
 }
 
 NamesEvent names_event(struct raw_msg *raw) {
-    char* token, *next;
+    char* token, *next = NULL;
     NamesEvent event;
     event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
     event.channel = raw->params[event.finished? 1 : 2];
