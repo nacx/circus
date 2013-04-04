@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#define _POSIX_SOURCE /* Required for fdopen */
+#define _POSIX_SOURCE   /* Required for fdopen */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,17 +31,19 @@
 #include <errno.h>
 #include <netdb.h>
 #include <unistd.h>
+#include "debug.h"
 #include "network.h"
 
 
-static int   _socket;  /* The socket to the IRC server */
-static FILE* _sd;      /* A file pointer to be able to read from the socket line by line */
+int _socket;                /* The socket to the IRC server */
+static FILE* _sd = NULL;    /* A file pointer to be able to read from the socket line by line */
 
 void net_connect(char* address, int port) {
     struct hostent *host_entry;     /* Host name */
     struct sockaddr_in sock_addr;   /* Remote address */
 
     /* Get remote host address */
+    debug(("network: Resolving address: %s\n", address));
     if ((host_entry = gethostbyname(address)) == NULL) {
         perror("gethostbyname error");
         exit(EXIT_FAILURE);
@@ -62,6 +64,7 @@ void net_connect(char* address, int port) {
     }
 
     /* Create a connection with the remote host */
+    debug(("network: Connecting\n"));
     if (connect(_socket, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
         perror("connect error");
         exit(EXIT_FAILURE);
@@ -72,14 +75,17 @@ void net_connect(char* address, int port) {
 }
 
 void net_disconnect() {
+    debug(("network: Disconnecting\n"));
     close(_socket);
-    _socket = -1;
+    _socket = 0;
+    _sd = NULL;
 }
 
 int net_send(char* msg) {
-    char out[MSG_SIZE];
+    char out[READ_BUF];             /* The real size we can send in the socket, considering the '\0'*/
 
     strncpy(out, msg, WRITE_BUF);   /* Cut the message to the maximum size */
+    out[WRITE_BUF]= '\0';           /* Make sure string is null terminated. Perhaps the '\0' was stripped) */
     strcat(out, MSG_SEP);           /* Messages must end like this */
 
     printf(">> %s", out);
@@ -92,6 +98,7 @@ void net_recv(char* msg) {
 
     /* Read only a single line from the socket */
     ret = fgets(msg, READ_BUF, _sd);
+    msg[READ_BUF - 1] = '\0';   /* Make sure the string is properly terminated */
 
     if (ret == NULL) {
         perror("Error reading from socket");

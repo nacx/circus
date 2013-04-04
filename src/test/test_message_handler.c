@@ -32,10 +32,6 @@
 #include "../lib/binding.h"
 #include "../lib/message_handler.c"
 
-#ifdef __GNUC__
-/* Not portable. Only redefine the function if it is defined weak. */
-int net_send(char* msg) { return 0; }
-#endif
 
 /* Event counters */
 int nick_events = 0;

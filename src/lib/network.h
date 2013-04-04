@@ -27,7 +27,7 @@
 #define MSG_SEP "\r\n"  /* The message separator */
 
 #define READ_BUF (MSG_SIZE + 1)     /* The read buffer size */
-#define WRITE_BUF (MSG_SIZE - 2)    /* The write buffer size */
+#define WRITE_BUF (MSG_SIZE - 3)    /* The write buffer size */
 
 /* Network status */
 enum net_status {
@@ -37,19 +37,15 @@ enum net_status {
     NET_IGNORE      /* Ignore the status and continue */
 };
 
+/* The socket to the IRC server */
+extern int _socket;
+
 /* Network functions  */
 void net_connect(char* address, int port);  /* Connect to the IRC server */
 void net_disconnect();                      /* Disconnect from the server */
 void net_recv(char* msg);                   /* Receive a message from the server */
 enum net_status net_listen();               /* Listen for incoming messages */
-
-#ifdef __GNUC__
-/* Not portable. Try to define the weak attribute to allow to redefine the */
-/* functions and mock them in tests. */
-__attribute__((weak)) int net_send(char* msg);   /* Send a message to the server */
-#else
-int net_send(char* msg);   /* Send a message to the server */
-#endif
+int net_send(char* msg);                    /* Send a message to the server */
 
 #endif
 

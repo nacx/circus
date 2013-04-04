@@ -21,6 +21,8 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "minunit.h"
 #include "test.h"
 
@@ -30,17 +32,37 @@ void run_all_tests() {
     mu_suite(test_hashtable);
     mu_suite(test_binding);
     mu_suite(test_utils);
-    mu_suite(test_message_handler);
-    mu_suite(test_events);
     mu_suite(test_codes);
+    mu_suite(test_events);
+    mu_suite(test_network);
+    mu_suite(test_message_handler);
     mu_suite(test_irc);
 }
 
+int disable_stdout() {
+    int original, quiet;
+    fflush(stdout);
+    original = dup(1);
+    quiet = open("/dev/null", O_WRONLY);
+    dup2(quiet, 1);
+    close(quiet);
+    return original;
+}
+
+void enable_stdout(int original) {
+    fflush(stdout);
+    dup2(original, 1);
+    close(original);
+}
+
 int main(int argc, char **argv) {
+    int _stdout;
     printf("--------------------------------------------------\n");
     printf("Running unit tests...\n");
 
+    _stdout = disable_stdout();
     run_all_tests();
+    enable_stdout(_stdout);
 
     mu_results();
     mu_free();
