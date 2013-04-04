@@ -61,6 +61,7 @@ void test_send() {
     close(socks[0]);
     close(socks[1]);
 
+    mu_assert(ret != NULL, "test_send: fgets should not return NULL");
     mu_assert(s_eq(msg, "Outgoing message\r\n"), "test_send: Message should be 'Outgoing message\\r\\n'");
 }
 
@@ -84,6 +85,7 @@ void test_send_longer() {
     close(socks[0]);
     close(socks[1]);
 
+    mu_assert(ret != NULL, "test_send: fgets should not return NULL");
     mu_assert(strlen(out) > strlen(msg), "test_send_longer: The received message should be stripped");
     mu_assert(strlen(msg) == (WRITE_BUF + strlen(MSG_SEP)),
             "test_send_longer: Sent message length should be 'WRITE_BUF + strlen(MSG_SEP)'");
