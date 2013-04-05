@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "minunit.h"
@@ -133,11 +134,68 @@ void test_recv_longer() {
     mu_assert(strlen(in) == MSG_SIZE, "test_recv_longer: Received message length should be 'MSG_SIZE'");
 }
 
+void test_listen_ready() {
+    int socks[2], pid;
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
+        perror("socketpair error");
+        exit(EXIT_FAILURE);
+    }
+
+    _socket = socks[0];   /* Override the socket the net_send will use */
+    pid = fork();
+
+    if (pid == 0)  { /* Child process */
+        enum net_status status = net_listen();
+        mu_assert(status == NET_READY, "test_listen_ready: status should be 'NET_READY'");
+    } else { /* Parent process */
+        send(socks[1], (void*) 15, sizeof(int), 0);
+    }
+}
+
+void test_listen_error() {
+    int socks[2];
+    enum net_status status;
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
+        perror("socketpair error");
+        exit(EXIT_FAILURE);
+    }
+
+    _socket = -100;
+    status = net_listen();
+    mu_assert(status == NET_ERROR, "test_listen_error: status should be 'NET_ERROR'");
+}
+
+void test_listen_close() {
+    int socks[2], pid;
+
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
+        perror("socketpair error");
+        exit(EXIT_FAILURE);
+    }
+
+    _socket = socks[0];   /* Override the socket the net_send will use */
+    pid = fork();
+
+    if (pid == 0)  { /* Child process */
+        enum net_status status = net_listen();
+        mu_assert(status == NET_CLOSE, "test_listen_close: status should be 'NET_CLOSE'");
+    } else { /* Parent process */
+        kill(pid, SIGTERM);
+    }
+}
+
 void test_network() {
     mu_run(test_connection);
     mu_run(test_send);
     mu_run(test_send_longer);
     mu_run(test_recv);
     mu_run(test_recv_longer);
+    mu_run(test_listen_ready);
+    mu_run(test_listen_error);
+    mu_run(test_listen_close);
+    /* test_listen_ignore not needed because NET_IGNORE is never
+     * going to happen since net_listen does not define a timeout */
 }
 
