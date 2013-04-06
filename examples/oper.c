@@ -35,9 +35,9 @@
 
 /* Give op to the user who has requested it */
 void give_op(MessageEvent* event) {     /* Event details are defined in events.h */
-    /* The event->to variable is the channel where the message comes from, */
-    /* if the message was sent to a channel, or the sender's nick, if the */
-    /* message was a private message */
+    /* The event->to variable is the channel where the message comes from,
+     * if the message was sent to a channel, or the sender's nick, if the
+     * message was a private message */
     irc_op(event->to, event->user.nick);
 }
 
@@ -79,8 +79,8 @@ int main(int argc, char **argv) {
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    /* Start listening to events */
-    /* This method blocks until a quit signal is received */
+    /* Start listening to events.
+     * This method blocks until a quit signal is received */
     irc_listen();
 
     /* Send quit message and close connection */

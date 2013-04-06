@@ -34,7 +34,7 @@ enum net_status {
     NET_READY,      /* There is data to be read from the socket */
     NET_ERROR,      /* Unexpected error while reading */
     NET_CLOSE,      /* The connection must terminate */
-    NET_IGNORE      /* Ignore the status and continue */
+    NET_TIMEOUT     /* The connection timed out */
 };
 
 /* The socket to the IRC server */

@@ -82,8 +82,8 @@ int main(int argc, char **argv) {
     server = argv[1];     /* The IRC server */
     port = atoi(argv[2]);   /* The IRC server port */
 
-    /* Bind IRC event to custom functions */
-    /* All bindable events are defined in codes.h */
+    /* Bind IRC event to custom functions.
+     * All bindable events are defined in codes.h */
     irc_bind_event(ERROR, (CallbackPtr) on_error);
     irc_bind_event(MODE, (CallbackPtr) on_mode);
 
@@ -92,13 +92,13 @@ int main(int argc, char **argv) {
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    /* Set/unset some user flags just to show how to manipulate them */
-    /* All flags are defined in irc.h */
+    /* Set/unset some user flags just to show how to manipulate them.
+     * All flags are defined in irc.h */
     irc_user_set(CONF_NICK, USR_WALLOPS | USR_INVISIBLE);
     irc_user_unset(CONF_NICK, USR_WALLOPS);
 
-    /* Start listening to events */
-    /* This method blocks until a quit signal is received */
+    /* Start listening to events.
+     * This method blocks until a quit signal is received */
     irc_listen();
 
     /* Send quit message and close connection */

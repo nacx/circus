@@ -99,8 +99,8 @@ HTEntry* ht_add(HTable* ht, HTData data) {
         current = current->next;
     }
 
-    /* If key does not exist or it must not be overriden, */
-    /* add the new element at the beginning of the list */
+    /* If key does not exist or it must not be overriden,
+     * add the new element at the beginning of the list. */
     if (current == NULL) {
         if ((current = malloc(sizeof(HTEntry))) == 0) {
             perror("Out of memory (ht_add)");

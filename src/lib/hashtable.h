@@ -23,7 +23,7 @@
 #ifndef __HASHTABLE_H__
 #define __HASHTABLE_H__
 
-#define HT_SIZE 256
+#define HT_SIZE 256                                 /* Number of entries in the hash table */
 #define ht_eq(a, b) (strcmp(a.key, b.key) == 0)     /* Data equallity macro */
 
 
@@ -35,7 +35,7 @@
 typedef struct {
     char* key;                  /* The key for the data */
     void* value;                /* The object value of the data, if value is an object or pointer */
-    void (*function)(void);     /* The function pointer of the data, if value is a function */
+    void (*function)(void);     /* The function pointer of the data, if value is a function pointer */
 } HTData;
 
 /* Hash table entry */

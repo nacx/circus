@@ -76,8 +76,8 @@ int main(int argc, char **argv) {
     /* Create the log directory */
     mkdir(LOG_PATH, S_IRWXU);
 
-    /* Bind IRC event to custom functions */
-    /* All bindable events are defined in codes.h */
+    /* Bind IRC event to custom functions.
+     * All bindable events are defined in codes.h */
     irc_bind_event(ERR_NICKNAMEINUSE, (CallbackPtr) on_nick_in_use);
     irc_bind_event(PRIVMSG, (CallbackPtr) log_msg);
 
@@ -90,8 +90,8 @@ int main(int argc, char **argv) {
         irc_join(argv[i]);
     }
 
-    /* Start listening to events */
-    /* This method blocks until a quit signal is received */
+    /* Start listening to events.
+     * This method blocks until a quit signal is received */
     irc_listen();
 
     /* Send quit message and close connection */

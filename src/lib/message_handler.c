@@ -68,8 +68,8 @@ void fire_event(struct raw_msg *raw) {
     CallbackPtr callback = NULL;
     upper(raw->type);
 
-    /* Check if there is a concrete binding for the */
-    /* incoming message type */
+    /* Check if there is a concrete binding for the
+     * incoming message type. */
     debug(("handler: Looking for a binding for %s\n", raw->type));
 
     /* Connection registration */
@@ -134,8 +134,8 @@ void fire_event(struct raw_msg *raw) {
         char* buffer, *command, *command_params;
         size_t lparam = strlen(raw->params[1]);
 
-        /* The first parameter in PRIVMSG contains the whole message */
-        /* We need to consider only the first word */
+        /* The first parameter in PRIVMSG contains the whole message.
+         * We need to consider only the first word */
         if ((buffer = malloc((lparam + 1) * sizeof(char))) == 0) {
             perror("Out of memory (fire_event)");
             exit(EXIT_FAILURE);
@@ -187,8 +187,8 @@ void fire_event(struct raw_msg *raw) {
         }
     }
 
-    /* If no specific callback is found, check if there is */
-    /* a global binding defined to handle the incoming message */
+    /* If no specific callback is found, check if there is
+     * a global binding defined to handle the incoming message. */
 
     if (callback == NULL) {
         if (is_error(raw->type)) {
@@ -245,16 +245,16 @@ struct raw_msg parse(char* msg, char* buffer) {
         while(token != NULL)
         {
             if (raw.type == NULL) {
-                /* If type is not set, we must check if there */
-                /* is a message prefix */
+                /* If type is not set, we must check if there
+                 * is a message prefix. */
                 if (token[0] == ':') {
                     raw.prefix = token + 1; /* Ignore the ':' */
                 } else {
                     raw.type = token;
                 }
             } else { /* If the type is set the token is a parameter */
-                /* If a parameter begins with ':' then it is */
-                /* the last parameter and it is all the remaining message */
+                /* If a parameter begins with ':' then it is
+                 * the last parameter and it is all the remaining message. */
                 if (token[0] == ':') {
                     /* Do not increment the parameter count */
                     raw.params[i] = token + 1; /* Ignore the ':' */
@@ -263,8 +263,8 @@ struct raw_msg parse(char* msg, char* buffer) {
                     if (is_last_parameter == 0) {
                         raw.params[i++] = token;
                     } else {
-                        /* If it is the last parameter, just concatenate */
-                        /* the tokens */
+                        /* If it is the last parameter, just concatenate
+                         * the tokens. */
                         sprintf(raw.params[i], "%s %s", raw.params[i], token);
                     }
                 }
@@ -274,8 +274,8 @@ struct raw_msg parse(char* msg, char* buffer) {
             token = strtok_r(NULL, PARAM_SEP, &token_end);
         }
 
-        /* If we have a last parameter we should increment now the parameter */
-        /* counter */
+        /* If we have a last parameter we should increment now the parameter
+         * counter. */
         raw.num_params = (is_last_parameter == 0)? i : i + 1;
     }
 
@@ -291,8 +291,6 @@ void handle(char* msg) {
     fire_event(&raw);               /* Fire the event */
 
     /* Free memory used to parse the message once it has been handled */
-    if (buffer != NULL) {
-        free(buffer);
-    }
+    free(buffer);
 }
 

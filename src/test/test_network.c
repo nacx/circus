@@ -208,7 +208,7 @@ void test_network() {
     mu_run(test_listen_ready);
     mu_run(test_listen_error);
     mu_run(test_listen_close);
-    /* test_listen_ignore not needed because NET_IGNORE is never
+    /* test_listen_timeout not needed because NET_TIMEOUT is never
      * going to happen since net_listen does not define a timeout */
 }
 

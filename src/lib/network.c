@@ -116,18 +116,19 @@ enum net_status net_listen() {
     FD_ZERO(&read_fd_set);
     FD_SET(_socket, &read_fd_set);
 
-    /* Check if there is some data to be read (avoid blocking read) */
+    /* Check if there is some data to be read */
     read = select(_socket + 1, &read_fd_set, NULL, NULL, NULL);
 
-    /* If there is an error in select, abort except */
-    /* if the error is an interrupt signal. We'll just */
-    /* ignore it since we are handling the signals. */
+    /* If there is an error in select, abort except
+     * if the error is an interrupt signal. We'll just
+     * ignore it since we are handling the signals. */
     if (read < 0) {
         ret = (errno == EINTR)? NET_CLOSE : NET_ERROR;
     } else if (read > 0 && FD_ISSET(_socket, &read_fd_set)) {
         ret = NET_READY;
     } else {
-        ret = NET_IGNORE;
+        /* This should never be raised, because no timeout is defined */
+        ret = NET_TIMEOUT;
     }
 
     return ret;

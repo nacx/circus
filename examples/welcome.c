@@ -73,8 +73,8 @@ int main(int argc, char **argv) {
     server = argv[1];     /* The IRC server */
     port = atoi(argv[2]);   /* The IRC server port */
 
-    /* Bind IRC event to custom functions */
-    /* All bindable events are defined in codes.h */
+    /* Bind IRC event to custom functions.
+     * All bindable events are defined in codes.h */
     irc_bind_event(JOIN, (CallbackPtr) on_join);
     irc_bind_event(PART, (CallbackPtr) on_part);
 
@@ -83,8 +83,8 @@ int main(int argc, char **argv) {
     irc_login(CONF_NICK, "Circus", "Circus IRC bot");
     irc_join(CONF_CHAN);
 
-    /* Start listening to events */
-    /* This method blocks until a quit signal is received */
+    /* Start listening to events.
+     * This method blocks until a quit signal is received */
     irc_listen();
 
     /* Send quit message and close connection */

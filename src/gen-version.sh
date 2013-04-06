@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Copyright (c) 2011 Ignasi Barrera
+# This file is released under the MIT License, see LICENSE file.
+
 LIB_NAME=circus
 LIB_VERSION=1.2
 

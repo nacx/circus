@@ -79,9 +79,7 @@ void irc_unbind_command(char* command) {
     ret = unbind_event(key);
 
     free(key);  /* Free the memory allocated un this function */
-    if (ret != NULL) {
-        free(ret);  /* Free the memory allocated when binding the command */
-    }
+    free(ret);  /* Free the memory allocated when binding the command */
 }
 
 /* ******************** */
@@ -130,16 +128,16 @@ void irc_listen() {
                 exit(EXIT_FAILURE);
                 break;
             case NET_CLOSE:
-                /* The shutdown flag should have been set by */
-                /* the signal handler, but it is safe to set it again */
+                /* The shutdown flag should have been set by
+                 * the signal handler, but it is safe to set it again. */
                 shutdown_requested = 1;
                 break;
             case NET_READY:
                 net_recv(msg);
                 handle(msg);
                 break;
-            case NET_IGNORE:
-                /* Do nothing. The loop should continue */
+            case NET_TIMEOUT:
+                /* Do nothing. The loop should continue and try again. */
                 break;
             default:
                 break;
