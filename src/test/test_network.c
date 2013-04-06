@@ -145,11 +145,15 @@ void test_listen_ready() {
     _socket = socks[0];   /* Override the socket the net_send will use */
     pid = fork();
 
-    if (pid == 0)  { /* Child process */
-        enum net_status status = net_listen();
-        mu_assert(status == NET_READY, "test_listen_ready: status should be 'NET_READY'");
-    } else { /* Parent process */
+    if (pid > 0)  { /* Parent process */
         send(socks[1], (void*) 15, sizeof(int), 0);
+    } else { /* Child process */
+        enum net_status status = net_listen();
+
+        close(socks[0]);
+        close(socks[1]);
+
+        mu_assert(status == NET_READY, "test_listen_ready: status should be 'NET_READY'");
     }
 }
 
@@ -162,8 +166,13 @@ void test_listen_error() {
         exit(EXIT_FAILURE);
     }
 
-    _socket = -100;
+    _socket = socks[0];
+
+    close(socks[0]);
+    close(socks[1]);
+
     status = net_listen();
+
     mu_assert(status == NET_ERROR, "test_listen_error: status should be 'NET_ERROR'");
 }
 
@@ -178,11 +187,15 @@ void test_listen_close() {
     _socket = socks[0];   /* Override the socket the net_send will use */
     pid = fork();
 
-    if (pid == 0)  { /* Child process */
-        enum net_status status = net_listen();
-        mu_assert(status == NET_CLOSE, "test_listen_close: status should be 'NET_CLOSE'");
-    } else { /* Parent process */
+    if (pid > 0)  { /* Parent process */
         kill(pid, SIGTERM);
+    } else { /* Child process */
+        enum net_status status = net_listen();
+
+        close(socks[0]);
+        close(socks[1]);
+
+        mu_assert(status == NET_CLOSE, "test_listen_close: status should be 'NET_CLOSE'");
     }
 }
 
