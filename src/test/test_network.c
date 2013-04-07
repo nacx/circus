@@ -27,14 +27,57 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <pthread.h>
 #include "minunit.h"
 #include "test.h"
 #include "../lib/utils.h"
 #include "../lib/network.c"
 
+#define TEST_PORT 19876
+
+/* Start a mock server that returns after accepting a connection */
+void* mock_server() {
+    int sockfd, newsockfd;
+    struct sockaddr_in serv_addr, cli_addr;
+    unsigned int clilen;
+
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket creation error");
+        exit(EXIT_FAILURE);
+    }
+
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(TEST_PORT);
+
+    if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
+         perror("socket binding error");
+         exit(EXIT_FAILURE);
+    }
+
+    if (listen(sockfd, 1) == -1) {
+        perror("listen error");
+        exit(EXIT_FAILURE);
+    }
+
+    clilen = sizeof(cli_addr);
+    if ((newsockfd = accept(sockfd, (struct sockaddr*) &cli_addr, &clilen)) == -1) {
+        perror("accept error");
+        exit(EXIT_FAILURE);
+    }
+
+    close(sockfd);
+    close(newsockfd);
+
+    pthread_exit(NULL);
+}
 
 void test_connection() {
-    net_connect("google.com", 80);  /* TODO: Start a local service to connect to */
+    pthread_t thread;
+    pthread_create(&thread, NULL, mock_server, NULL);
+
+    net_connect("localhost", TEST_PORT);
     mu_assert(_socket > 0, "test_connection: _socket should be > 0");
     mu_assert(_sd != NULL, "test_connection: _sd should not be NULL");
 

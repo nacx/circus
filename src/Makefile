@@ -5,6 +5,7 @@
 CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall -ansi -pedantic
+LDFLAGS = -lpthread -lcircus
 
 ifdef DEBUG
     CFLAGS += -DDEBUG
@@ -47,7 +48,7 @@ lib: gen-version $(CIRCUS_OBJ)
 
 test: $(TEST_OBJ)
 	test -f $(LIB) || $(MAKE) lib
-	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) -lcircus
+	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) $(LDFLAGS)
 	$(TEST_PATH)/$(LIB_TEST)
 
 install: 
