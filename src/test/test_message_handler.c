@@ -72,6 +72,8 @@ void test_new_raw_message() {
     int i;
     struct raw_msg raw = new_raw_message();
 
+    mu_assert(raw.timestamp.tv_sec > 0, "test_new_raw_message: timestamp seconds should be > 0");
+    mu_assert(raw.timestamp.tv_usec > 0, "test_new_raw_message: timestamp microseconds should be > 0");
     mu_assert(raw.prefix == NULL, "test_new_raw_message: prefix should be NULL");
     mu_assert(raw.type == NULL, "test_new_raw_message: type should be NULL");
     mu_assert(raw.num_params == 0, "test_new_raw_message: num_params should be '0'");
