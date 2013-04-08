@@ -82,6 +82,7 @@ void test_connection() {
     pthread_t thread;
     pthread_create(&thread, NULL, mock_server, NULL);
 
+    poll(0, 0, 1000);   /* Make sure server is running */
     net_connect("localhost", TEST_PORT);
     mu_assert(_socket > 0, "test_connection: _socket should be > 0");
     mu_assert(_sd != NULL, "test_connection: _sd should not be NULL");
