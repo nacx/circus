@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <pthread.h>
+#include <poll.h>
 #include "minunit.h"
 #include "test.h"
 #include "../lib/utils.h"
@@ -71,6 +72,10 @@ void* mock_server() {
     close(newsockfd);
 
     pthread_exit(NULL);
+}
+
+void mock_handler(int signal) {
+    /* Do nothing */
 }
 
 void test_connection() {
@@ -178,68 +183,75 @@ void test_recv_longer() {
 }
 
 void test_listen_ready() {
-    int socks[2], pid;
+    int pid, p2c[2], c2p[2];
 
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
-        perror("socketpair error");
+    if (pipe(p2c) == -1) {      /* Parent to child pipe */
+        perror("pipe error");
         exit(EXIT_FAILURE);
     }
 
-    _socket = socks[0];   /* Override the socket the net_send will use */
+    if (pipe(c2p) == -1) {      /* Child to parent pipe */
+        perror("pipe error");
+        exit(EXIT_FAILURE);
+    }
+
     pid = fork();
 
     if (pid > 0)  { /* Parent process */
-        send(socks[1], (void*) 15, sizeof(int), 0);
-    } else { /* Child process */
-        enum net_status status = net_listen();
+        enum net_status status;
 
-        close(socks[0]);
-        close(socks[1]);
+        /* Close parent read and client write endpoints */
+        close(p2c[0]);
+        close(c2p[1]);
+
+        poll(0, 0, 1000); /* Make sure child process is listening */
+        write(p2c[1], "test", strlen("test"));
+
+        /* Read returned value from the child process */
+        read(c2p[0], &status, sizeof(enum net_status));
+
+        close(p2c[1]);
+        close(c2p[0]);
 
         mu_assert(status == NET_READY, "test_listen_ready: status should be 'NET_READY'");
+    } else { /* Child process */
+        enum net_status status;
+
+        /* Close parent write and clieht read endpoints */
+        close(p2c[1]);
+        close(c2p[0]);
+
+        _socket = p2c[0];   /* Overwrite the file descriptor net_listen will use */
+        status = net_listen();
+
+        /* Notify the returned value tot he parent process */
+        write(c2p[1], &status, sizeof(enum net_status));
+
+        close(p2c[0]);
+        close(c2p[1]);
+
+        /* Terminate the child process */
+        exit(EXIT_SUCCESS);
     }
 }
 
 void test_listen_error() {
-    int socks[2];
+    int fd[2];
     enum net_status status;
 
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
-        perror("socketpair error");
+    if (pipe(fd) == -1) {
+        perror("pipe error");
         exit(EXIT_FAILURE);
     }
 
-    _socket = socks[0];
+    _socket = fd[0];    /* Override the file descriptor net_listen will use */
 
-    close(socks[0]);
-    close(socks[1]);
+    close(fd[0]);
+    close(fd[1]);
 
     status = net_listen();
 
     mu_assert(status == NET_ERROR, "test_listen_error: status should be 'NET_ERROR'");
-}
-
-void test_listen_close() {
-    int socks[2], pid;
-
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1) {
-        perror("socketpair error");
-        exit(EXIT_FAILURE);
-    }
-
-    _socket = socks[0];   /* Override the socket the net_send will use */
-    pid = fork();
-
-    if (pid > 0)  { /* Parent process */
-        kill(pid, SIGTERM);
-    } else { /* Child process */
-        enum net_status status = net_listen();
-
-        close(socks[0]);
-        close(socks[1]);
-
-        mu_assert(status == NET_CLOSE, "test_listen_close: status should be 'NET_CLOSE'");
-    }
 }
 
 void test_network() {
@@ -250,8 +262,5 @@ void test_network() {
     mu_run(test_recv_longer);
     mu_run(test_listen_ready);
     mu_run(test_listen_error);
-    mu_run(test_listen_close);
-    /* test_listen_timeout not needed because NET_TIMEOUT is never
-     * going to happen since net_listen does not define a timeout */
 }
 

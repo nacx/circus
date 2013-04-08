@@ -131,6 +131,7 @@ void irc_listen() {
                 /* The shutdown flag should have been set by
                  * the signal handler, but it is safe to set it again. */
                 shutdown_requested = 1;
+                cleanup_bindings();
                 break;
             case NET_READY:
                 net_recv(msg);
