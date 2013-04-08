@@ -205,10 +205,16 @@ void test_listen_ready() {
         close(c2p[1]);
 
         poll(0, 0, 1000); /* Make sure child process is listening */
-        write(p2c[1], "test", strlen("test"));
+        if (write(p2c[1], "test", strlen("test")) == -1) {
+            perror("write error");
+            exit(EXIT_FAILURE);
+        }
 
         /* Read returned value from the child process */
-        read(c2p[0], &status, sizeof(enum net_status));
+        if (read(c2p[0], &status, sizeof(enum net_status)) == -1) {
+            perror("write error");
+            exit(EXIT_FAILURE);
+        }
 
         close(p2c[1]);
         close(c2p[0]);
@@ -225,7 +231,10 @@ void test_listen_ready() {
         status = net_listen();
 
         /* Notify the returned value tot he parent process */
-        write(c2p[1], &status, sizeof(enum net_status));
+        if (write(c2p[1], &status, sizeof(enum net_status)) == -1) {
+            perror("write error");
+            exit(EXIT_FAILURE);
+        }
 
         close(p2c[0]);
         close(c2p[1]);
