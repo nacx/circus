@@ -123,6 +123,7 @@ enum net_status net_listen() {
      * if the error is an interrupt signal. We'll just
      * ignore it since we are handling the signals. */
     if (read < 0) {
+        debug(("network: Select returned %d\n", errno));
         ret = (errno == EINTR)? NET_CLOSE : NET_ERROR;
     } else if (read > 0 && FD_ISSET(_socket, &read_fd_set)) {
         ret = NET_READY;
