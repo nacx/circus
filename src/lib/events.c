@@ -71,6 +71,7 @@ ErrorEvent error_event(struct raw_msg *raw) {
         event.params[i] = raw->params[i];
     }
 
+    event.raw = raw;
     event.code = raw->type;
     event.num_params = i;
     event.message = raw->params[raw->num_params - 1];
@@ -86,6 +87,7 @@ GenericEvent generic_event(struct raw_msg *raw) {
         event.params[i] = raw->params[i];
     }
 
+    event.raw = raw;
     event.code = raw->type;
     event.num_params = i;
     event.message = raw->params[raw->num_params - 1];
@@ -99,6 +101,7 @@ GenericEvent generic_event(struct raw_msg *raw) {
 
 NickEvent nick_event(struct raw_msg *raw) {
     NickEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.new_nick = raw->params[0];
     return event;
@@ -106,6 +109,7 @@ NickEvent nick_event(struct raw_msg *raw) {
 
 QuitEvent quit_event(struct raw_msg *raw) {
     QuitEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.message = raw->params[0];
     return event;
@@ -117,6 +121,7 @@ QuitEvent quit_event(struct raw_msg *raw) {
 
 JoinEvent join_event(struct raw_msg *raw) {
     JoinEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     return event;
@@ -124,6 +129,7 @@ JoinEvent join_event(struct raw_msg *raw) {
 
 PartEvent part_event(struct raw_msg *raw) {
     PartEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.message = raw->params[1];
@@ -132,6 +138,7 @@ PartEvent part_event(struct raw_msg *raw) {
 
 TopicEvent topic_event(struct raw_msg *raw) {
     TopicEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.topic = raw->params[1];
@@ -141,6 +148,7 @@ TopicEvent topic_event(struct raw_msg *raw) {
 NamesEvent names_event(struct raw_msg *raw) {
     char* token, *next = NULL;
     NamesEvent event;
+    event.raw = raw;
     event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
     event.channel = raw->params[event.finished? 1 : 2];
     event.num_names = 0;
@@ -156,6 +164,7 @@ NamesEvent names_event(struct raw_msg *raw) {
 
 ListEvent list_event(struct raw_msg *raw) {
     ListEvent event;
+    event.raw = raw;
     event.channel = NULL;
     event.num_users = 0;
     event.topic = NULL;
@@ -170,6 +179,7 @@ ListEvent list_event(struct raw_msg *raw) {
 
 InviteEvent invite_event(struct raw_msg *raw) {
     InviteEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.nick = raw->params[0];
     event.channel = raw->params[1];
@@ -178,6 +188,7 @@ InviteEvent invite_event(struct raw_msg *raw) {
 
 KickEvent kick_event(struct raw_msg *raw) {
     KickEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.nick = raw->params[1];
@@ -187,6 +198,7 @@ KickEvent kick_event(struct raw_msg *raw) {
 
 MessageEvent message_event(struct raw_msg *raw) {
     MessageEvent event;
+    event.raw = raw;
     event.user = user_info(raw->prefix);
     event.is_channel = (raw->params[0][0] == '#');
     event.to = raw->params[0];
@@ -201,6 +213,7 @@ ModeEvent mode_event(struct raw_msg *raw) {
     unsigned short int current_flag = 0x0000;
     char* flags = raw->params[1];
 
+    event.raw = raw;
     event.is_channel = (raw->params[0][0] == '#');
     event.user = user_info(event.is_channel? raw->prefix : NULL);
     event.target = raw->params[0];
@@ -257,12 +270,14 @@ ModeEvent mode_event(struct raw_msg *raw) {
 
 PingEvent ping_event(struct raw_msg *raw) {
     PingEvent event;
+    event.raw = raw;
     event.server = raw->params[0];
     return event;
 }
 
 NoticeEvent notice_event(struct raw_msg *raw) {
     NoticeEvent event;
+    event.raw = raw;
     event.to = raw->params[0];
     event.text = raw->params[1];
     return event;
