@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include "events.h"
 #include "utils.h"
 #include "binding.h"
@@ -41,6 +42,7 @@ static struct raw_msg new_raw_message() {
     int i;
     struct raw_msg raw;
 
+    gettimeofday(&raw.timestamp, NULL);
     raw.prefix = NULL;
     raw.type = NULL;
     raw.num_params = 0;

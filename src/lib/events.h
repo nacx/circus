@@ -23,11 +23,14 @@
 #ifndef __EVENTS_H__
 #define __EVENTS_H__
 
+#include <sys/time.h>
+
 /* Maximum number of parameters in an IRC message */
 #define MAX_PARAMS 15
 
 /* Raw IRC message */
 struct raw_msg {
+    struct timeval timestamp;   /* The timestamp when the event was generated */
     char* type;                 /* The IRC message type */
     char* prefix;               /* The message prefix (if any) */
     int   num_params;           /* The number of parameters */
@@ -54,6 +57,7 @@ UserInfo user_info(char* user_ref);
 
 /* Fired when an error message arrives */
 typedef struct {
+    struct raw_msg* raw;        /* The raw IRC message */
     char* code;                 /* The error code */
     int   num_params;           /* The number of parameters in the message */
     char* params[MAX_PARAMS];   /* The parameters of the message */
@@ -62,6 +66,7 @@ typedef struct {
 
 /* Fired when no specific parsing is defined fot the reveiced event */
 typedef struct {
+    struct raw_msg* raw;        /* The raw IRC message */
     char* code;                 /* The message code */
     int   num_params;           /* The number of parameters in the message */
     char* params[MAX_PARAMS];   /* The parameters of the message */
@@ -74,14 +79,16 @@ typedef struct {
 
 /* Fired when the nick is changed */
 typedef struct {
-    UserInfo user;      /* The user who generates the event */
-    char* new_nick;     /* The new nick for the user */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who generates the event */
+    char* new_nick;         /* The new nick for the user */
 } NickEvent;
 
 /* Fired when someone quits */
 typedef struct {
-    UserInfo user;      /* The user who generates the event */
-    char* message;      /* The quit message */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who generates the event */
+    char* message;          /* The quit message */
 } QuitEvent;
 
 /* ************************ */
@@ -90,26 +97,30 @@ typedef struct {
 
 /* Fired when a user joins a channel */
 typedef struct {
-    UserInfo user;  /* The user who joined a channel */
-    char* channel;  /* The channel name */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who joined a channel */
+    char* channel;          /* The channel name */
 } JoinEvent;
 
 /* Fired when a user leaves a channel */
 typedef struct {
-    UserInfo user;  /* The user who leaved the channel */
-    char* channel;  /* The channel name */
-    char* message;  /* The part message */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who leaved the channel */
+    char* channel;          /* The channel name */
+    char* message;          /* The part message */
 } PartEvent;
 
 /* Fired when someone changes the topic of a channel */
 typedef struct {
-    UserInfo user;  /* The user who has changed the topic */
-    char* channel;  /* The channel name */
-    char* topic;    /* The new topic */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who has changed the topic */
+    char* channel;          /* The channel name */
+    char* topic;            /* The new topic */
 } TopicEvent;
 
 /* Fired when the response to the NAMES arrives */
 typedef struct {
+    struct raw_msg* raw;        /* The raw IRC message */
     int finished;               /* If there are no more users to process (NAMES response is multi-message) */
     char* channel;              /* The channel */
     int num_names;              /* The number of names in the current names list */
@@ -118,37 +129,42 @@ typedef struct {
 
 /* Fired when the response to the NAMES arrives */
 typedef struct {
-    int finished;       /* If there are no more channels to process (LIST response is multi-message) */
-    char* channel;      /* The name of the current channel */
-    int num_users;      /* The number of users in the channel */
-    char* topic;        /* The current topic in the channel */
+    struct raw_msg* raw;        /* The raw IRC message */
+    int finished;               /* If there are no more channels to process (LIST response is multi-message) */
+    char* channel;              /* The name of the current channel */
+    int num_users;              /* The number of users in the channel */
+    char* topic;                /* The current topic in the channel */
 } ListEvent;
 
 /* Fired when someone invites to a channel */
 typedef struct {
-    UserInfo user;  /* The user who generates the event */
-    char* nick;     /* The user being invited to the channel */
-    char* channel;  /* The chanel where the user is invited */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who generates the event */
+    char* nick;             /* The user being invited to the channel */
+    char* channel;          /* The chanel where the user is invited */
 } InviteEvent;
 
 /* Fired when someone is kicked in a channel */
 typedef struct {
-    UserInfo user;  /* The user performing the kick */
-    char* channel;  /* The channel where the user is kicked from */
-    char* nick;     /* The nick of the user being kicked */
-    char* message;  /* The kick message */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user performing the kick */
+    char* channel;          /* The channel where the user is kicked from */
+    char* nick;             /* The nick of the user being kicked */
+    char* message;          /* The kick message */
 } KickEvent;
 
 /* Fired when a message is sent to a channel or to a user */
 typedef struct {
-    UserInfo user;  /* The user who sends the message */
-    int is_channel; /* If the message is sent to a channel */
-    char* to;       /* The destination of the event (nick or channel) */
-    char* message;  /* The text of the message */
+    struct raw_msg* raw;    /* The raw IRC message */
+    UserInfo user;          /* The user who sends the message */
+    int is_channel;         /* If the message is sent to a channel */
+    char* to;               /* The destination of the event (nick or channel) */
+    char* message;          /* The text of the message */
 } MessageEvent;
 
 /* Fired when someone sets a mode in a channel */
 typedef struct {
+    struct raw_msg* raw;                /* The raw IRC message */
     UserInfo user;                      /* The user who is changing the mode */
     int is_channel;                     /* If the mode applies to a channel or to a user. */
     char* target;                       /* The affected channel or user */
@@ -165,13 +181,15 @@ typedef struct {
 
 /* Fired when a ping message arrives */
 typedef struct {
-    char* server;   /* Server where the pong response must be sent */
+    struct raw_msg* raw;    /* The raw IRC message */
+    char* server;           /* Server where the pong response must be sent */
 } PingEvent;
 
 /* Fired when a notice arrives */
 typedef struct {
-    char* to;       /* The destination of the message */
-    char* text;     /* The text of the message */
+    struct raw_msg* raw;    /* The raw IRC message */
+    char* to;               /* The destination of the message */
+    char* text;             /* The text of the message */
 } NoticeEvent;
 
 /* ************************ */
