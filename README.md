@@ -54,6 +54,9 @@ The code examples include the library in a different way, because they point to 
 compilation directory. The common pattern is, however, to have the Circus library installed in your
 system and reference the headers files as shown above.
 
+Also take into account that circus uses POSIX threads to dispatch events to the user defined callbacks.
+Make sure you link the `pthread` library when building your application.
+
 
 How to contribute
 -----------------

@@ -27,10 +27,10 @@
 #include <signal.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <stdarg.h>
 #include <string.h>
 #include "network.h"
 #include "listener.h"
+#include "dispatcher.h"
 #include "binding.h"
 #include "utils.h"
 #include "version.h"
@@ -100,6 +100,7 @@ void shutdown_handler(int signal) {
         case SIGTERM:
         case SIGINT:
             shutdown_requested = 1;
+            dsp_shutdown();     /* Terminate the event dispatcher thread */
             bnd_cleanup();
             break;
         default:
@@ -119,6 +120,8 @@ void irc_listen() {
     printf("Starting %s %s\n  Git: %s\n  Build: %s\n  Platform: %s...\n",
         lib_name, lib_version, git_revision, build_date, build_platform);
 
+    dsp_start();     /* Start the event dispatcher thread */
+
     while (shutdown_requested == 0) {
         status = net_listen();
 
@@ -131,6 +134,7 @@ void irc_listen() {
                 /* The shutdown flag should have been set by
                  * the signal handler, but it is safe to set it again. */
                 shutdown_requested = 1;
+                dsp_shutdown();     /* Terminate the event dispatcher thread */
                 bnd_cleanup();
                 break;
             case NET_READY:

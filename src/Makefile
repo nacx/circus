@@ -5,7 +5,7 @@
 CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall -ansi -pedantic
-LDFLAGS = -lpthread -lcircus
+LDFLAGS = -lcircus -lpthread
 
 ifdef DEBUG
     CFLAGS += -DDEBUG
@@ -17,7 +17,8 @@ CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/binding.c \
 			 $(CIRCUS_PATH)/network.c $(CIRCUS_PATH)/listener.c \
 			 $(CIRCUS_PATH)/events.c $(CIRCUS_PATH)/utils.c \
 			 $(CIRCUS_PATH)/codes.c $(CIRCUS_PATH)/irc.c \
-			 $(CIRCUS_PATH)/debug.c $(CIRCUS_PATH)/version.c
+			 $(CIRCUS_PATH)/debug.c $(CIRCUS_PATH)/version.c \
+			 $(CIRCUS_PATH)/dispatcher.c
 CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
 
 # Test build
@@ -27,7 +28,7 @@ TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_events.c $(TEST_PATH)/test_codes.c \
 		   $(TEST_PATH)/test_utils.c $(TEST_PATH)/test_version.c \
 		   $(TEST_PATH)/test_irc.c $(TEST_PATH)/test_network.c \
-		   $(TEST_PATH)/test.c
+		   $(TEST_PATH)/test_dispatcher.c $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
 
 LIB_NAME = libcircus.a

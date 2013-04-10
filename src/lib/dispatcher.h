@@ -20,20 +20,13 @@
  * THE SOFTWARE.
  */
 
-#ifndef __TEST_H__
-#define __TEST_H__
+#ifndef __DISPATCHER_H__
+#define __DISPATCHER_H__
 
-/* Unit test suites */
-void test_version();
-void test_hashtable();
-void test_binding();
-void test_utils();
-void test_codes();
-void test_events();
-void test_network();
-void test_listener();
-void test_dispatcher();
-void test_irc();
+#include "events.h"
+
+void dsp_start();                               /* Initialize the event dispatcher */
+void dsp_dispatch(struct raw_event* event);     /* Dispatch the given event */
+void dsp_shutdown();                            /* Shuts down the event dispatcher */
 
 #endif
-
