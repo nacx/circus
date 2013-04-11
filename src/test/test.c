@@ -35,7 +35,7 @@ void run_all_tests() {
     mu_suite(test_codes);
     mu_suite(test_events);
     mu_suite(test_network);
-    mu_suite(test_message_handler);
+    mu_suite(test_listener);
     mu_suite(test_irc);
 }
 

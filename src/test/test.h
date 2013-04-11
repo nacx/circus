@@ -31,7 +31,7 @@ void test_utils();
 void test_codes();
 void test_events();
 void test_network();
-void test_message_handler();
+void test_listener();
 void test_irc();
 
 #endif

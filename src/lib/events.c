@@ -27,7 +27,7 @@
 #include <string.h>
 #include "utils.h"
 #include "events.h"
-#include "message_handler.h"
+#include "listener.h"
 #include "irc.h"
 
 
@@ -63,7 +63,7 @@ UserInfo user_info(char* user_ref) {
 /* Generic events */
 /* ************** */
 
-ErrorEvent error_event(struct raw_msg *raw) {
+ErrorEvent evt_error(struct raw_event *raw) {
     int i;
     ErrorEvent event;
 
@@ -79,7 +79,7 @@ ErrorEvent error_event(struct raw_msg *raw) {
     return event;
 }
 
-GenericEvent generic_event(struct raw_msg *raw) {
+GenericEvent evt_generic(struct raw_event *raw) {
     int i;
     GenericEvent event;
 
@@ -99,7 +99,7 @@ GenericEvent generic_event(struct raw_msg *raw) {
 /* Connection registration events */
 /* ****************************** */
 
-NickEvent nick_event(struct raw_msg *raw) {
+NickEvent evt_nick(struct raw_event *raw) {
     NickEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -107,7 +107,7 @@ NickEvent nick_event(struct raw_msg *raw) {
     return event;
 }
 
-QuitEvent quit_event(struct raw_msg *raw) {
+QuitEvent evt_quit(struct raw_event *raw) {
     QuitEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -119,7 +119,7 @@ QuitEvent quit_event(struct raw_msg *raw) {
 /* Channel operation events */
 /* ************************ */
 
-JoinEvent join_event(struct raw_msg *raw) {
+JoinEvent evt_join(struct raw_event *raw) {
     JoinEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -127,7 +127,7 @@ JoinEvent join_event(struct raw_msg *raw) {
     return event;
 }
 
-PartEvent part_event(struct raw_msg *raw) {
+PartEvent evt_part(struct raw_event *raw) {
     PartEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -136,7 +136,7 @@ PartEvent part_event(struct raw_msg *raw) {
     return event;
 }
 
-TopicEvent topic_event(struct raw_msg *raw) {
+TopicEvent evt_topic(struct raw_event *raw) {
     TopicEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -145,7 +145,7 @@ TopicEvent topic_event(struct raw_msg *raw) {
     return event;
 }
 
-NamesEvent names_event(struct raw_msg *raw) {
+NamesEvent evt_names(struct raw_event *raw) {
     char* token, *next = NULL;
     NamesEvent event;
     event.raw = raw;
@@ -162,7 +162,7 @@ NamesEvent names_event(struct raw_msg *raw) {
     return event;
 }
 
-ListEvent list_event(struct raw_msg *raw) {
+ListEvent evt_list(struct raw_event *raw) {
     ListEvent event;
     event.raw = raw;
     event.channel = NULL;
@@ -177,7 +177,7 @@ ListEvent list_event(struct raw_msg *raw) {
     return event;
 }
 
-InviteEvent invite_event(struct raw_msg *raw) {
+InviteEvent evt_invite(struct raw_event *raw) {
     InviteEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -186,7 +186,7 @@ InviteEvent invite_event(struct raw_msg *raw) {
     return event;
 }
 
-KickEvent kick_event(struct raw_msg *raw) {
+KickEvent evt_kick(struct raw_event *raw) {
     KickEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -196,7 +196,7 @@ KickEvent kick_event(struct raw_msg *raw) {
     return event;
 }
 
-MessageEvent message_event(struct raw_msg *raw) {
+MessageEvent evt_message(struct raw_event *raw) {
     MessageEvent event;
     event.raw = raw;
     event.user = user_info(raw->prefix);
@@ -206,7 +206,7 @@ MessageEvent message_event(struct raw_msg *raw) {
     return event;
 }
 
-ModeEvent mode_event(struct raw_msg *raw) {
+ModeEvent evt_mode(struct raw_event *raw) {
     ModeEvent event;
     int i;
     char op = '\0';  /* Invalid character to initialize variable */
@@ -268,14 +268,14 @@ ModeEvent mode_event(struct raw_msg *raw) {
 /* Miscellaneous events */
 /* ******************** */
 
-PingEvent ping_event(struct raw_msg *raw) {
+PingEvent evt_ping(struct raw_event *raw) {
     PingEvent event;
     event.raw = raw;
     event.server = raw->params[0];
     return event;
 }
 
-NoticeEvent notice_event(struct raw_msg *raw) {
+NoticeEvent evt_notice(struct raw_event *raw) {
     NoticeEvent event;
     event.raw = raw;
     event.to = raw->params[0];

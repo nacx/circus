@@ -28,7 +28,7 @@
 
 static HTable* ht = NULL;
 
-void bind_event(char* event, CallbackPtr callback) {
+void bnd_bind(char* event, CallbackPtr callback) {
     HTData data;
 
     if (ht == NULL) {
@@ -43,7 +43,7 @@ void bind_event(char* event, CallbackPtr callback) {
     ht_add(ht, data);
 }
 
-char* unbind_event(char* event) {
+char* bnd_unbind(char* event) {
     HTData data;
 
     data.key = event;
@@ -55,7 +55,7 @@ char* unbind_event(char* event) {
     return data.key;
 }
 
-CallbackPtr lookup_event(char* event) {
+CallbackPtr bnd_lookup(char* event) {
     HTData data;
     HTEntry* entry;
     CallbackPtr callback = NULL;
@@ -74,7 +74,7 @@ CallbackPtr lookup_event(char* event) {
     return callback;
 }
 
-void cleanup_bindings() {
+void bnd_cleanup() {
     if (ht != NULL) {
         debug(("binding: Cleaning up\n"));
         ht_destroy(ht);

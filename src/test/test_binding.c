@@ -29,33 +29,33 @@ void target(char* txt) {
     /* target function to test hook methods */
 }
 
-void test_lookup_event() {
+void test_bnd_lookup() {
     CallbackPtr callback;
 
-    bind_event("test", (CallbackPtr) target);
-    callback = lookup_event("test");
-    mu_assert(callback == (CallbackPtr) target, "test_lookup_event: Found a different memory address");
+    bnd_bind("test", (CallbackPtr) target);
+    callback = bnd_lookup("test");
+    mu_assert(callback == (CallbackPtr) target, "test_bnd_lookup: Found a different memory address");
 
-    unbind_event("test"); /* Cleanup */
-    callback = lookup_event("test");
-    mu_assert(callback == NULL, "test_lookup_event: callback should be NULL");
+    bnd_unbind("test"); /* Cleanup */
+    callback = bnd_lookup("test");
+    mu_assert(callback == NULL, "test_bnd_lookup: callback should be NULL");
 }
 
 void test_lookup_unexisting_event() {
-    CallbackPtr callback = lookup_event("test-unexisting");
+    CallbackPtr callback = bnd_lookup("test-unexisting");
     mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
 }
 
-void test_cleanup_bindings() {
-    cleanup_bindings();
-    mu_assert(ht == NULL, "test_cleanup_bindings: Hash table should be NULL");
+void test_bnd_cleanup() {
+    bnd_cleanup();
+    mu_assert(ht == NULL, "test_bnd_cleanup: Hash table should be NULL");
 }
 
 void test_binding() {
-    mu_run(test_lookup_event);
+    mu_run(test_bnd_lookup);
     mu_run(test_lookup_unexisting_event);
-    mu_run(test_cleanup_bindings);
+    mu_run(test_bnd_cleanup);
 
-    cleanup_bindings();   /* Free memory used in tests */
+    bnd_cleanup();   /* Free memory used in tests */
 }
 

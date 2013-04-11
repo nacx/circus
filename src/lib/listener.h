@@ -20,13 +20,13 @@
  * THE SOFTWARE.
  */
 
-#ifndef __MESSAGEHANDLER_H__
-#define __MESSAGEHANDLER_H__
+#ifndef __LISTENER_H__
+#define __LISTENER_H__
 
 #define PARAM_SEP   " "         /* IRC parameter separator */
 
-void handle(char* msg);                             /* Parse each line of an IRC message */
-struct raw_msg parse(char* msg, char* buffer);      /* Parse one single line of an IRC message */
+void lst_handle(char* msg);                             /* Parse each line of an IRC message */
+struct raw_event lst_parse(char* msg, char* buffer);      /* Parse one single line of an IRC message */
 
 #endif
 

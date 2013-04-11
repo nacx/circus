@@ -32,15 +32,15 @@
 #include "codes.h"
 #include "irc.h"
 #include "debug.h"
-#include "message_handler.h"
+#include "listener.h"
 
 /* *************** */
 /* Utility methods */
 /* *************** */
 
-static struct raw_msg new_raw_message() {
+static struct raw_event new_raw_message() {
     int i;
-    struct raw_msg raw;
+    struct raw_event raw;
 
     gettimeofday(&raw.timestamp, NULL);
     raw.prefix = NULL;
@@ -66,7 +66,7 @@ static void __circus__ping_handler(PingEvent* event) {
 /* Event triggering */
 /* **************** */
 
-void fire_event(struct raw_msg *raw) {
+static void _fire_event(struct raw_event *raw) {
     CallbackPtr callback = NULL;
     upper(raw->type);
 
@@ -76,58 +76,58 @@ void fire_event(struct raw_msg *raw) {
 
     /* Connection registration */
     if (s_eq(raw->type, NICK)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            NickEvent event = nick_event(raw);
+            NickEvent event = evt_nick(raw);
             NickCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, QUIT)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            QuitEvent event = quit_event(raw);
+            QuitEvent event = evt_quit(raw);
             QuitCallback(callback)(&event);
         }
     } /* Channel operations */
     else if (s_eq(raw->type, JOIN)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            JoinEvent event = join_event(raw);
+            JoinEvent event = evt_join(raw);
             JoinCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, PART)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            PartEvent event = part_event(raw);
+            PartEvent event = evt_part(raw);
             PartCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, TOPIC)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            TopicEvent event = topic_event(raw);
+            TopicEvent event = evt_topic(raw);
             TopicCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, RPL_NAMREPLY) || s_eq(raw->type, RPL_ENDOFNAMES)) {
-        callback = lookup_event(NAMES);
+        callback = bnd_lookup(NAMES);
         if (callback != NULL) {
-            NamesEvent event = names_event(raw);
+            NamesEvent event = evt_names(raw);
             NamesCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, RPL_LIST) || s_eq(raw->type, RPL_LISTEND)) {
-        callback = lookup_event(LIST);
+        callback = bnd_lookup(LIST);
         if (callback != NULL) {
-            ListEvent event = list_event(raw);
+            ListEvent event = evt_list(raw);
             ListCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, INVITE)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            InviteEvent event = invite_event(raw);
+            InviteEvent event = evt_invite(raw);
             InviteCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, KICK)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            KickEvent event = kick_event(raw);
+            KickEvent event = evt_kick(raw);
             KickCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, PRIVMSG)) {
@@ -150,7 +150,7 @@ void fire_event(struct raw_msg *raw) {
         if (command != NULL) {
             build_command_key(key, command);
             debug(("handler: Looking for command: %s\n", command));
-            callback = lookup_event(key);
+            callback = bnd_lookup(key);
             if (callback != NULL) {
                 /* Remove the command name from the raw message */
                 raw->params[1] = command_params;
@@ -160,31 +160,31 @@ void fire_event(struct raw_msg *raw) {
         /* If no command binding is found, look for an event binding */
         if (callback == NULL) {
             debug(("handler: No command found. Looking for event.\n"));
-            callback = lookup_event(raw->type);
+            callback = bnd_lookup(raw->type);
         }
 
         if (callback != NULL) {
-            MessageEvent event = message_event(raw);
+            MessageEvent event = evt_message(raw);
             MessageCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, MODE)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            ModeEvent event = mode_event(raw);
+            ModeEvent event = evt_mode(raw);
             ModeCallback(callback)(&event);
         }
     } /* Miscellaneous events */
     else if (s_eq(raw->type, PING)) {
-        PingEvent event = ping_event(raw);
+        PingEvent event = evt_ping(raw);
         __circus__ping_handler(&event);    /* Call the system callback for ping before calling the bindings */
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
             PingCallback(callback)(&event);
         }
     } else if (s_eq(raw->type, NOTICE)) {
-        callback = lookup_event(raw->type);
+        callback = bnd_lookup(raw->type);
         if (callback != NULL) {
-            NoticeEvent event = notice_event(raw);
+            NoticeEvent event = evt_notice(raw);
             NoticeCallback(callback)(&event);
         }
     }
@@ -195,26 +195,26 @@ void fire_event(struct raw_msg *raw) {
     if (callback == NULL) {
         if (is_error(raw->type)) {
             /* Look for a concrete error binding */
-            callback = lookup_event(raw->type);
+            callback = bnd_lookup(raw->type);
             /* If none is found, look for a generic error binding */
             if (callback == NULL) {
-                callback = lookup_event(ERROR);
+                callback = bnd_lookup(ERROR);
             }
 
             if (callback != NULL) {
-                ErrorEvent event = error_event(raw);
+                ErrorEvent event = evt_error(raw);
                 ErrorCallback(callback)(&event);
             }
         } else {
             /* Look for a concrete message binding */
-            callback = lookup_event(raw->type);
+            callback = bnd_lookup(raw->type);
             /* If none is found, look for a generic message binding */
             if (callback == NULL) {
-                callback = lookup_event(ALL);
+                callback = bnd_lookup(ALL);
             }
 
             if (callback != NULL) {
-                GenericEvent event = generic_event(raw);
+                GenericEvent event = evt_generic(raw);
                 GenericCallback(callback)(&event);
             }
         }
@@ -227,10 +227,10 @@ void fire_event(struct raw_msg *raw) {
 /* Message parsing */
 /* *************** */
 
-struct raw_msg parse(char* msg, char* buffer) {
+struct raw_event lst_parse(char* msg, char* buffer) {
     int i = 0, is_last_parameter = 0;
     size_t msg_len;
-    struct raw_msg raw = new_raw_message();
+    struct raw_event raw = new_raw_message();
     char *token, *token_end = NULL;
 
     if (msg != NULL && (msg_len = strlen(msg)) > 0) {
@@ -284,13 +284,13 @@ struct raw_msg parse(char* msg, char* buffer) {
     return raw;
 }
 
-void handle(char* msg) {
+void lst_handle(char* msg) {
     char* buffer = NULL;
-    struct raw_msg raw;
+    struct raw_event raw;
 
     msg[strlen(msg) - 2] = '\0';    /* Remove the line terminaion before parsing */
-    raw = parse(msg, buffer);       /* Parse the input and get the raw message */
-    fire_event(&raw);               /* Fire the event */
+    raw = lst_parse(msg, buffer);       /* Parse the input and get the raw message */
+    _fire_event(&raw);               /* Fire the event */
 
     /* Free memory used to parse the message once it has been handled */
     free(buffer);

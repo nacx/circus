@@ -30,7 +30,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "network.h"
-#include "message_handler.h"
+#include "listener.h"
 #include "binding.h"
 #include "utils.h"
 #include "version.h"
@@ -45,11 +45,11 @@ static int shutdown_requested = 0;
 /* *********************** */
 
 void irc_bind_event(char* event, CallbackPtr callback) {
-    bind_event(event, callback);
+    bnd_bind(event, callback);
 }
 
 void irc_unbind_event(char* event) {
-    unbind_event(event);
+    bnd_unbind(event);
 }
 
 void irc_bind_command(char* command, CallbackPtr callback) {
@@ -63,7 +63,7 @@ void irc_bind_command(char* command, CallbackPtr callback) {
     memset(key, '\0', 50);
     build_command_key(key, command);
     
-    bind_event(key, callback);
+    bnd_bind(key, callback);
 }
 
 void irc_unbind_command(char* command) {
@@ -76,7 +76,7 @@ void irc_unbind_command(char* command) {
     
     memset(key, '\0', 50);
     build_command_key(key, command);
-    ret = unbind_event(key);
+    ret = bnd_unbind(key);
 
     free(key);  /* Free the memory allocated un this function */
     free(ret);  /* Free the memory allocated when binding the command */
@@ -100,7 +100,7 @@ void shutdown_handler(int signal) {
         case SIGTERM:
         case SIGINT:
             shutdown_requested = 1;
-            cleanup_bindings();
+            bnd_cleanup();
             break;
         default:
             break;
@@ -131,11 +131,11 @@ void irc_listen() {
                 /* The shutdown flag should have been set by
                  * the signal handler, but it is safe to set it again. */
                 shutdown_requested = 1;
-                cleanup_bindings();
+                bnd_cleanup();
                 break;
             case NET_READY:
                 net_recv(msg);
-                handle(msg);
+                lst_handle(msg);
                 break;
             case NET_TIMEOUT:
                 /* Do nothing. The loop should continue and try again. */
