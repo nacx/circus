@@ -45,7 +45,7 @@ void on_join(JoinEvent* event) {    /* Events details are defined in events.h */
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                /* String not-equal macro from utils.h */
         snprintf(msg, 30, "Welcome %s", event->user.nick);  /* Build the message to send */
-        irc_channel_msg(event->channel, msg);               /* Send message to channel */
+        irc_message(event->channel, msg);               /* Send message to channel */
     }
 }
 
@@ -57,7 +57,7 @@ void on_part(PartEvent* event) {    /* Event details are defined in events.h */
     char msg[30];
     if (s_ne(event->user.nick, CONF_NICK)) {                /* String not-equal macro from utils.h */
         snprintf(msg, 30, "Good bye %s", event->user.nick); /* Build the message to send */
-        irc_private_msg(event->user.nick, msg);             /* Send the private message to the user */
+        irc_message(event->user.nick, msg);             /* Send the private message to the user */
     }
 }
 

@@ -71,8 +71,7 @@ void irc_topic(char* channel, char* topic);                         /* Change th
 void irc_names(char* channel);                                      /* List the users in a channel */
 void irc_list();                                                    /* List channels and their topics */
 void irc_invite(char* nick, char* channel);                         /* Invite a user to a channel */
-void irc_channel_msg(char* channel, char* messge);                  /* Send a message to a channel */
-void irc_private_msg(char* nick, char* message);                    /* Send a private message to a user */
+void irc_message(char* target, char* messge);                  /* Send a message to a nick or channel */
 void irc_op(char* channel, char* nick);                             /* Give operator to a user */
 void irc_deop(char* channel, char* nick);                           /* Take operator from a user */
 void irc_voice(char* channel, char* nick);                          /* Give voice to a user */

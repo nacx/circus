@@ -54,7 +54,7 @@ void on_mode(ModeEvent* event) {
         for (i = 0; i < event->num_params; i++) {
             if (s_eq(event->params[i], CONF_NICK)) { /* We've been given operator privilege */
                 snprintf(msg, 30, "Thanks %s!", event->user.nick);  /* Build the message to send */
-                irc_channel_msg(event->target, msg);
+                irc_message(event->target, msg);
         
                 /* Channel flags are defined in irc.h */
                 irc_channel_set(event->target, CH_INVITEONLY | CH_MODERATED);

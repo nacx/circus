@@ -10,7 +10,7 @@ LIBDIR = ../src/lib
 CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall -ansi -pedantic -I$(INCLUDEDIR)
-LDFLAGS = -L$(LIBDIR) -lcircus
+LDFLAGS = -L$(LIBDIR) -lpthread -lcircus
 
 all: $(TARGETS)
 

@@ -9,7 +9,7 @@ TARGETS = $(BINARY_NAME)
 CC = gcc
 LN = $(CC)
 CFLAGS = -pipe -O2 -Wall
-LDFLAGS = -lcircus
+LDFLAGS = -lpthread -lcircus
 
 PREFIX ?= /usr/local
 

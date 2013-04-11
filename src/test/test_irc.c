@@ -181,24 +181,14 @@ void test_irc_invite() {
     mu_assert(s_eq(msg, "INVITE circus #circus\r\n"), "test_irc_invite: msg should be 'INVITE circus #circus\\r\\n'");
 }
 
-void test_irc_channel_msg() {
+void test_irc_message() {
     char msg[READ_BUF];
 
-    irc_channel_msg("#circus", "Foo bar");
+    irc_message("#circus", "Foo bar");
     read_mock(msg);
 
     mu_assert(s_eq(msg, "PRIVMSG #circus :Foo bar\r\n"),
-            "test_irc_channel_msg: msg should be 'PRIVMSG #circus :Foo bar\\r\\n'");
-}
-
-void test_irc_private_msg() {
-    char msg[READ_BUF];
-
-    irc_private_msg("circus", "Foo bar");
-    read_mock(msg);
-
-    mu_assert(s_eq(msg, "PRIVMSG circus :Foo bar\r\n"),
-            "test_irc_private_msg: msg should be 'PRIVMSG circus :Foo bar\\r\\n'");
+            "test_irc_message: msg should be 'PRIVMSG #circus :Foo bar\\r\\n'");
 }
 
 void test_irc_op() {
@@ -373,8 +363,8 @@ void test_irc() {
     mu_run(test_irc_names);
     mu_run(test_irc_list);
     mu_run(test_irc_invite);
-    mu_run(test_irc_channel_msg);
-    mu_run(test_irc_private_msg);
+    mu_run(test_irc_message);
+    mu_run(test_irc_message);
     mu_run(test_irc_op);
     mu_run(test_irc_deop);
     mu_run(test_irc_voice);
