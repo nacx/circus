@@ -34,25 +34,6 @@
 #include "debug.h"
 #include "listener.h"
 
-/* *************** */
-/* Utility methods */
-/* *************** */
-
-static struct raw_event new_raw_message() {
-    int i;
-    struct raw_event raw;
-
-    gettimeofday(&raw.timestamp, NULL);
-    raw.prefix = NULL;
-    raw.type = NULL;
-    raw.num_params = 0;
-
-    for (i = 0; i < MAX_PARAMS; i++) {
-        raw.params[i] = NULL;
-    }
-
-    return raw;
-}
 
 /* ********************* */
 /* System event handlers */
@@ -66,7 +47,7 @@ static void __circus__ping_handler(PingEvent* event) {
 /* Event triggering */
 /* **************** */
 
-static void _fire_event(struct raw_event *raw) {
+static void _fire_event(struct raw_event* raw) {
     CallbackPtr callback = NULL;
     upper(raw->type);
 
@@ -227,11 +208,11 @@ static void _fire_event(struct raw_event *raw) {
 /* Message parsing */
 /* *************** */
 
-struct raw_event lst_parse(char* msg, char* buffer) {
+struct raw_event* lst_parse(char* msg) {
     int i = 0, is_last_parameter = 0;
     size_t msg_len;
-    struct raw_event raw = new_raw_message();
-    char *token, *token_end = NULL;
+    struct raw_event* raw = evt_raw_create();
+    char* buffer, *token, *token_end = NULL;
 
     if (msg != NULL && (msg_len = strlen(msg)) > 0) {
 
@@ -246,28 +227,28 @@ struct raw_event lst_parse(char* msg, char* buffer) {
         token = strtok_r(buffer, PARAM_SEP, &token_end);
         while(token != NULL)
         {
-            if (raw.type == NULL) {
+            if (raw->type == NULL) {
                 /* If type is not set, we must check if there
                  * is a message prefix. */
                 if (token[0] == ':') {
-                    raw.prefix = token + 1; /* Ignore the ':' */
+                    raw->prefix = token + 1; /* Ignore the ':' */
                 } else {
-                    raw.type = token;
+                    raw->type = token;
                 }
             } else { /* If the type is set the token is a parameter */
                 /* If a parameter begins with ':' then it is
                  * the last parameter and it is all the remaining message. */
                 if (token[0] == ':') {
                     /* Do not increment the parameter count */
-                    raw.params[i] = token + 1; /* Ignore the ':' */
+                    raw->params[i] = token + 1; /* Ignore the ':' */
                     is_last_parameter = 1;       /* Set the last parameter flag */
                 } else {
                     if (is_last_parameter == 0) {
-                        raw.params[i++] = token;
+                        raw->params[i++] = token;
                     } else {
                         /* If it is the last parameter, just concatenate
                          * the tokens. */
-                        sprintf(raw.params[i], "%s %s", raw.params[i], token);
+                        sprintf(raw->params[i], "%s %s", raw->params[i], token);
                     }
                 }
             }
@@ -278,21 +259,21 @@ struct raw_event lst_parse(char* msg, char* buffer) {
 
         /* If we have a last parameter we should increment now the parameter
          * counter. */
-        raw.num_params = (is_last_parameter == 0)? i : i + 1;
+        raw->num_params = (is_last_parameter == 0)? i : i + 1;
     }
+
+    raw->__buffer = buffer;
 
     return raw;
 }
 
 void lst_handle(char* msg) {
-    char* buffer = NULL;
-    struct raw_event raw;
+    struct raw_event* raw;
 
     msg[strlen(msg) - 2] = '\0';    /* Remove the line terminaion before parsing */
-    raw = lst_parse(msg, buffer);       /* Parse the input and get the raw message */
-    _fire_event(&raw);               /* Fire the event */
+    raw = lst_parse(msg);           /* Parse the input and get the raw event */
 
-    /* Free memory used to parse the message once it has been handled */
-    free(buffer);
+    _fire_event(raw);               /* Fire the event */
+    evt_raw_destroy(raw);               /* Free memory once the event been handled */
 }
 

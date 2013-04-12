@@ -59,6 +59,36 @@ UserInfo user_info(char* user_ref) {
     return ui;
 }
 
+/* ********** */
+/* Raw events */
+/* ********** */
+
+struct raw_event* evt_raw_create() {
+    int i;
+    struct raw_event* raw;
+
+    if ((raw = malloc(sizeof(struct raw_event))) == 0) {
+        perror("Out of memory (raw_create)");
+        exit(EXIT_FAILURE);
+    }
+
+    gettimeofday(&raw->timestamp, NULL);
+    raw->prefix = NULL;
+    raw->type = NULL;
+    raw->num_params = 0;
+
+    for (i = 0; i < MAX_PARAMS; i++) {
+        raw->params[i] = NULL;
+    }
+
+    return raw;
+}
+
+void evt_raw_destroy(struct raw_event* raw) {
+    free(raw->__buffer);
+    free(raw);
+}
+
 /* ************** */
 /* Generic events */
 /* ************** */

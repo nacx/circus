@@ -68,380 +68,342 @@ void on_error(ErrorEvent* event) { evt_errors++; }
 void on_generic(GenericEvent* event) { evt_generics++; }
 
 
-void test_new_raw_message() {
-    int i;
-    struct raw_event raw = new_raw_message();
-
-    mu_assert(raw.timestamp.tv_sec > 0, "test_new_raw_message: timestamp seconds should be > 0");
-    mu_assert(raw.timestamp.tv_usec > 0, "test_new_raw_message: timestamp microseconds should be > 0");
-    mu_assert(raw.prefix == NULL, "test_new_raw_message: prefix should be NULL");
-    mu_assert(raw.type == NULL, "test_new_raw_message: type should be NULL");
-    mu_assert(raw.num_params == 0, "test_new_raw_message: num_params should be '0'");
-    for (i = 0; i < MAX_PARAMS; i++) {
-        mu_assert(raw.params[i] == NULL, "test_new_raw_message: params[i] should be NULL");
-    }
-}
-
 void test_parse_empty_message() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(NULL, buffer);
+    raw = lst_parse(NULL);
 
-    mu_assert(raw.prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
-    mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
-    mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
+    mu_assert(raw->prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
+    mu_assert(raw->type == NULL, "test_parse_empty_message: type should be NULL"); 
+    mu_assert(raw->num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 
+    raw = lst_parse("");
 
-    raw = lst_parse("", buffer);
+    mu_assert(raw->prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
+    mu_assert(raw->type == NULL, "test_parse_empty_message: type should be NULL"); 
+    mu_assert(raw->num_params == 0, "test_parse_empty_message: there should be 0 parameters");
 
-    mu_assert(raw.prefix == NULL, "test_parse_empty_message: prefix should be NULL"); 
-    mu_assert(raw.type == NULL, "test_parse_empty_message: type should be NULL"); 
-    mu_assert(raw.num_params == 0, "test_parse_empty_message: there should be 0 parameters");
-
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse("TEST This is a message test without prefix", buffer);
+    raw = lst_parse("TEST This is a message test without prefix");
 
-    mu_assert(raw.prefix == NULL, "test_parse: prefix should be NULL"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse: type should be TEST"); 
-    mu_assert(raw.num_params == 7, "test_parse: there should be 7 parameters");
+    mu_assert(raw->prefix == NULL, "test_parse: prefix should be NULL"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse: type should be TEST"); 
+    mu_assert(raw->num_params == 7, "test_parse: there should be 7 parameters");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse_with_prefix() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(":prefix TEST This is a message test with prefix", buffer);
+    raw = lst_parse(":prefix TEST This is a message test with prefix");
 
-    mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix: prefix should be 'prefix'"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
-    mu_assert(raw.num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
+    mu_assert(s_eq(raw->prefix, "prefix"), "test_parse_with_prefix: prefix should be 'prefix'"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse_with_prefix: type should be 'TEST'"); 
+    mu_assert(raw->num_params == 7, "test_parse_with_prefix: there should be 7 parameters");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse_with_last_param() {
     char* last_param;
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse("TEST This is a message test with a :last parameter", buffer);
-    last_param = raw.params[raw.num_params -1];
+    raw = lst_parse("TEST This is a message test with a :last parameter");
+    last_param = raw->params[raw->num_params -1];
 
-    mu_assert(raw.prefix == NULL, "test_parse_with_last_param: prefix should be NULL"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_last_param: type should be 'TEST'"); 
-    mu_assert(raw.num_params == 8, "test_parse_with_last_param: there should be 8 parameters");
+    mu_assert(raw->prefix == NULL, "test_parse_with_last_param: prefix should be NULL"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse_with_last_param: type should be 'TEST'"); 
+    mu_assert(raw->num_params == 8, "test_parse_with_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_last_param: last parameter should be 'last parameter'");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse_with_prefix_and_last_param() {
     char* last_param;
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(":prefix TEST This is a message test with a :last parameter", buffer);
-    last_param = raw.params[raw.num_params - 1];
+    raw = lst_parse(":prefix TEST This is a message test with a :last parameter");
+    last_param = raw->params[raw->num_params - 1];
 
-    mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix_and_last_param: prefix should be 'prefix'"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix_and_last_param: type should be 'TEST'"); 
-    mu_assert(raw.num_params == 8, "test_parse_with_prefix_and_last_param: there should be 8 parameters");
+    mu_assert(s_eq(raw->prefix, "prefix"), "test_parse_with_prefix_and_last_param: prefix should be 'prefix'"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse_with_prefix_and_last_param: type should be 'TEST'"); 
+    mu_assert(raw->num_params == 8, "test_parse_with_prefix_and_last_param: there should be 8 parameters");
     mu_assert(s_eq(last_param, "last parameter"), "test_parse_with_prefix_and_last_param: last parameter should be 'last parameter'");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse_only_last_param() {
     char* last_param;
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse("TEST :only last parameter", buffer);
-    last_param = raw.params[raw.num_params -1];
+    raw = lst_parse("TEST :only last parameter");
+    last_param = raw->params[raw->num_params -1];
 
-    mu_assert(raw.prefix == NULL, "test_parse_only_last_param: prefix should be NULL"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse_only_last_param: type should be 'TEST'"); 
-    mu_assert(raw.num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
+    mu_assert(raw->prefix == NULL, "test_parse_only_last_param: prefix should be NULL"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse_only_last_param: type should be 'TEST'"); 
+    mu_assert(raw->num_params == 1, "test_parse_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_only_last_param: last parameter should be 'only last parameter'");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_parse_with_prefix_only_last_param() {
     char* last_param;
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(":prefix TEST :only last parameter", buffer);
-    last_param = raw.params[raw.num_params - 1];
+    raw = lst_parse(":prefix TEST :only last parameter");
+    last_param = raw->params[raw->num_params - 1];
 
-    mu_assert(s_eq(raw.prefix, "prefix"), "test_parse_with_prefix_only_last_param: prefix should be 'prefix'"); 
-    mu_assert(s_eq(raw.type, "TEST"), "test_parse_with_prefix_only_last_param: type should be 'TEST'"); 
-    mu_assert(raw.num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
+    mu_assert(s_eq(raw->prefix, "prefix"), "test_parse_with_prefix_only_last_param: prefix should be 'prefix'"); 
+    mu_assert(s_eq(raw->type, "TEST"), "test_parse_with_prefix_only_last_param: type should be 'TEST'"); 
+    mu_assert(raw->num_params == 1, "test_parse_with_prefix_only_last_param: there should be 1 parameters");
     mu_assert(s_eq(last_param, "only last parameter"), "test_parse_with_prefix_only_last_param: last parameter should be 'only last parameter'");
 
-    free(buffer);   /* Cleanup */
+    evt_raw_destroy(raw);   /* Cleanup */
 }
 
 void test_fire_evt_nick() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(NICK, (CallbackPtr) on_nick);
-    raw = lst_parse("NICK test-nick", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("NICK test-nick");
+    _fire_event(raw);
 
     mu_assert(evt_nicks == 1, "test_fire_evt_nick: evt_nicks should be '1'");
 
     irc_unbind_event(NICK);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_quit() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(QUIT, (CallbackPtr) on_quit);
-    raw = lst_parse("QUIT :Bye bye!", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("QUIT :Bye bye!");
+    _fire_event(raw);
 
     mu_assert(evt_quits == 1, "test_fire_evt_quit: evt_quits should be '1'");
 
     irc_unbind_event(QUIT);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_join() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(JOIN, (CallbackPtr) on_join);
-    raw = lst_parse("JOIN #circus", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("JOIN #circus");
+    _fire_event(raw);
 
     mu_assert(evt_joins == 1, "test_fire_evt_join: evt_joins should be '1'");
 
     irc_unbind_event(JOIN);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_part() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(PART, (CallbackPtr) on_part);
-    raw = lst_parse("PART #circus :Bye", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("PART #circus :Bye");
+    _fire_event(raw);
 
     mu_assert(evt_parts == 1, "test_fire_evt_part: evt_parts should be '1'");
 
     irc_unbind_event(PART);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_topic() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(TOPIC, (CallbackPtr) on_topic);
-    raw = lst_parse("TOPIC #circus :New topic", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("TOPIC #circus :New topic");
+    _fire_event(raw);
 
     mu_assert(evt_topics == 1, "test_fire_evt_topic: evt_topics should be '1'");
 
     irc_unbind_event(TOPIC);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_names() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(NAMES, (CallbackPtr) on_names);
 
-    raw = lst_parse("353 test-nick @ #circus :test1 test2", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("353 test-nick @ #circus :test1 test2");
+    _fire_event(raw);
     mu_assert(evt_namess == 1, "test_fire_evt_names: evt_namess should be '1'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
-    raw = lst_parse("366 test-nick #circus :End of /NAMES list", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("366 test-nick #circus :End of /NAMES list");
+    _fire_event(raw);
     mu_assert(evt_namess == 2, "test_fire_evt_names: evt_namess should be '2'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
     irc_unbind_event(NAMES);
 }
 
 void test_fire_evt_list() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(LIST, (CallbackPtr) on_list);
 
-    raw = lst_parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework");
+    _fire_event(raw);
     mu_assert(evt_lists == 1, "test_fire_evt_list: evt_lists should be '1'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
-    raw = lst_parse(":moorcock.freenode.net 323 circus-bot :End of /LIST", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":moorcock.freenode.net 323 circus-bot :End of /LIST");
+    _fire_event(raw);
     mu_assert(evt_lists == 2, "test_fire_evt_list: evt_lists should be '2'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
     irc_unbind_event(LIST);
 }
 
 void test_fire_evt_invite() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(INVITE, (CallbackPtr) on_invite);
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus");
+    _fire_event(raw);
 
     mu_assert(evt_invites == 1, "test_fire_evt_invite: evt_invites should be '1'");
 
     irc_unbind_event(INVITE);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_kick() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(KICK, (CallbackPtr) on_kick);
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo");
+    _fire_event(raw);
 
     mu_assert(evt_kicks == 1, "test_fire_evt_kick: evt_kicks should be '1'");
 
     irc_unbind_event(KICK);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_message() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(PRIVMSG, (CallbackPtr) on_message);
 
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there");
+    _fire_event(raw);
     mu_assert(evt_messages == 1, "test_fire_evt_message: evt_messages should be '1'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :Hi there", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :Hi there");
+    _fire_event(raw);
     mu_assert(evt_messages == 2, "test_fire_evt_message: evt_messages should be '2'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
     irc_unbind_event(PRIVMSG);
     irc_bind_command("!cmd", (CallbackPtr) on_message);
 
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :!cmd Do it", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :!cmd Do it");
+    _fire_event(raw);
     mu_assert(evt_messages == 3, "test_fire_evt_message: evt_messages should be '3'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
-    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :!cmd", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :!cmd");
+    _fire_event(raw);
     mu_assert(evt_messages == 4, "test_fire_evt_message: evt_messages should be '2'");
-    free(buffer);
+    evt_raw_destroy(raw);
 
     irc_unbind_command("!cmd");
 }
 
 void test_fire_evt_mode() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(MODE, (CallbackPtr) on_mode);
-    raw = lst_parse(":nick!~user@server MODE #test +inm", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":nick!~user@server MODE #test +inm");
+    _fire_event(raw);
 
     mu_assert(evt_modes == 1, "test_fire_evt_mode: evt_modes should be '1'");
 
     irc_unbind_event(MODE);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_ping() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(PING, (CallbackPtr) on_ping);
-    raw = lst_parse("PING :zelazny.freenode.net", buffer);
-    _fire_event(&raw);
+    raw = lst_parse("PING :zelazny.freenode.net");
+    _fire_event(raw);
 
     mu_assert(evt_pings == 1, "test_fire_evt_ping: evt_pings should be '1'");
 
     irc_unbind_event(PING);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_notice() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
     irc_bind_event(NOTICE, (CallbackPtr) on_notice);
-    raw = lst_parse(":moorcock.freenode.net NOTICE * :Message", buffer);
-    _fire_event(&raw);
+    raw = lst_parse(":moorcock.freenode.net NOTICE * :Message");
+    _fire_event(raw);
 
     mu_assert(evt_notices == 1, "test_fire_evt_notice: evt_notices should be '1'");
 
     irc_unbind_event(NOTICE);
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_error() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(":nick!~user@server 401 circus-bot :Test message", buffer);
+    raw = lst_parse(":nick!~user@server 401 circus-bot :Test message");
 
     irc_bind_event(ERR_NOSUCHNICK, (CallbackPtr) on_error);
-    _fire_event(&raw);
+    _fire_event(raw);
     mu_assert(evt_errors == 1, "test_fire_evt_error: evt_errors should be '1'");
 
     irc_unbind_event(ERR_NOSUCHNICK);
     irc_bind_event(ERROR, (CallbackPtr) on_error);
-    _fire_event(&raw);
+    _fire_event(raw);
     mu_assert(evt_errors == 2, "test_fire_evt_error: evt_errors should be '2'");
 
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_fire_evt_generic() {
-    struct raw_event raw;
-    char* buffer = NULL;
+    struct raw_event* raw;
 
-    raw = lst_parse(":nick!~user@server 305 circus-bot :Test message", buffer);
+    raw = lst_parse(":nick!~user@server 305 circus-bot :Test message");
 
     irc_bind_event(RPL_UNAWAY, (CallbackPtr) on_generic);
-    _fire_event(&raw);
+    _fire_event(raw);
     mu_assert(evt_generics == 1, "test_fire_evt_generic: evt_generics should be '1'");
 
     irc_unbind_event(RPL_UNAWAY);
     irc_bind_event(ALL, (CallbackPtr) on_generic);
-    _fire_event(&raw);
+    _fire_event(raw);
     mu_assert(evt_generics == 2, "test_fire_evt_generic: evt_generics should be '2'");
 
-    free(buffer);
+    evt_raw_destroy(raw);
 }
 
 void test_listener() {
-    mu_run(test_new_raw_message);
     mu_run(test_parse_empty_message);
     mu_run(test_parse);
     mu_run(test_parse_with_prefix);

@@ -31,11 +31,15 @@
 /* Raw IRC message */
 struct raw_event {
     struct timeval timestamp;   /* The timestamp when the event was generated */
+    char* __buffer;             /* The tokenized original message */
     char* type;                 /* The IRC message type */
     char* prefix;               /* The message prefix (if any) */
     int   num_params;           /* The number of parameters */
     char* params[MAX_PARAMS];   /* The parameter array */
 };
+
+struct raw_event* evt_raw_create();             /* Creates a raw event */
+void evt_raw_destroy(struct raw_event* raw);    /* Destroys the raw event */
 
 /* ********************************** */
 /* User information utility functions */

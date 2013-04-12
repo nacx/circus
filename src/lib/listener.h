@@ -25,8 +25,8 @@
 
 #define PARAM_SEP   " "         /* IRC parameter separator */
 
-void lst_handle(char* msg);                             /* Parse each line of an IRC message */
-struct raw_event lst_parse(char* msg, char* buffer);      /* Parse one single line of an IRC message */
+void lst_handle(char* msg);                 /* Parse each line of an IRC message */
+struct raw_event* lst_parse(char* msg);     /* Parse one single line of an IRC message */
 
 #endif
 
