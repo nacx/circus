@@ -212,19 +212,19 @@ struct raw_event* lst_parse(char* msg) {
     int i = 0, is_last_parameter = 0;
     size_t msg_len;
     struct raw_event* raw = evt_raw_create();
-    char* buffer, *token, *token_end = NULL;
+    char* token, *token_end = NULL;
 
     if (msg != NULL && (msg_len = strlen(msg)) > 0) {
 
-        if ((buffer = malloc((msg_len + 1) * sizeof(char))) == 0) {
+        if ((raw->__buffer = malloc((msg_len + 1) * sizeof(char))) == 0) {
             perror("Out of memory (parse)");
             exit(EXIT_FAILURE);
         }
 
-        memset(buffer, '\0', msg_len + 1);
-        strncpy(buffer, msg, msg_len);
+        memset(raw->__buffer, '\0', msg_len + 1);
+        strncpy(raw->__buffer, msg, msg_len);
 
-        token = strtok_r(buffer, PARAM_SEP, &token_end);
+        token = strtok_r(raw->__buffer, PARAM_SEP, &token_end);
         while(token != NULL)
         {
             if (raw->type == NULL) {
@@ -261,8 +261,6 @@ struct raw_event* lst_parse(char* msg) {
          * counter. */
         raw->num_params = (is_last_parameter == 0)? i : i + 1;
     }
-
-    raw->__buffer = buffer;
 
     return raw;
 }

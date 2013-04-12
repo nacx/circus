@@ -73,6 +73,7 @@ struct raw_event* evt_raw_create() {
     }
 
     gettimeofday(&raw->timestamp, NULL);
+    raw->__buffer = NULL;
     raw->prefix = NULL;
     raw->type = NULL;
     raw->num_params = 0;
