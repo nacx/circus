@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "irc.h"                    /* IRC protocol functions */
 
 /* The location of the log files */
@@ -49,13 +50,20 @@ void on_nick_in_use(ErrorEvent* event) {
 
 /* Log message to the log file */
 void log_msg(MessageEvent* event) {
-    char log_file[30];
+    char log_file[30], str_time[64];
     FILE* f;
+    struct tm* event_time;
 
+    /* Build the file where the log will be appended to */
     sprintf(log_file, "%s/%s", LOG_PATH, event->is_channel? event->to : event->user.nick);
 
+    /* Pretty format the event timestamp */
+    event_time = localtime(&event->timestamp->tv_sec);
+    strftime(str_time, sizeof(str_time), "%Y-%m-%d %H:%M:%S", event_time);
+
+    /* Write the log */
     f = fopen(log_file, "a");
-    fprintf(f, "<%s> %s\n", event->user.nick, event->message);
+    fprintf(f, "[%s] <%s> %s\n", str_time, event->user.nick, event->message);
     fclose(f);
 }
 

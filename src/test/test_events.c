@@ -62,7 +62,7 @@ void test_evt_error_one_param() {
     raw = lst_parse(":nick!~user@server 401 circus-bot :Test message");
     event = evt_error(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_error_one_param: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_error_no_params: timestamp should not be NULL");
     mu_assert(s_eq(event.code, "401"), "test_evt_error_one_param: code should be 401");
     mu_assert(event.num_params == 1, "test_evt_error_one_param: num_params should be 1");
     mu_assert(s_eq(event.params[0], "circus-bot"), "test_evt_error_one_param: params[0] should be 'circus-bot'");
@@ -78,7 +78,7 @@ void test_evt_error_no_params() {
     raw = lst_parse(":nick!~user@server 401 :Test message");
     event = evt_error(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_error_no_params: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_error_no_params: timestamp should not be NULL");
     mu_assert(s_eq(event.code, "401"), "test_evt_error_no_params: code should be 401");
     mu_assert(event.num_params == 0, "test_evt_error_no_params: num_params should be 0");
     mu_assert(s_eq(event.message, "Test message"), "test_evt_error_no_params: message should be 'Test message'");
@@ -93,7 +93,7 @@ void test_evt_generic_one_param() {
     raw = lst_parse(":nick!~user@server 305 circus-bot :Test message");
     event = evt_generic(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_generic_one_param: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_generic_one_param: timestamp should not be NULL");
     mu_assert(s_eq(event.code, "305"), "test_evt_generic_one_param: code should be 305");
     mu_assert(event.num_params == 1, "test_evt_generic_one_param: num_params should be 1");
     mu_assert(s_eq(event.params[0], "circus-bot"), "test_evt_generic_one_param: params[0] should be 'circus-bot'");
@@ -109,7 +109,7 @@ void test_evt_generic_no_params() {
     raw = lst_parse(":nick!~user@server 305 :Test message");
     event = evt_generic(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_generic_no_params: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_generic_no_params: timestamp should not be NULL");
     mu_assert(s_eq(event.code, "305"), "test_evt_generic_no_params: code should be 305");
     mu_assert(event.num_params == 0, "test_evt_generic_no_params: num_params should be 0");
     mu_assert(s_eq(event.message, "Test message"), "test_evt_generic_no_params: message should be 'test message'");
@@ -124,7 +124,7 @@ void test_evt_nick() {
     raw = lst_parse("NICK test-nick");
     event = evt_nick(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_nick: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_nick: timestamp should not be NULL");
     mu_assert(s_eq(event.new_nick, "test-nick"), "test_evt_nick: nick should be 'test-nick'");
 
     evt_raw_destroy(raw);   /* Cleanup */
@@ -137,7 +137,7 @@ void test_evt_quit() {
     raw = lst_parse("QUIT :Bye bye!");
     event = evt_quit(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_quit: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_quit: timestamp should not be NULL");
     mu_assert(s_eq(event.message, "Bye bye!"), "test_evt_quit: message should be 'Bye bye!'");
 
     evt_raw_destroy(raw);   /* Cleanup */
@@ -150,7 +150,7 @@ void test_evt_join() {
     raw = lst_parse("JOIN #circus");
     event = evt_join(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_join: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_join: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_join: channel should be '#circus'");
 
     evt_raw_destroy(raw);   /* Cleanup */
@@ -163,7 +163,7 @@ void test_evt_part() {
     raw = lst_parse("PART #circus :Bye");
     event = evt_part(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_part: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_part: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_part: channel should be '#circus'");
     mu_assert(s_eq(event.message, "Bye"), "test_evt_part: message should be 'Bye'");
 
@@ -177,7 +177,7 @@ void test_evt_names_partial() {
     raw = lst_parse("353 test-nick @ #circus :test1 test2");
     event = evt_names(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_names_partial: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_names_partial: timestamp should not be NULL");
     mu_assert(!event.finished, "test_evt_names_partial: event should not be finished");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_names_partial: channel should be '#circus'");
     mu_assert(event.num_names == 2, "test_evt_names_partial: num_names should be '2'");
@@ -194,7 +194,7 @@ void test_evt_names_finished() {
     raw = lst_parse("366 test-nick #circus :End of /NAMES list");
     event = evt_names(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_names_finished: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_names_finished: timestamp should not be NULL");
     mu_assert(event.finished, "test_evt_names_finished: event should be finished");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_names_finished: channel should be '#circus'");
     mu_assert(event.num_names == 0, "test_evt_names_finished: num_names should be '0'");
@@ -209,7 +209,7 @@ void test_evt_topic() {
     raw = lst_parse("TOPIC #circus :New topic");
     event = evt_topic(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_topic: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_topic: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_topic: channel should be '#circus'");
     mu_assert(s_eq(event.topic, "New topic"), "test_evt_topic: topic should be 'New topic'");
 
@@ -223,7 +223,7 @@ void test_evt_list_partial() {
     raw = lst_parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework");
     event = evt_list(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_list_partial: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_list_partial: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_list_partial: channel should be '#circus'");
     mu_assert(!event.finished, "test_evt_list_partial: event should not be finished");
     mu_assert(event.num_users == 7, "test_evt_list_partial: num_users should be '7'");
@@ -239,7 +239,7 @@ void test_evt_list_finished() {
     raw = lst_parse(":moorcock.freenode.net 323 circus-bot :End of /LIST");
     event = evt_list(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_list_finished: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_list_finished: timestamp should not be NULL");
     mu_assert(event.channel == NULL, "test_evt_list_finished: channel should be 'NULL'");
     mu_assert(event.finished, "test_evt_list_finished: event should be finished");
     mu_assert(event.num_users == 0, "test_evt_list_finished: num_users should be '0'");
@@ -255,7 +255,7 @@ void test_evt_invite() {
     raw = lst_parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus");
     event = evt_invite(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_invite: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_invite: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_invite: channel should be '#circus'");
     mu_assert(s_eq(event.nick, "circus-bot"), "test_evt_invite: nick should be 'circus-bot'");
     mu_assert(s_eq(event.user.nick, "nacx"), "test_evt_invite: user.nick should be 'nacx'");
@@ -270,7 +270,7 @@ void test_evt_kick() {
     raw = lst_parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo");
     event = evt_kick(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_kick: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_kick: timestamp should not be NULL");
     mu_assert(s_eq(event.channel, "#circus"), "test_evt_kick: channel should be '#circus'");
     mu_assert(s_eq(event.nick, "circus-bot"), "test_evt_kick: nick should be 'circus-bot'");
     mu_assert(s_eq(event.message, "Foo"), "test_evt_kick: message should be 'Foo'");
@@ -286,7 +286,7 @@ void test_evt_message_channel() {
     raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there");
     event = evt_message(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_message_channel: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_message_channel: timestamp should not be NULL");
     mu_assert(s_eq(event.to, "#circus"), "test_evt_message_channel: event.to should be '#circus'");
     mu_assert(event.is_channel, "test_evt_message_channel: event.is_channel should be 'true'");
     mu_assert(s_eq(event.message, "Hi there"), "test_evt_message_channel: message should be 'Hi there'");
@@ -302,7 +302,7 @@ void test_evt_message_private() {
     raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG circus-bot :Hi there");
     event = evt_message(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_message_private: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_message_private: timestamp should not be NULL");
     mu_assert(s_eq(event.to, "circus-bot"), "test_evt_message_channel: event.to should be 'circus-bot'");
     mu_assert(!event.is_channel, "test_evt_message_channel: event.is_channel should be 'false'");
     mu_assert(s_eq(event.message, "Hi there"), "test_evt_message_channel: message should be 'Hi there'");
@@ -318,7 +318,7 @@ void test_evt_ping() {
     raw = lst_parse("PING :zelazny.freenode.net");
     event = evt_ping(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_ping: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_ping: timestamp should not be NULL");
     mu_assert(s_eq(event.server, "zelazny.freenode.net"), "test_evt_ping: server should be 'zelazny.freenode.net'");
 
     evt_raw_destroy(raw);   /* Cleanup */
@@ -331,7 +331,7 @@ void test_evt_notice() {
     raw = lst_parse(":moorcock.freenode.net NOTICE * :Message");
     event = evt_notice(raw);
 
-    mu_assert(event.raw != NULL, "test_evt_notice: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_evt_notice: timestamp should not be NULL");
     mu_assert(s_eq(event.to, "*"), "test_evt_notice: event.to should be '*'");
     mu_assert(s_eq(event.text, "Message"), "test_evt_notice: event.text should be 'Message'");
 
@@ -346,7 +346,7 @@ void test_channel_evt_mode_set() {
     raw = lst_parse(":nick!~user@server MODE #test +inm");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_channel_evt_mode_set: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_channel_evt_mode_set: timestamp should not be NULL");
     mu_assert(event.is_channel, "test_channel_evt_mode_set: is_channel should be true");
     mu_assert(s_eq(event.target, "#test"), "test_channel_evt_mode_set: target should be '#test'");
     mu_assert(event.set_flags == set_flags, "test_channel_evt_mode_set: set_flags should be 'inm'");
@@ -364,7 +364,7 @@ void test_channel_evt_mode_unset() {
     raw = lst_parse(":nick!~user@server MODE #test -inm");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_channel_evt_mode_unset: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_channel_evt_mode_unset: timestamp should not be NULL");
     mu_assert(event.is_channel, "test_channel_evt_mode_unset: is_channel should be true");
     mu_assert(s_eq(event.target, "#test"), "test_channel_evt_mode_unset: target should be '#test'");
     mu_assert(event.set_flags == 0x0000, "test_channel_evt_mode_unset: set_flags should be 0x0000");
@@ -383,7 +383,7 @@ void test_channel_evt_mode_setunset() {
     raw = lst_parse(":nick!~user@server MODE #test -i+ts-nm");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_channel_evt_mode_setunset: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_channel_evt_mode_setunset: timestamp should not be NULL");
     mu_assert(event.is_channel, "test_channel_evt_mode_setunset: is_channel should be true");
     mu_assert(s_eq(event.target, "#test"), "test_channel_evt_mode_setunset: target should be '#test'");
     mu_assert(event.set_flags == set_flags, "test_channel_evt_mode_setunset: set_flags should be 'ts'");
@@ -401,7 +401,7 @@ void test_channel_evt_mode_params() {
     raw = lst_parse(":nick!~user@server MODE #test +ilb 10 test *!*@*");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_channel_evt_mode_params: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_channel_evt_mode_params: timestamp should not be NULL");
     mu_assert(event.is_channel, "test_channel_evt_mode_params: is_channel should be true");
     mu_assert(s_eq(event.target, "#test"), "test_channel_evt_mode_params: target should be '#test'");
     mu_assert(event.set_flags == set_flags, "test_channel_evt_mode_params: set_flags should be 'i'");
@@ -422,7 +422,7 @@ void test_user_evt_mode_set() {
     raw = lst_parse(":test MODE test +iw");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_user_evt_mode_set: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_user_evt_mode_set: timestamp should not be NULL");
     mu_assert(!event.is_channel, "test_user_evt_mode_set: is_channel should be false");
     mu_assert(s_eq(event.target, "test"), "test_user_evt_mode_set: target should be 'test'");
     mu_assert(event.set_flags == set_flags, "test_user_evt_mode_set: set_flags should be 'iw'");
@@ -440,7 +440,7 @@ void test_user_evt_mode_unset() {
     raw = lst_parse(":test MODE test -iw");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_user_evt_mode_unset: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_user_evt_mode_unset: timestamp should not be NULL");
     mu_assert(!event.is_channel, "test_user_evt_mode_unset: is_channel should be false");
     mu_assert(s_eq(event.target, "test"), "test_user_evt_mode_unset: target should be 'test'");
     mu_assert(event.set_flags == 0x0000, "test_user_evt_mode_unset: set_flags should be 0x0000");
@@ -459,7 +459,7 @@ void test_user_evt_mode_setunset() {
     raw = lst_parse(":test MODE test -i+w-o");
     event = evt_mode(raw);
 
-    mu_assert(event.raw != NULL, "test_user_evt_mode_setunset: raw message should not be NULL");
+    mu_assert(event.timestamp != NULL, "test_user_evt_mode_setunset: timestamp should not be NULL");
     mu_assert(!event.is_channel, "test_user_evt_mode_setunset: is_channel should be false");
     mu_assert(s_eq(event.target, "test"), "test_user_evt_mode_setunset: target should be 'test'");
     mu_assert(event.set_flags == set_flags, "test_user_evt_mode_setunset: set_flags should be 'w'");

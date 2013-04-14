@@ -102,7 +102,7 @@ ErrorEvent evt_error(struct raw_event *raw) {
         event.params[i] = raw->params[i];
     }
 
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.code = raw->type;
     event.num_params = i;
     event.message = raw->params[raw->num_params - 1];
@@ -118,7 +118,7 @@ GenericEvent evt_generic(struct raw_event *raw) {
         event.params[i] = raw->params[i];
     }
 
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.code = raw->type;
     event.num_params = i;
     event.message = raw->params[raw->num_params - 1];
@@ -132,7 +132,7 @@ GenericEvent evt_generic(struct raw_event *raw) {
 
 NickEvent evt_nick(struct raw_event *raw) {
     NickEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.new_nick = raw->params[0];
     return event;
@@ -140,7 +140,7 @@ NickEvent evt_nick(struct raw_event *raw) {
 
 QuitEvent evt_quit(struct raw_event *raw) {
     QuitEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.message = raw->params[0];
     return event;
@@ -152,7 +152,7 @@ QuitEvent evt_quit(struct raw_event *raw) {
 
 JoinEvent evt_join(struct raw_event *raw) {
     JoinEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     return event;
@@ -160,7 +160,7 @@ JoinEvent evt_join(struct raw_event *raw) {
 
 PartEvent evt_part(struct raw_event *raw) {
     PartEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.message = raw->params[1];
@@ -169,7 +169,7 @@ PartEvent evt_part(struct raw_event *raw) {
 
 TopicEvent evt_topic(struct raw_event *raw) {
     TopicEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.topic = raw->params[1];
@@ -179,7 +179,7 @@ TopicEvent evt_topic(struct raw_event *raw) {
 NamesEvent evt_names(struct raw_event *raw) {
     char* token, *next = NULL;
     NamesEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.finished = s_eq(raw->type, RPL_ENDOFNAMES);
     event.channel = raw->params[event.finished? 1 : 2];
     event.num_names = 0;
@@ -195,7 +195,7 @@ NamesEvent evt_names(struct raw_event *raw) {
 
 ListEvent evt_list(struct raw_event *raw) {
     ListEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.channel = NULL;
     event.num_users = 0;
     event.topic = NULL;
@@ -210,7 +210,7 @@ ListEvent evt_list(struct raw_event *raw) {
 
 InviteEvent evt_invite(struct raw_event *raw) {
     InviteEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.nick = raw->params[0];
     event.channel = raw->params[1];
@@ -219,7 +219,7 @@ InviteEvent evt_invite(struct raw_event *raw) {
 
 KickEvent evt_kick(struct raw_event *raw) {
     KickEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.channel = raw->params[0];
     event.nick = raw->params[1];
@@ -229,7 +229,7 @@ KickEvent evt_kick(struct raw_event *raw) {
 
 MessageEvent evt_message(struct raw_event *raw) {
     MessageEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.user = user_info(raw->prefix);
     event.is_channel = (raw->params[0][0] == '#');
     event.to = raw->params[0];
@@ -244,7 +244,7 @@ ModeEvent evt_mode(struct raw_event *raw) {
     unsigned short int current_flag = 0x0000;
     char* flags = raw->params[1];
 
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.is_channel = (raw->params[0][0] == '#');
     event.user = user_info(event.is_channel? raw->prefix : NULL);
     event.target = raw->params[0];
@@ -301,14 +301,14 @@ ModeEvent evt_mode(struct raw_event *raw) {
 
 PingEvent evt_ping(struct raw_event *raw) {
     PingEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.server = raw->params[0];
     return event;
 }
 
 NoticeEvent evt_notice(struct raw_event *raw) {
     NoticeEvent event;
-    event.raw = raw;
+    event.timestamp = &raw->timestamp;
     event.to = raw->params[0];
     event.text = raw->params[1];
     return event;
