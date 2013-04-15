@@ -3,6 +3,7 @@
 *.a
 version.c
 src/test/libcircus-test
+src/test/circus-bnchk
 examples/welcome
 examples/oper
 examples/binding

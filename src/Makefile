@@ -11,6 +11,9 @@ ifdef DEBUG
     CFLAGS += -DDEBUG
 endif
 
+# Installation directory
+PREFIX ?= /usr/local
+
 # Circus build
 CIRCUS_PATH = lib
 CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/binding.c \
@@ -20,6 +23,8 @@ CIRCUS_SRC = $(CIRCUS_PATH)/hashtable.c $(CIRCUS_PATH)/binding.c \
 			 $(CIRCUS_PATH)/debug.c $(CIRCUS_PATH)/version.c \
 			 $(CIRCUS_PATH)/dispatcher.c
 CIRCUS_OBJ = $(CIRCUS_SRC:%.c=%.o)
+LIB_NAME = libcircus.a
+LIB = $(CIRCUS_PATH)/$(LIB_NAME)
 
 # Test build
 TEST_PATH = test
@@ -30,14 +35,15 @@ TEST_SRC = $(TEST_PATH)/minunit.c $(TEST_PATH)/test_hashtable.c \
 		   $(TEST_PATH)/test_irc.c $(TEST_PATH)/test_network.c \
 		   $(TEST_PATH)/test_dispatcher.c $(TEST_PATH)/test.c
 TEST_OBJ = $(TEST_SRC:%.c=%.o)
-
-LIB_NAME = libcircus.a
-LIB = $(CIRCUS_PATH)/$(LIB_NAME)
 LIB_TEST = libcircus-test
-PREFIX ?= /usr/local
+
+# Benchmark build
+BNCHK = circus-bnchk
+BNCHK_SRC = $(TEST_PATH)/bnchk.c
+BNCHK_OBJ = $(BNCHK_SRC:%.c=%.o)
 
 
-all: $(LIB)
+all: $(LIB) benchmark
 
 $(LIB): lib
 
@@ -52,6 +58,10 @@ test: $(TEST_OBJ)
 	$(LN) -o $(TEST_PATH)/$(LIB_TEST) $(TEST_OBJ) -L$(CIRCUS_PATH) $(LDFLAGS)
 	$(TEST_PATH)/$(LIB_TEST)
 
+benchmark: $(BNCHK_OBJ)
+	test -f $(LIB) || $(MAKE) lib
+	$(LN) -o $(TEST_PATH)/$(BNCHK) $(BNCHK_OBJ) -L$(CIRCUS_PATH) $(LDFLAGS)
+
 install: 
 	test -f $(LIB) || $(MAKE) lib
 	install -d -m 0755 $(PREFIX)/lib
@@ -64,12 +74,15 @@ uninstall:
 	rm -rf $(PREFIX)/include/circus
 
 clean-lib:
-	rm -f $(CIRCUS_PATH)/*.o $(LIB)
+	rm -f $(CIRCUS_OBJ) $(LIB)
 
 clean-test:
-	rm -f $(TEST_PATH)/*.o $(TEST_PATH)/$(LIB_TEST)
+	rm -f $(TEST_OBJ) $(TEST_PATH)/$(LIB_TEST)
 
-clean: clean-lib clean-test
+clean-benchmark:
+	rm -f $(BNCHK_OBJ) $(TEST_PATH)/$(BNCHK)
 
-.PHONY: gen-version install uninstall clean-lib clean-test clean
+clean: clean-lib clean-test clean-benchmark
+
+.PHONY: gen-version install uninstall clean-lib clean-test clean-benchmark clean
 
