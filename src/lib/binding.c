@@ -20,27 +20,46 @@
  * THE SOFTWARE.
  */
 
+#define _POSIX_SOURCE   /* Use POSIX threads */
+
 #include <stdio.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
 #include "debug.h"
 #include "hashtable.h"
 #include "binding.h"
 
-static HTable* ht = NULL;
+static HTable* ht = NULL;           /* The binding table */
+static pthread_mutex_t* bnd_lock;   /* Prevent race conditions if user callbacks modify the bindings */
+
+
+static void bnd_init() {
+    debug(("binding: Creating table\n"));
+    ht = ht_create();
+
+    debug(("binding: Creating binding lock\n"));
+    if ((bnd_lock = malloc(sizeof(pthread_mutex_t))) == 0) {
+        perror("Out of memory (q_create: lock)");
+        exit(EXIT_FAILURE);
+    }
+    pthread_mutex_init(bnd_lock, NULL);
+}
 
 void bnd_bind(char* event, CallbackPtr callback) {
     HTData data;
 
     if (ht == NULL) {
-        debug(("binding: Creating table\n"));
-        ht = ht_create();
+        bnd_init();
     }
 
     data.key = event;
     data.function = callback;
 
     debug(("binding: Adding event %s\n", event));
+
+    pthread_mutex_lock(bnd_lock);
     ht_add(ht, data);
+    pthread_mutex_unlock(bnd_lock);
 }
 
 char* bnd_unbind(char* event) {
@@ -51,7 +70,11 @@ char* bnd_unbind(char* event) {
     data.function = NULL;
 
     debug(("binding: Removing event %s\n", event));
+
+    pthread_mutex_lock(bnd_lock);
     data = ht_del(ht, data);
+    pthread_mutex_unlock(bnd_lock);
+
     return data.key;
 }
 
@@ -76,9 +99,13 @@ CallbackPtr bnd_lookup(char* event) {
 
 void bnd_cleanup() {
     if (ht != NULL) {
-        debug(("binding: Cleaning up\n"));
+        debug(("binding: Cleaning up binding table\n"));
         ht_destroy(ht);
         ht = NULL;
+
+        debug(("binding: Destroying binding lock\n"));
+        pthread_mutex_destroy(bnd_lock);
+        free(bnd_lock);
     }
 }
 
