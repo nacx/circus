@@ -35,14 +35,14 @@
 #include "../lib/listener.h"
 
 long int evt_total = 0;
-double avg_usec = 0.0;
+double avg_sec = 0.0;
 
 void on_event(GenericEvent* event) {
     struct timeval current_time;
     long int avg;
     gettimeofday(&current_time, NULL);
     avg = (current_time.tv_sec - event->timestamp->tv_sec) * 1000000 + ((int) current_time.tv_usec - (int) event->timestamp->tv_usec);
-    avg_usec = (avg_usec > 0 ? (avg_usec + avg) / (double) 2 : avg) / 1000000;
+    avg_sec = (avg_sec > 0 ? (avg_sec + avg) / (double) 2 : avg) / 1000000;
     evt_total++;
 }
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
     printf("  Run time (secs): %f\n",  el_usec / (double) 1000000);
     printf("  Processed events: %ld\n", evt_total);
-    printf("  Process time per event (secs): %f\n", avg_usec);
+    printf("  Process time per event (secs): %f\n", avg_sec);
 
     return 0;
 }
