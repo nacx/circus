@@ -467,6 +467,6 @@ void test_dispatcher() {
     mu_run(test_fire_evt_error);
     mu_run(test_fire_evt_generic);
 
-    bnd_cleanup();
+    bnd_destroy();
 }
 

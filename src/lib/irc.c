@@ -53,33 +53,17 @@ void irc_unbind_event(char* event) {
 }
 
 void irc_bind_command(char* command, CallbackPtr callback) {
-    char* key;
-
-    if ((key = malloc(50 * sizeof(char))) == 0) {
-        perror("Out of memory (irc_bind_command)");
-        exit(EXIT_FAILURE);
-    }
-
+    char key[50];
     memset(key, '\0', 50);
     build_command_key(key, command);
-    
     bnd_bind(key, callback);
 }
 
 void irc_unbind_command(char* command) {
-    char* key, *ret;
-
-    if ((key = malloc(50 * sizeof(char))) == 0) {
-        perror("Out of memory (irc_unbind_command)");
-        exit(EXIT_FAILURE);
-    }
-    
+    char key[50];
     memset(key, '\0', 50);
     build_command_key(key, command);
-    ret = bnd_unbind(key);
-
-    free(key);  /* Free the memory allocated un this function */
-    free(ret);  /* Free the memory allocated when binding the command */
+    bnd_unbind(key);
 }
 
 /* ******************** */
@@ -94,14 +78,19 @@ void irc_disconnect() {
     net_disconnect();
 }
 
+static void _shutdown() {
+    printf("Shutting down...\n");
+    shutdown_requested = 1;     /* Stop listening to the network */
+    dsp_shutdown();             /* Terminate the event dispatcher thread */
+    bnd_destroy();              /* Destroy the binding table */
+}
+
 void shutdown_handler(int signal) {
     switch (signal) {
         case SIGHUP:
         case SIGTERM:
         case SIGINT:
-            shutdown_requested = 1;
-            dsp_shutdown();     /* Terminate the event dispatcher thread */
-            bnd_cleanup();
+            _shutdown();
             break;
         default:
             break;
@@ -131,11 +120,7 @@ void irc_listen() {
                 exit(EXIT_FAILURE);
                 break;
             case NET_CLOSE:
-                /* The shutdown flag should have been set by
-                 * the signal handler, but it is safe to set it again. */
-                shutdown_requested = 1;
-                dsp_shutdown();     /* Terminate the event dispatcher thread */
-                bnd_cleanup();
+                _shutdown();
                 break;
             case NET_READY:
                 net_recv(msg);

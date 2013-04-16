@@ -26,9 +26,9 @@
 #include "events.h"
 
 void        bnd_bind(char* event, CallbackPtr callback);    /* Bind an event to the given callback */
-char*       bnd_unbind(char* event);		            /* Remove the binding for the given event */
+void        bnd_unbind(char* event);		            /* Remove the binding for the given event */
 CallbackPtr bnd_lookup(char* event);  		            /* Lookup for a callback for the given event */
-void        bnd_cleanup();                                  /* Cleanup all bindings */
+void        bnd_destroy();                                  /* Destroy the binding table */
  
 #endif
 

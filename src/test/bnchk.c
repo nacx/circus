@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     el_usec = (end.tv_sec - start.tv_sec) * 1000000 + ((int) end.tv_usec - (int) start.tv_usec);
     
     dsp_shutdown();
-    bnd_cleanup();
+    bnd_destroy();
 
     printf("  Run time (secs): %f\n",  el_usec / (double) 1000000);
     printf("  Processed events: %ld\n", evt_total);

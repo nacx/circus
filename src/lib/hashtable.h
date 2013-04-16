@@ -23,8 +23,7 @@
 #ifndef __HASHTABLE_H__
 #define __HASHTABLE_H__
 
-#define HT_SIZE 256                                 /* Number of entries in the hash table */
-#define ht_eq(a, b) (strcmp(a.key, b.key) == 0)     /* Data equallity macro */
+#define HT_SIZE 256             /* Number of entries in the hash table */
 
 
 /*************************/
@@ -32,39 +31,36 @@
 /*************************/
 
 /* The data being stored in the hashtable */
-typedef struct {
+struct ht_data {
     char* key;                  /* The key for the data */
     void* value;                /* The object value of the data, if value is an object or pointer */
     void (*function)(void);     /* The function pointer of the data, if value is a function pointer */
-} HTData;
+};
 
-/* Hash table entry */
-typedef struct entry {
-    struct entry *next;         /* Pointer for the next entry of the same hash */
-    HTData data;                /* Data stored in the current entry */
-} HTEntry;
+/* An entry in the hash table */
+struct ht_entry {
+    struct ht_entry *next;      /* Pointer for the next entry of the same hash */
+    struct ht_data* data;       /* Data stored in the current entry */
+};
 
 /* Hash table data structure */
-typedef struct {
-    HTEntry** entries;	    /* The hash table */
-    size_t size;            /* The size of the hash table */
-    int num_entries;        /* The number of current entries */
-} HTable;
-
-/* Hash table index */
-typedef unsigned char HTIndex;
+struct ht_table {
+    struct ht_entry** entries;	    /* The hash table */
+    int size;                       /* The size of the hash table */
+    int num_entries;                /* The number of current entries */
+};
 
 /************************/
 /* Hash table functions */
 /************************/
 
-HTable*     ht_create();			    /* Create a new hash table */
-void        ht_destroy(HTable* ht);                 /* Destroy the given hash table */
-HTEntry*    ht_add(HTable* ht, HTData data);        /* Add an entry to the hash table */
-HTData 	    ht_del(HTable* ht, HTData data);	    /* Remove an entry from the hash table */
-HTEntry*    ht_find(HTable* ht, HTData data);	    /* Find an entry in the hash table */
-void        ht_print_keys(HTable* ht);              /* Print all keys in the table */
-HTIndex     ht_hash(HTData data);                   /* Compute the hash for the given data */
+struct ht_table*    ht_create();			        /* Creates a new hash table */
+void                ht_destroy(struct ht_table* ht);            /* Destroy the given hash table */
+void                ht_add_value(struct ht_table* ht, char* key, void* value);                  /* Add a value to the hash table */
+void                ht_add_function(struct ht_table* ht, char* key, void(*function)(void));    /* Add a function to the hash table */
+void                ht_del(struct ht_table* ht, char* key);     /* Remove an entry from the hash table */
+struct ht_data*     ht_find(struct ht_table* ht, char* key);	/* Find an entry in the hash table */
+void                ht_print_keys(struct ht_table* ht);         /* Print all keys in the table */
 
 #endif
 

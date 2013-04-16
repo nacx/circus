@@ -24,47 +24,86 @@
 #include <stdlib.h>
 #include <string.h>
 #include "debug.h"
+#include "utils.h"
 #include "hashtable.h"
 
 
-HTIndex ht_hash(HTData data) {
-    HTIndex h = 0;
-    char* str = data.key;
-    while (*str)
-        h += *str++;
-    return h;
+/* ****************** */
+/* Hast table helpers */
+/* ****************** */
+
+/* Compute the hash of the given key */
+static unsigned char ht_hash(char* key) {
+    unsigned char hash = 0;
+    char* str = key;
+    while (*str) {
+        hash += *str++;
+    }
+    return hash;
 }
 
-HTable* ht_create() {
-    int i;
-    HTable* ht;
-    HTEntry** entries;
+/* Create the structure that will hold a key and its values */
+static struct ht_data* ht_data_create(char* key, void* value, void (*function)(void)) {
+    struct ht_data* data;
 
-    debug(("hashtable: Creating table of size %d\n", HT_SIZE));
-
-    if ((entries = malloc(HT_SIZE * sizeof(HTEntry*))) == 0) {
-        perror("Out of memory (ht_create_entries)");
+    if ((data = malloc(sizeof(struct ht_data))) == 0) {
+        perror("Out of memory (ht_data_create)");
         exit(EXIT_FAILURE);
     }
 
-    for (i = 0; i < HT_SIZE; i++) {
-        entries[i] = NULL;
+    /* Allocate length + 1 to make space for the '\0' character */
+    if ((data->key = malloc((strlen(key) + 1) * sizeof(char))) == 0) {
+        perror("Out of memory (ht_data_create: key)");
+        exit(EXIT_FAILURE);
     }
 
-    if ((ht = malloc(sizeof(HTable))) == 0) {
+    strncpy(data->key, key, strlen(key) + 1);
+    data->value = value;
+    data->function = function;
+
+    return data;
+}
+
+/* Destruy a ht_data structure */
+static void ht_data_destroy(struct ht_data* data) {
+    if (data != NULL) {
+        free(data->key);
+        free(data);
+    }
+}
+
+/* ************************* */
+/* Hash table implementation */
+/* ************************* */
+
+struct ht_table* ht_create() {
+    int i;
+    struct ht_table* ht;
+
+    debug(("hashtable: Creating table of size %d\n", HT_SIZE));
+
+    if ((ht = malloc(sizeof(struct ht_table))) == 0) {
         perror("Out of memory (ht_create)");
         exit(EXIT_FAILURE);
     }
 
+    if ((ht->entries = malloc(HT_SIZE * sizeof(struct ht_entry*))) == 0) {
+        perror("Out of memory (ht_create: entries)");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; i < HT_SIZE; i++) {
+        ht->entries[i] = NULL;
+    }
+
     ht->num_entries = 0;
     ht->size = HT_SIZE;
-    ht->entries = entries;
 
     return ht;
 }
 
-void ht_destroy(HTable* ht) {
-    HTEntry* current, *previous;
+void ht_destroy(struct ht_table* ht) {
+    struct ht_entry* current, *previous;
     int i = 0;
 
     debug(("hashtable: Destroying\n"));
@@ -75,6 +114,7 @@ void ht_destroy(HTable* ht) {
             while (current != NULL) {
                 previous = current;
                 current = current->next;
+                ht_data_destroy(previous->data);
                 free(previous);
             }
         }
@@ -84,25 +124,28 @@ void ht_destroy(HTable* ht) {
     free(ht);
 }
 
-HTEntry* ht_add(HTable* ht, HTData data) {
-    HTEntry *current, *old;
-    HTIndex idx;
+static void ht_add(struct ht_table* ht, char* key, void* value, void(*function)(void)) {
+    struct ht_entry *current, *old;
+    unsigned char idx;
+    struct ht_data* data;
 
-    debug(("hashtable: Adding entry with key %s\n", data.key));
+    debug(("hashtable: Adding entry with key %s\n", key));
 
-    idx = ht_hash(data);
+    idx = ht_hash(key);
     current = ht->entries[idx];
 
     /* Find the key (if already exists) */
-    while (current != NULL && !ht_eq(current->data, data)) {
+    while (current != NULL && s_ne(current->data->key, key)) {
         old = current;
         current = current->next;
     }
 
     /* If key does not exist or it must not be overriden,
      * add the new element at the beginning of the list. */
-    if (current == NULL) {
-        if ((current = malloc(sizeof(HTEntry))) == 0) {
+    data = ht_data_create(key, value, function);
+
+    if (current == NULL) {  /* Add element */
+        if ((current = malloc(sizeof(struct ht_entry))) == 0) {
             perror("Out of memory (ht_add)");
             exit(EXIT_FAILURE);
         }
@@ -112,64 +155,66 @@ HTEntry* ht_add(HTable* ht, HTData data) {
         current->next = old;
         current->data = data;
         ht->num_entries++;
-    } else {
+    } else {    /* Overwrite */
+        ht_data_destroy(current->data);
         current->data = data;
     }
-
-    return current;
 }
 
-HTData ht_del(HTable* ht, HTData data) {
-    HTEntry *current, *old;
-    HTIndex idx;
-    HTData ret;
-    
-    debug(("hashtable: Deleting entry with key %s\n", data.key));
+void ht_add_value(struct ht_table* ht, char* key, void* value) {
+    ht_add(ht, key, value, NULL);
+}
 
-    ret.key = NULL;
-    ret.value = NULL;
-    ret.function = NULL;
+void ht_add_function(struct ht_table* ht, char* key, void(*function)(void)) {
+    ht_add(ht, key, NULL, function);
+}
+
+void ht_del(struct ht_table* ht, char* key) {
+    struct ht_entry *current, *old;
+    unsigned char idx;
+
+    debug(("hashtable: Deleting entry with key %s\n", key));
 
     /* Find entry */
     old = 0;
-    idx = ht_hash(data);
+    idx = ht_hash(key);
     current = ht->entries[idx];
 
-    while (current != NULL && !ht_eq(current->data, data)) {
+    while (current != NULL && s_ne(current->data->key, key)) {
         old = current;
         current = current->next;
     }
 
-    if (current == NULL)
-        return ret;
+    if (current != NULL) {
+        if (old != NULL) {
+            old->next = current->next;          /* Not first node, old points to previous node */
+        } else {
+            ht->entries[idx] = current->next;   /* First node on chain */
+        }
 
-    if (old != NULL) {
-        old->next = current->next;          /* Not first node, old points to previous node */
-    } else {
-        ht->entries[idx] = current->next;   /* First node on chain */
+        ht_data_destroy(current->data);
+        free(current);
+        ht->num_entries--;
     }
-
-    ret = current->data;
-    free(current);
-    ht->num_entries--;
-
-    return ret;
 }
 
-HTEntry* ht_find(HTable* ht, HTData data) {
-    HTEntry *current;
+struct ht_data* ht_find(struct ht_table* ht, char* key) {
+    struct ht_entry *current;
     
-    debug(("hashtable: Looking for key %s\n", data.key));
+    debug(("hashtable: Looking for key %s\n", key));
 
-    current = ht->entries[ht_hash(data)];
-    while (current != NULL && !ht_eq(current->data, data)) {
+    current = ht->entries[ht_hash(key)];
+    while (current != NULL && s_ne(current->data->key, key)) {
         current = current->next;
     }
-    return current;
+
+    debug(("hashtable: Key %s %sfound\n", key, current == NULL? "not " : ""));
+
+    return current == NULL? NULL : current->data;
 }
 
-void ht_print_keys(HTable* ht) {
-    HTEntry* current;
+void ht_print_keys(struct ht_table* ht) {
+    struct ht_entry* current;
     int i = 0;
 
     debug(("hashtable: Dumping keys\n"));
@@ -178,7 +223,7 @@ void ht_print_keys(HTable* ht) {
         if (ht->entries[i] != NULL) {
             current = ht->entries[i];
             while (current != NULL) {
-                printf("Key: %s\n", current->data.key);
+                printf("Key: %s\n", current->data->key);
                 current = current->next;
             }
         }

@@ -29,83 +29,71 @@
 #include "hashtable.h"
 #include "binding.h"
 
-static HTable* ht = NULL;           /* The binding table */
-static pthread_mutex_t* bnd_lock;   /* Prevent race conditions if user callbacks modify the bindings */
+
+/* The thread safe binding table data type */
+struct bnd_table {
+    struct ht_table* table;      /* The binding table */
+    pthread_mutex_t* lock;              /* Prevent race conditions if user callbacks modify the bindings */
+};
+
+/* The binding table */
+static struct bnd_table* bindings;
 
 
 static void bnd_init() {
     debug(("binding: Creating table\n"));
-    ht = ht_create();
 
-    debug(("binding: Creating binding lock\n"));
-    if ((bnd_lock = malloc(sizeof(pthread_mutex_t))) == 0) {
-        perror("Out of memory (q_create: lock)");
+    if ((bindings = malloc(sizeof(struct bnd_table))) == 0) {
+        perror("Out of memory (bnd_init: table)");
         exit(EXIT_FAILURE);
     }
-    pthread_mutex_init(bnd_lock, NULL);
+
+    bindings->table = ht_create();
+
+    debug(("binding: Creating binding lock\n"));
+    if ((bindings->lock = malloc(sizeof(pthread_mutex_t))) == 0) {
+        perror("Out of memory (bnd_init: lock)");
+        exit(EXIT_FAILURE);
+    }
+
+    pthread_mutex_init(bindings->lock, NULL);
 }
 
 void bnd_bind(char* event, CallbackPtr callback) {
-    HTData data;
-
-    if (ht == NULL) {
+    debug(("binding: Adding event %s\n", event));
+    if (bindings == NULL) {
         bnd_init();
     }
-
-    data.key = event;
-    data.function = callback;
-
-    debug(("binding: Adding event %s\n", event));
-
-    pthread_mutex_lock(bnd_lock);
-    ht_add(ht, data);
-    pthread_mutex_unlock(bnd_lock);
+    pthread_mutex_lock(bindings->lock);
+    ht_add_function(bindings->table, event, callback);
+    pthread_mutex_unlock(bindings->lock);
 }
 
-char* bnd_unbind(char* event) {
-    HTData data;
-
-    data.key = event;
-    data.value = NULL;
-    data.function = NULL;
-
+void bnd_unbind(char* event) {
     debug(("binding: Removing event %s\n", event));
-
-    pthread_mutex_lock(bnd_lock);
-    data = ht_del(ht, data);
-    pthread_mutex_unlock(bnd_lock);
-
-    return data.key;
+    pthread_mutex_lock(bindings->lock);
+    ht_del(bindings->table, event);
+    pthread_mutex_unlock(bindings->lock);
 }
 
 CallbackPtr bnd_lookup(char* event) {
-    HTData data;
-    HTEntry* entry;
-    CallbackPtr callback = NULL;
-
+    struct ht_data* data;
     debug(("binding: Looking for event %s\n", event));
-
-    data.key = event;
-    data.value = NULL;
-    data.function = NULL;
-
-    entry = ht_find(ht, data);
-    if (entry != NULL) {
-        callback = entry->data.function;
-    }
-
-    return callback;
+    data = ht_find(bindings->table, event);
+    return data == NULL? NULL : data->function;
 }
 
-void bnd_cleanup() {
-    if (ht != NULL) {
+void bnd_destroy() {
+    if (bindings != NULL) {
         debug(("binding: Cleaning up binding table\n"));
-        ht_destroy(ht);
-        ht = NULL;
+        ht_destroy(bindings->table);
 
         debug(("binding: Destroying binding lock\n"));
-        pthread_mutex_destroy(bnd_lock);
-        free(bnd_lock);
+        pthread_mutex_destroy(bindings->lock);
+        free(bindings->lock);
+
+        free(bindings);
+        bindings = NULL;
     }
 }
 

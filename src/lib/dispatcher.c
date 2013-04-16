@@ -474,6 +474,10 @@ static void _fire_event(struct raw_event* raw) {
         }
     }
 
-    debug(("dispatcher: Binding%sfound\n", callback == NULL? " not " : " "));
+    #ifdef DEBUG
+    if (callback == NULL) {
+        debug(("dispatcher: Binding not found\n"));
+    }
+    #endif
 }
 
