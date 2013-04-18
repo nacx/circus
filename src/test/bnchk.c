@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 
     evt_max = strtol(argv[1], NULL, 0);
 
-    bnd_bind(ALL, (CallbackPtr) on_event);
+    bnd_bind(ALL, (Callback) on_event);
     dsp_start();
 
     printf("Starting benchmark with %ld events\n", evt_max);

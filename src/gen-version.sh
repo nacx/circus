@@ -4,7 +4,7 @@
 # This file is released under the MIT License, see LICENSE file.
 
 LIB_NAME=circus
-LIB_VERSION=1.2-rc.1
+LIB_VERSION=1.2
 
 GIT_REVISION=`git show-ref --head -s | head -n 1`
 BUILD_PLATFORM=`uname -srm`

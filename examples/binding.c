@@ -60,8 +60,8 @@ void disable(MessageEvent* event) {
 }
 
 void enable(MessageEvent* event) {
-    irc_bind_event(JOIN, (CallbackPtr) welcome);
-    irc_bind_command("!op", (CallbackPtr) give_op);
+    irc_bind_event(JOIN, (Callback) welcome);
+    irc_bind_command("!op", (Callback) give_op);
 }
 
 
@@ -79,10 +79,10 @@ int main(int argc, char **argv) {
 
     /* Bind IRC events and message commands to custom functions.
      * All bindable events are defined in codes.h */
-    irc_bind_event(JOIN, (CallbackPtr) welcome);
-    irc_bind_command("!disable", (CallbackPtr) disable);
-    irc_bind_command("!enable", (CallbackPtr) enable);
-    irc_bind_command("!op", (CallbackPtr) give_op);
+    irc_bind_event(JOIN, (Callback) welcome);
+    irc_bind_command("!disable", (Callback) disable);
+    irc_bind_command("!enable", (Callback) enable);
+    irc_bind_command("!op", (Callback) give_op);
 
     /* Connect, login and join the configured channel */
     irc_connect(server, port);

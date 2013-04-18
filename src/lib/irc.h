@@ -49,10 +49,10 @@ enum user_flags {
 };
 
 /* Event binding */
-void irc_bind_event(char* event, CallbackPtr callback);         /* Bind an IRC event to a callback function */
-void irc_bind_command(char* command, CallbackPtr callback);     /* Bind a channel or private chat command to a callback function */
-void irc_unbind_event(char* event);                             /* Unbind an IRC event */
-void irc_unbind_command(char* command);                         /* Unbind a channel or private message chat command */
+void irc_bind_event(char* event, Callback callback);        /* Bind an IRC event to a callback function */
+void irc_bind_command(char* command, Callback callback);    /* Bind a channel or private chat command to a callback function */
+void irc_unbind_event(char* event);                         /* Unbind an IRC event */
+void irc_unbind_command(char* command);                     /* Unbind a channel or private message chat command */
 
 /* Connection registration */
 void irc_connect(char* address, int port);                      /* Connect to the IRC server */
@@ -71,7 +71,7 @@ void irc_topic(char* channel, char* topic);                         /* Change th
 void irc_names(char* channel);                                      /* List the users in a channel */
 void irc_list();                                                    /* List channels and their topics */
 void irc_invite(char* nick, char* channel);                         /* Invite a user to a channel */
-void irc_message(char* target, char* messge);                  /* Send a message to a nick or channel */
+void irc_message(char* target, char* messge);                       /* Send a message to a nick or channel */
 void irc_op(char* channel, char* nick);                             /* Give operator to a user */
 void irc_deop(char* channel, char* nick);                           /* Take operator from a user */
 void irc_voice(char* channel, char* nick);                          /* Give voice to a user */

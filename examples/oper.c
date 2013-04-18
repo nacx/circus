@@ -69,10 +69,10 @@ int main(int argc, char **argv) {
     port = atoi(argv[2]);   /* The IRC server port */
 
     /* Bind message commands to custom functions */
-    irc_bind_command("!op", (CallbackPtr) give_op);
-    irc_bind_command("!deop", (CallbackPtr) take_op);
-    irc_bind_command("!voice", (CallbackPtr) give_voice);
-    irc_bind_command("!devoice", (CallbackPtr) take_voice);
+    irc_bind_command("!op", (Callback) give_op);
+    irc_bind_command("!deop", (Callback) take_op);
+    irc_bind_command("!voice", (Callback) give_voice);
+    irc_bind_command("!devoice", (Callback) take_voice);
 
     /* Connect, login and join the configured channel */
     irc_connect(server, port);

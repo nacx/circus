@@ -44,7 +44,7 @@ static int shutdown_requested = 0;
 /* Event binding functions */
 /* *********************** */
 
-void irc_bind_event(char* event, CallbackPtr callback) {
+void irc_bind_event(char* event, Callback callback) {
     bnd_bind(event, callback);
 }
 
@@ -52,7 +52,7 @@ void irc_unbind_event(char* event) {
     bnd_unbind(event);
 }
 
-void irc_bind_command(char* command, CallbackPtr callback) {
+void irc_bind_command(char* command, Callback callback) {
     char key[50];
     memset(key, '\0', 50);
     build_command_key(key, command);

@@ -61,30 +61,30 @@ void test_shutdown_handler() {
 }
 
 void test_bnd_bind() {
-    CallbackPtr binding = NULL;
+    Callback binding = NULL;
 
-    irc_bind_event("foo", (CallbackPtr) test_bnd_bind);
+    irc_bind_event("foo", (Callback) test_bnd_bind);
     binding = bnd_lookup("foo");
-    mu_assert(binding == (CallbackPtr) test_bnd_bind, "test_bnd_bind: bound function is not the same");
+    mu_assert(binding == (Callback) test_bnd_bind, "test_bnd_bind: bound function is not the same");
 }
 
 void test_bnd_unbind() {
-    irc_bind_event("foo", (CallbackPtr) test_bnd_unbind);
+    irc_bind_event("foo", (Callback) test_bnd_unbind);
     irc_unbind_event("foo");
 
     mu_assert(bnd_lookup("foo") == NULL, "test_bnd_unbind: binding should be null");
 }
 
 void test_bind_command() {
-    CallbackPtr binding = NULL;
+    Callback binding = NULL;
 
-    irc_bind_command("foo", (CallbackPtr) test_bind_command);
+    irc_bind_command("foo", (Callback) test_bind_command);
     binding = bnd_lookup("PRIVMSG#foo");
-    mu_assert(binding == (CallbackPtr) test_bind_command, "test_bind_command: bound function is not the same");
+    mu_assert(binding == (Callback) test_bind_command, "test_bind_command: bound function is not the same");
 }
 
 void test_unbind_command() {
-    irc_bind_command("foo", (CallbackPtr) test_bnd_bind);
+    irc_bind_command("foo", (Callback) test_bnd_bind);
     irc_unbind_command("foo");
 
     mu_assert(bnd_lookup("PRIVMSG#foo") == NULL, "test_unbind_command: binding should be null");

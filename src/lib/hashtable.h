@@ -25,16 +25,18 @@
 
 #define HT_SIZE 256             /* Number of entries in the hash table */
 
-
 /*************************/
 /* Hash table definition */
 /*************************/
 
+/* The function pointer type */
+typedef void (*Function)(void);
+
 /* The data being stored in the hashtable */
 struct ht_data {
-    char* key;                  /* The key for the data */
-    void* value;                /* The object value of the data, if value is an object or pointer */
-    void (*function)(void);     /* The function pointer of the data, if value is a function pointer */
+    char* key;              /* The key for the data */
+    void* value;            /* The object value of the data, if value is an object or pointer */
+    Function function;      /* The function pointer of the data, if value is a function pointer */
 };
 
 /* An entry in the hash table */
@@ -56,8 +58,8 @@ struct ht_table {
 
 struct ht_table*    ht_create();			        /* Creates a new hash table */
 void                ht_destroy(struct ht_table* ht);            /* Destroy the given hash table */
-void                ht_add_value(struct ht_table* ht, char* key, void* value);                  /* Add a value to the hash table */
-void                ht_add_function(struct ht_table* ht, char* key, void(*function)(void));    /* Add a function to the hash table */
+void                ht_add_value(struct ht_table* ht, char* key, void* value);              /* Add a value to the hash table */
+void                ht_add_function(struct ht_table* ht, char* key, Function function);     /* Add a function to the hash table */
 void                ht_del(struct ht_table* ht, char* key);     /* Remove an entry from the hash table */
 struct ht_data*     ht_find(struct ht_table* ht, char* key);	/* Find an entry in the hash table */
 void                ht_print_keys(struct ht_table* ht);         /* Print all keys in the table */

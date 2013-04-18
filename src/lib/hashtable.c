@@ -43,7 +43,7 @@ static unsigned char ht_hash(char* key) {
 }
 
 /* Create the structure that will hold a key and its values */
-static struct ht_data* ht_data_create(char* key, void* value, void (*function)(void)) {
+static struct ht_data* ht_data_create(char* key, void* value, Function function) {
     struct ht_data* data;
 
     if ((data = malloc(sizeof(struct ht_data))) == 0) {

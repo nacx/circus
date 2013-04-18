@@ -37,6 +37,19 @@ If you want to install the library, you can do it as usual. It will be installed
     make install PREFIX=<install dir>  # Installs Circus in <install dir>
 
 
+Testing performance
+--------------------
+
+If you want to test performance, you can run the little benchmark tool as follows:
+
+    cd src/test
+    ./circus-bnchk 1000000
+
+This will generate and process the provided number of events (one million in this example) and
+print some metrics, such as the average time spent processing each event or the total execution
+time.
+
+
 Building Circus based applications
 ----------------------------------
 

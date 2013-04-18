@@ -321,7 +321,7 @@ static void __circus__ping_handler(PingEvent* event) {
 }
 
 static void _fire_event(struct raw_event* raw) {
-    CallbackPtr callback = NULL;
+    Callback callback = NULL;
     upper(raw->type);
 
     /* Check if there is a concrete binding for the

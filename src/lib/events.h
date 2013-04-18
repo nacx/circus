@@ -221,7 +221,7 @@ NoticeEvent     evt_notice(struct raw_event *raw);
 /* ************** */
 
 /* Generic callback pointer */
-typedef void (*CallbackPtr)(void);
+typedef void (*Callback)(void);
 
 /* Macros to convert to the appropriate function pointer type for each event */
 #define ErrorCallback(callback) ((void (*)(ErrorEvent*)) callback)

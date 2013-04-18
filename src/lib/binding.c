@@ -59,7 +59,7 @@ static void bnd_init() {
     pthread_mutex_init(bindings->lock, NULL);
 }
 
-void bnd_bind(char* event, CallbackPtr callback) {
+void bnd_bind(char* event, Callback callback) {
     debug(("binding: Adding event %s\n", event));
     if (bindings == NULL) {
         bnd_init();
@@ -76,7 +76,7 @@ void bnd_unbind(char* event) {
     pthread_mutex_unlock(bindings->lock);
 }
 
-CallbackPtr bnd_lookup(char* event) {
+Callback bnd_lookup(char* event) {
     struct ht_data* data;
     debug(("binding: Looking for event %s\n", event));
     data = ht_find(bindings->table, event);

@@ -25,10 +25,10 @@
 
 #include "events.h"
 
-void        bnd_bind(char* event, CallbackPtr callback);    /* Bind an event to the given callback */
-void        bnd_unbind(char* event);		            /* Remove the binding for the given event */
-CallbackPtr bnd_lookup(char* event);  		            /* Lookup for a callback for the given event */
-void        bnd_destroy();                                  /* Destroy the binding table */
+void bnd_bind(char* event, Callback callback);  /* Bind an event to the given callback */
+void bnd_unbind(char* event);		        /* Remove the binding for the given event */
+Callback bnd_lookup(char* event);  		/* Lookup for a callback for the given event */
+void bnd_destroy();                             /* Destroy the binding table */
  
 #endif
 

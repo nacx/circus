@@ -38,11 +38,11 @@ void test_bnd_init() {
 }
 
 void test_bnd_lookup() {
-    CallbackPtr callback;
+    Callback callback;
 
-    bnd_bind("test", (CallbackPtr) target);
+    bnd_bind("test", (Callback) target);
     callback = bnd_lookup("test");
-    mu_assert(callback == (CallbackPtr) target, "test_bnd_lookup: Found a different memory address");
+    mu_assert(callback == (Callback) target, "test_bnd_lookup: Found a different memory address");
 
     bnd_unbind("test"); /* Cleanup */
     callback = bnd_lookup("test");
@@ -50,7 +50,7 @@ void test_bnd_lookup() {
 }
 
 void test_lookup_unexisting_event() {
-    CallbackPtr callback = bnd_lookup("test-unexisting");
+    Callback callback = bnd_lookup("test-unexisting");
     mu_assert(callback == NULL, "test_lookup_unexisting_event: Callback should be NULL");
 }
 

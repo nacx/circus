@@ -198,7 +198,7 @@ void test_dsp_start_shutdown() {
 void test_dsp_dispatch() {
     struct raw_event* raw = lst_parse(":nick!~user@server 305 circus-bot :Test message");
 
-    irc_bind_event(RPL_UNAWAY, (CallbackPtr) on_dispatch);
+    irc_bind_event(RPL_UNAWAY, (Callback) on_dispatch);
     dsp_start();
     dsp_dispatch(raw);
 
@@ -213,7 +213,7 @@ void test_dsp_dispatch() {
 void test_fire_evt_nick() {
     struct raw_event* raw;
 
-    irc_bind_event(NICK, (CallbackPtr) on_nick);
+    irc_bind_event(NICK, (Callback) on_nick);
     raw = lst_parse("NICK test-nick");
     _fire_event(raw);
 
@@ -226,7 +226,7 @@ void test_fire_evt_nick() {
 void test_fire_evt_quit() {
     struct raw_event* raw;
 
-    irc_bind_event(QUIT, (CallbackPtr) on_quit);
+    irc_bind_event(QUIT, (Callback) on_quit);
     raw = lst_parse("QUIT :Bye bye!");
     _fire_event(raw);
 
@@ -239,7 +239,7 @@ void test_fire_evt_quit() {
 void test_fire_evt_join() {
     struct raw_event* raw;
 
-    irc_bind_event(JOIN, (CallbackPtr) on_join);
+    irc_bind_event(JOIN, (Callback) on_join);
     raw = lst_parse("JOIN #circus");
     _fire_event(raw);
 
@@ -252,7 +252,7 @@ void test_fire_evt_join() {
 void test_fire_evt_part() {
     struct raw_event* raw;
 
-    irc_bind_event(PART, (CallbackPtr) on_part);
+    irc_bind_event(PART, (Callback) on_part);
     raw = lst_parse("PART #circus :Bye");
     _fire_event(raw);
 
@@ -265,7 +265,7 @@ void test_fire_evt_part() {
 void test_fire_evt_topic() {
     struct raw_event* raw;
 
-    irc_bind_event(TOPIC, (CallbackPtr) on_topic);
+    irc_bind_event(TOPIC, (Callback) on_topic);
     raw = lst_parse("TOPIC #circus :New topic");
     _fire_event(raw);
 
@@ -278,7 +278,7 @@ void test_fire_evt_topic() {
 void test_fire_evt_names() {
     struct raw_event* raw;
 
-    irc_bind_event(NAMES, (CallbackPtr) on_names);
+    irc_bind_event(NAMES, (Callback) on_names);
 
     raw = lst_parse("353 test-nick @ #circus :test1 test2");
     _fire_event(raw);
@@ -296,7 +296,7 @@ void test_fire_evt_names() {
 void test_fire_evt_list() {
     struct raw_event* raw;
 
-    irc_bind_event(LIST, (CallbackPtr) on_list);
+    irc_bind_event(LIST, (Callback) on_list);
 
     raw = lst_parse(":moorcock.freenode.net 322 circus-bot #circus 7 :Circus IRC framework");
     _fire_event(raw);
@@ -314,7 +314,7 @@ void test_fire_evt_list() {
 void test_fire_evt_invite() {
     struct raw_event* raw;
 
-    irc_bind_event(INVITE, (CallbackPtr) on_invite);
+    irc_bind_event(INVITE, (Callback) on_invite);
     raw = lst_parse(":nacx!~nacx@127.0.0.1 INVITE circus-bot :#circus");
     _fire_event(raw);
 
@@ -327,7 +327,7 @@ void test_fire_evt_invite() {
 void test_fire_evt_kick() {
     struct raw_event* raw;
 
-    irc_bind_event(KICK, (CallbackPtr) on_kick);
+    irc_bind_event(KICK, (Callback) on_kick);
     raw = lst_parse(":nacx!~nacx@127.0.0.1 KICK #circus circus-bot :Foo");
     _fire_event(raw);
 
@@ -340,7 +340,7 @@ void test_fire_evt_kick() {
 void test_fire_evt_message() {
     struct raw_event* raw;
 
-    irc_bind_event(PRIVMSG, (CallbackPtr) on_message);
+    irc_bind_event(PRIVMSG, (Callback) on_message);
 
     raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :Hi there");
     _fire_event(raw);
@@ -353,7 +353,7 @@ void test_fire_evt_message() {
     evt_raw_destroy(raw);
 
     irc_unbind_event(PRIVMSG);
-    irc_bind_command("!cmd", (CallbackPtr) on_message);
+    irc_bind_command("!cmd", (Callback) on_message);
 
     raw = lst_parse(":nacx!~nacx@127.0.0.1 PRIVMSG #circus :!cmd Do it");
     _fire_event(raw);
@@ -371,7 +371,7 @@ void test_fire_evt_message() {
 void test_fire_evt_mode() {
     struct raw_event* raw;
 
-    irc_bind_event(MODE, (CallbackPtr) on_mode);
+    irc_bind_event(MODE, (Callback) on_mode);
     raw = lst_parse(":nick!~user@server MODE #test +inm");
     _fire_event(raw);
 
@@ -384,7 +384,7 @@ void test_fire_evt_mode() {
 void test_fire_evt_ping() {
     struct raw_event* raw;
 
-    irc_bind_event(PING, (CallbackPtr) on_ping);
+    irc_bind_event(PING, (Callback) on_ping);
     raw = lst_parse("PING :zelazny.freenode.net");
     _fire_event(raw);
 
@@ -397,7 +397,7 @@ void test_fire_evt_ping() {
 void test_fire_evt_notice() {
     struct raw_event* raw;
 
-    irc_bind_event(NOTICE, (CallbackPtr) on_notice);
+    irc_bind_event(NOTICE, (Callback) on_notice);
     raw = lst_parse(":moorcock.freenode.net NOTICE * :Message");
     _fire_event(raw);
 
@@ -412,12 +412,12 @@ void test_fire_evt_error() {
 
     raw = lst_parse(":nick!~user@server 401 circus-bot :Test message");
 
-    irc_bind_event(ERR_NOSUCHNICK, (CallbackPtr) on_error);
+    irc_bind_event(ERR_NOSUCHNICK, (Callback) on_error);
     _fire_event(raw);
     mu_assert(evt_errors == 1, "test_fire_evt_error: evt_errors should be '1'");
 
     irc_unbind_event(ERR_NOSUCHNICK);
-    irc_bind_event(ERROR, (CallbackPtr) on_error);
+    irc_bind_event(ERROR, (Callback) on_error);
     _fire_event(raw);
     mu_assert(evt_errors == 2, "test_fire_evt_error: evt_errors should be '2'");
 
@@ -429,12 +429,12 @@ void test_fire_evt_generic() {
 
     raw = lst_parse(":nick!~user@server 305 circus-bot :Test message");
 
-    irc_bind_event(RPL_UNAWAY, (CallbackPtr) on_generic);
+    irc_bind_event(RPL_UNAWAY, (Callback) on_generic);
     _fire_event(raw);
     mu_assert(evt_generics == 1, "test_fire_evt_generic: evt_generics should be '1'");
 
     irc_unbind_event(RPL_UNAWAY);
-    irc_bind_event(ALL, (CallbackPtr) on_generic);
+    irc_bind_event(ALL, (Callback) on_generic);
     _fire_event(raw);
     mu_assert(evt_generics == 2, "test_fire_evt_generic: evt_generics should be '2'");
 
