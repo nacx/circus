@@ -28,10 +28,16 @@
 #ifndef __MINUNIT_H__
 #define __MINUNIT_H__
 
+#include "../lib/debug.h"
+
+/* Macro to string helpers */
+#define STR_VALUE(x) #x
+#define STR(x) STR_VALUE(x)
+
 /* Test macros */
 #define mu_assert(test, msg) do { if (!(test)) { mu_fail(msg); return; } } while (0)
-#define mu_run(test) do { test(); tests_run++; } while (0)
-#define mu_suite(suite) do { suite(); } while (0)
+#define mu_run(test) do { debug(("TEST: %s\n", STR(test))); test(); tests_run++; } while (0)
+#define mu_suite(suite) do { debug(("SUITE: %s\n", STR(suite))); suite(); } while (0)
 
 extern int tests_run;       /* Number of executed tests */
 extern int test_fails;      /* Number of failed tests */

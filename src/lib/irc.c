@@ -106,7 +106,7 @@ void irc_listen() {
     signal(SIGTERM, shutdown_handler);
     signal(SIGINT, shutdown_handler);
 
-    printf("Starting %s %s\n  Git: %s\n  Build: %s\n  Platform: %s...\n",
+    printf("Starting %s %s...\n  Git: %s\n  Build: %s\n  Platform: %s\n",
         lib_name, lib_version, git_revision, build_date, build_platform);
 
     dsp_start();     /* Start the event dispatcher thread */
