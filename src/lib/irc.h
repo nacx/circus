@@ -56,8 +56,8 @@ void irc_unbind_command(char* command);                     /* Unbind a channel 
 
 /* Connection registration */
 void irc_connect(char* address, int port);                      /* Connect to the IRC server */
-void irc_disconnect();                                          /* Disconnect from the IRC server */
-void irc_listen();                                              /* Listen to IRC server messages (blocks until quit signal is received) */
+void irc_disconnect(void);                                      /* Disconnect from the IRC server */
+void irc_listen(void);                                          /* Listen to IRC server messages (blocks until quit signal is received) */
 void irc_nick(char* nick);                                      /* Set or change the nick of the user */
 void irc_user(char* user_name, char* real_name);                /* Set the user information */
 void irc_login(char* nick, char* user_name, char* real_name);   /* Sets the nick and the user information */
@@ -69,7 +69,7 @@ void irc_join_pass(char* channel, char* pass);                      /* Join a pa
 void irc_part(char* channel);                                       /* Leave a channel */
 void irc_topic(char* channel, char* topic);                         /* Change the topic of a channel */
 void irc_names(char* channel);                                      /* List the users in a channel */
-void irc_list();                                                    /* List channels and their topics */
+void irc_list(void);                                                /* List channels and their topics */
 void irc_invite(char* nick, char* channel);                         /* Invite a user to a channel */
 void irc_message(char* target, char* messge);                       /* Send a message to a nick or channel */
 void irc_op(char* channel, char* nick);                             /* Give operator to a user */

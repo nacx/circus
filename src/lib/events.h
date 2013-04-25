@@ -38,7 +38,7 @@ struct raw_event {
     char* params[MAX_PARAMS];   /* The parameter array */
 };
 
-struct raw_event* evt_raw_create();             /* Creates a raw event */
+struct raw_event* evt_raw_create(void);         /* Creates a raw event */
 void evt_raw_destroy(struct raw_event* raw);    /* Destroys the raw event */
 
 /* ********************************** */
