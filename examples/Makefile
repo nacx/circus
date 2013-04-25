@@ -12,9 +12,14 @@ LN = $(CC)
 CFLAGS = -pipe -O2 -Wall -ansi -pedantic -I$(INCLUDEDIR)
 LDFLAGS = -L$(LIBDIR) -lcircus -lpthread
 
+
 all: $(TARGETS)
 
 examples: all
+
+pycircus:
+	$(CC) $(CFLAGS) $(shell python-config --cflags) -c $@.c
+	$(LN) -o $@ $@.o $(LDFLAGS) $(shell python-config --ldflags)
 
 $(TARGETS):
 	$(CC) $(CFLAGS) -c $@.c
@@ -22,6 +27,6 @@ $(TARGETS):
 
 clean:
 	rm -f *.o
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) pycircus
 
 .PHONY: clean
