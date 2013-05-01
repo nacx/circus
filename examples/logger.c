@@ -69,17 +69,17 @@ void log_msg(MessageEvent* event) {
 
 
 int main(int argc, char **argv) {
-    int i, port;
-    char *server, *nick;
+    int i;
+    char *server, *port, *nick;
 
     if (argc < 4) {
         printf("Usage: %s <server> <port> <nick> ['<channel 1>' ... '<channel n>']\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    server = argv[1];       /* The IRC server */
-    port = atoi(argv[2]);   /* The IRC server port */
-    nick = argv[3];         /* The nick to use */
+    server = argv[1];   /* The IRC server */
+    port = argv[2];     /* The IRC server port */
+    nick = argv[3];     /* The nick to use */
 
     /* Create the log directory */
     mkdir(LOG_PATH, S_IRWXU);

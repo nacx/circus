@@ -66,16 +66,15 @@ void on_message(GenericEvent* event) {
 }
 
 int main(int argc, char **argv) {
-    char* server;
-    int port;
+    char* server, *port;
 
     if (argc != 3) {
         printf("Usage: %s <server> <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    server = argv[1];     /* The IRC server */
-    port = atoi(argv[2]);   /* The IRC server port */
+    server = argv[1];   /* The IRC server */
+    port = argv[2];     /* The IRC server port */
 
     /* Bind IRC event to custom functions.
      * All bindable events are defined in codes.h */

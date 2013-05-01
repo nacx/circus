@@ -70,7 +70,7 @@ void irc_unbind_command(char* command) {
 /* Connection functions */
 /* ******************** */
 
-void irc_connect(char* address, int port) {
+void irc_connect(char* address, char* port) {
     net_connect(address, port);
 }
 
