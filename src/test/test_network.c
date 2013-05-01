@@ -34,7 +34,7 @@
 #include "../lib/utils.h"
 #include "../lib/network.c"
 
-#define TEST_PORT 19876
+#define TEST_PORT "19876"
 
 /* Start a mock server that returns after accepting a connection */
 void* mock_server() {
@@ -50,7 +50,7 @@ void* mock_server() {
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(TEST_PORT);
+    serv_addr.sin_port = htons(atoi(TEST_PORT));
 
     if (bind(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
          perror("socket binding error");
@@ -88,7 +88,7 @@ void test_connection() {
     mu_assert(_sd != NULL, "test_connection: _sd should not be NULL");
 
     net_disconnect();
-    mu_assert(_socket == 0, "test_connection: _socket should be 0");
+    mu_assert(_socket == -1, "test_connection: _socket should be -1");
     mu_assert(_sd == NULL, "test_connection: _sd should be NULL");
 }
 
