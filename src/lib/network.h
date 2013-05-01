@@ -41,11 +41,11 @@ enum net_status {
 extern int _socket;
 
 /* Network functions  */
-void net_connect(char* address, int port);  /* Connect to the IRC server */
-void net_disconnect();                      /* Disconnect from the server */
-void net_recv(char* msg);                   /* Receive a message from the server */
-enum net_status net_listen();               /* Listen for incoming messages */
-int net_send(char* msg);                    /* Send a message to the server */
+void net_connect(char* address, char* port);    /* Connect to the IRC server */
+void net_disconnect();                          /* Disconnect from the server */
+void net_recv(char* msg);                       /* Receive a message from the server */
+enum net_status net_listen();                   /* Listen for incoming messages */
+int net_send(char* msg);                        /* Send a message to the server */
 
 #endif
 

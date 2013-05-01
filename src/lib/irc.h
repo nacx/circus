@@ -55,7 +55,7 @@ void irc_unbind_event(char* event);                         /* Unbind an IRC eve
 void irc_unbind_command(char* command);                     /* Unbind a channel or private message chat command */
 
 /* Connection registration */
-void irc_connect(char* address, int port);                      /* Connect to the IRC server */
+void irc_connect(char* address, char* port);                    /* Connect to the IRC server */
 void irc_disconnect(void);                                      /* Disconnect from the IRC server */
 void irc_listen(void);                                          /* Listen to IRC server messages (blocks until quit signal is received) */
 void irc_nick(char* nick);                                      /* Set or change the nick of the user */

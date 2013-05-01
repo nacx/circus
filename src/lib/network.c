@@ -29,55 +29,59 @@
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <errno.h>
+#include <err.h>
 #include <netdb.h>
 #include <unistd.h>
 #include "debug.h"
 #include "network.h"
 
 
-int _socket;                /* The socket to the IRC server */
+int _socket = -1;           /* The socket to the IRC server */
 static FILE* _sd = NULL;    /* A file pointer to be able to read from the socket line by line */
 
-void net_connect(char* address, int port) {
-    struct hostent *host_entry;     /* Host name */
-    struct sockaddr_in sock_addr;   /* Remote address */
+void net_connect(char* address, char* port) {
+    struct addrinfo addr_in;            /* Remote address configuration */
+    struct addrinfo *addr_out, *addr;   /* Resolved addresses */
+    int error;                          /* Error number when resolving host name */
 
     /* Get remote host address */
     debug(("network: Resolving address: %s\n", address));
-    if ((host_entry = gethostbyname(address)) == NULL) {
-        perror("gethostbyname error");
-        exit(EXIT_FAILURE);
+    memset(&addr_in, 0, sizeof(addr_in));
+    addr_in.ai_family = AF_INET;
+    addr_in.ai_socktype = SOCK_STREAM;
+
+    error = getaddrinfo(address, port, &addr_in, &addr_out);
+    if (error) {
+        errx(EXIT_FAILURE, "%s", gai_strerror(error));
     }
 
-    /* Write zeros into remote address structure */
-    memset(&sock_addr, 0, sizeof(sock_addr));
-
-    /* Family type, server port and host address */
-    sock_addr.sin_family = AF_INET;
-    sock_addr.sin_port = htons(port);
-    sock_addr.sin_addr = *((struct in_addr *) host_entry->h_addr_list[0]);
-
-    /* Socket creation */
-    if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket creation error");
-        exit(EXIT_FAILURE);
-    }
-
-    /* Create a connection with the remote host */
     debug(("network: Connecting\n"));
-    if (connect(_socket, (struct sockaddr *) &sock_addr, sizeof(struct sockaddr)) == -1) {
-        perror("connect error");
-        exit(EXIT_FAILURE);
+    for (addr = addr_out; addr && _socket == -1; addr = addr->ai_next) {
+        if ((_socket = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol)) != -1) {
+            if (connect(_socket, addr->ai_addr, addr->ai_addrlen) != -1) {
+                /* Create the file descriptor to read from the socket line by line
+                 * and turn off buffering to avoid blocking input */
+                _sd = fdopen(_socket, "r");
+                setvbuf(_sd, NULL, _IONBF, 0);
+            } else {
+                /* If connection fails, close the socket and try next resolved address */
+                close(_socket);
+                _socket = -1;
+            }
+        }
     }
 
-    _sd = fdopen(_socket, "r");     /* Create the file descriptor to read from the socket line by line */
-    setvbuf(_sd, NULL, _IONBF, 0);  /* Turn off buffering to avoid blocking input */
+    freeaddrinfo(addr_out);     /* Free the temporal address info */
+
+    if (_socket == -1) {
+        errx(EXIT_FAILURE, "Could not connect to: %s:%s\n", address, port);
+    }
 }
 
 void net_disconnect() {
     debug(("network: Disconnecting\n"));
     close(_socket);
-    _socket = 0;
+    _socket = -1;
     _sd = NULL;
 }
 
