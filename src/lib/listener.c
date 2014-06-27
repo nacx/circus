@@ -64,7 +64,7 @@ struct raw_event* lst_parse(char* msg) {
             } else { /* If the type is set the token is a parameter */
                 /* If a parameter begins with ':' then it is
                  * the last parameter and it is all the remaining message. */
-                if (token[0] == ':') {
+                if (is_last_parameter == 0 && token[0] == ':') {
                     /* Do not increment the parameter count */
                     raw->params[i] = token + 1; /* Ignore the ':' */
                     is_last_parameter = 1;       /* Set the last parameter flag */
