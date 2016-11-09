@@ -1,18 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/documentup/latest.min.js"></script>
-    <script>
-      DocumentUp.document({
-        repo:  "nacx/circus",
-        name: "circus",
-        twitter: ["IgnasiBarrera"]
-      });
-    </script>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Circus by nacx</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-  <body></body>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Circus</h1>
+        <p class="header">An event-driven IRC framework written in C</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/nacx/circus/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/nacx/circus/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/nacx/circus">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/nacx">nacx</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="circus-an-event-driven-irc-framework-written-in-c" class="anchor" href="#circus-an-event-driven-irc-framework-written-in-c" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Circus: An event-driven IRC framework written in C</h1>
+
+<p><a href="http://travis-ci.org/nacx/circus"><img src="https://secure.travis-ci.org/nacx/circus.png" alt="Build Status"></a></p>
+
+<p>Circus is an event-driven IRC framework written in ANSI C that provides a simple
+way to write IRC clients in pure C. Its main purpose is to provide a base
+to write IRC bots, but it may be extended to implement fully-featured IRC
+clients.</p>
+
+<h2>
+<a id="compiling-circus" class="anchor" href="#compiling-circus" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compiling Circus</h2>
+
+<p>To compile Circus, you can simply run:</p>
+
+<pre><code>make
+</code></pre>
+
+<p>If you want to enable debug messages, you can also compile Circus with debug support. It might
+be too verbose, so you'd better use it just during development:</p>
+
+<pre><code>make DEBUG=1
+</code></pre>
+
+<p>This will compile the Circus library and build all the examples in the <em>examples</em> directory, so
+you can start playing with them. It is a good starting point to modify the existing examples and
+make them do some cool stuff :)</p>
+
+<p>Before you start coding, it is usually a good idea to run the unit tests. This way you will make
+sure everything is working as expected:</p>
+
+<pre><code>make test
+</code></pre>
+
+<p>If you want to install the library, you can do it as usual. It will be installed by default in
+/usr/local, but you can customize the installation directory by adding the <em>PREFIX</em> parameter:</p>
+
+<pre><code>make install                       # Installs Circus in /usr/local
+make install PREFIX=&lt;install dir&gt;  # Installs Circus in &lt;install dir&gt;
+</code></pre>
+
+<h2>
+<a id="testing-performance" class="anchor" href="#testing-performance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing performance</h2>
+
+<p>If you want to test performance, you can run the little benchmark tool as follows:</p>
+
+<pre><code>cd src/test
+./circus-bnchk 1000000
+</code></pre>
+
+<p>This will generate and process the provided number of events (one million in this example) and
+print some metrics, such as the average time spent processing each event or the total execution
+time.</p>
+
+<h2>
+<a id="building-circus-based-applications" class="anchor" href="#building-circus-based-applications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building Circus based applications</h2>
+
+<p>To build your own Circus application, you can take a look at the <em>examples</em> folder.
+There you will find the <code>Makefile.example</code> file that you can copy and modify to build
+your application. The example Makefile assumes that you installed Circus in a default location
+(such as /usr or /usr/local); if you installed it in a different place, you may need to configure
+the <code>CFLAGS</code> and the <code>LDFLAGS</code> variables accordingly.</p>
+
+<p>When including the Circus header files in your source code files, you can include them as follows:</p>
+
+<pre><code>#include &lt;circus/irc.h&gt;
+</code></pre>
+
+<p>The code examples include the library in a different way, because they point to the library in the
+compilation directory. The common pattern is, however, to have the Circus library installed in your
+system and reference the headers files as shown above.</p>
+
+<p>Also take into account that circus uses POSIX threads to dispatch events to the user defined callbacks.
+Make sure you link the <code>pthread</code> library when building your application.</p>
+
+<h2>
+<a id="how-to-contribute" class="anchor" href="#how-to-contribute" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to contribute</h2>
+
+<p>Contributions are always welcome. Feel free to share your code!</p>
+
+<ul>
+<li>Fork the project.</li>
+<li>Create a topic branch for your feature or bug fix.</li>
+<li>Develop in the just created topic branch.</li>
+<li>Add tests for your changes. This is important so I don't break them in a future version unintentionally.</li>
+<li>Commit.</li>
+<li>Rebase to the latest upstream version to make sure your topic branch is up to date.</li>
+<li>Send me a pull request.</li>
+</ul>
+
+<h2>
+<a id="issue-tracking" class="anchor" href="#issue-tracking" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Issue Tracking</h2>
+
+<p>If you find any issue or want to ask for a feature, please submit your request to the
+<a href="https://github.com/nacx/circus/issues">Bug tracking system</a> and I'll do my best to fix/add it.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>This sowftare is licensed under the MIT license. See LICENSE file for details.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
 </html>
