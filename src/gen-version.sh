@@ -16,11 +16,13 @@ VFILE=lib/version.c
 license() {
     echo "/*" >$1
     cat $LFILE | nl -b a -s ' * ' | cut -c7- >>$1
-    echo -e " */\n" >>$1
+    echo " */" >>$1
+    echo >>$1
 }
 
 license $VFILE
-echo -e '#include "version.h"\n' >>$VFILE
+echo '#include "version.h"' >>$VFILE
+echo >>$VFILE
 echo "const char* lib_name = \"$LIB_NAME\";" >>$VFILE 
 echo "const char* lib_version = \"$LIB_VERSION\";" >>$VFILE 
 echo "const char* git_revision = \"$GIT_REVISION\";" >>$VFILE 
