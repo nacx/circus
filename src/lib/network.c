@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#define _POSIX_SOURCE   /* Required for fdopen */
+#define _POSIX_C_SOURCE 200112L      /* Use addr structs and fdopen */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,6 +120,8 @@ enum net_status net_listen() {
     FD_ZERO(&read_fd_set);
     FD_SET(_socket, &read_fd_set);
 
+    debug(("network: Waiting for incoming messages...\n"));
+
     /* Check if there is some data to be read */
     read = select(_socket + 1, &read_fd_set, NULL, NULL, NULL);
 
@@ -133,6 +135,7 @@ enum net_status net_listen() {
         ret = NET_READY;
     } else {
         /* This should never be raised, because no timeout is defined */
+        debug(("network: Timeout. Socket dead?\n"));
         ret = NET_TIMEOUT;
     }
 

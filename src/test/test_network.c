@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#define _POSIX_SOURCE /* Required for fdopen in network.c */
+#define _POSIX_C_SOURCE 200112L      /* Use addr structs and fdopen in network.c */
 
 #include <stdio.h>
 #include <errno.h>

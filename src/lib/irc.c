@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <string.h>
+#include "debug.h"
 #include "network.h"
 #include "listener.h"
 #include "dispatcher.h"
@@ -120,6 +121,7 @@ void irc_listen() {
                 exit(EXIT_FAILURE);
                 break;
             case NET_CLOSE:
+                debug(("irc: Connection closed. Shutting down...\n"));
                 _shutdown();
                 break;
             case NET_READY:
@@ -127,12 +129,15 @@ void irc_listen() {
                 lst_handle(msg);
                 break;
             case NET_TIMEOUT:
+                debug(("irc: Timeout. Socket dead?\n"));
                 /* Do nothing. The loop should continue and try again. */
                 break;
             default:
                 break;
         }
     }
+
+    debug(("irc: Exiting network listen loop\n"));
 }
 
 void irc_nick(char* nick) {

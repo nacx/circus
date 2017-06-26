@@ -7,7 +7,7 @@ TARGETS = lib test benchmark install uninstall clean-lib clean-test clean-benchm
 LIB = src/lib/libcircus.a
 
 all: lib examples benchmark
-	@echo "\n*** Done! Run 'make test' to make sure everything is working as expected! ***\n"
+	@echo -e "\n*** Done! Run 'make test' to make sure everything is working as expected! ***\n"
 
 $(TARGETS):
 	$(MAKE) $@ -C src
