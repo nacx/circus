@@ -48,7 +48,7 @@ all: $(LIB) benchmark
 $(LIB): lib
 
 gen-version:
-	sh gen-version.sh
+	sh -x gen-version.sh
 
 lib: gen-version $(CIRCUS_OBJ)
 	$(AR) -rv $(LIB) $(CIRCUS_OBJ)
